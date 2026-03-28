@@ -21,6 +21,12 @@ async function loadProducts() {
                     const discountAmount = product.price * (DISCOUNT_PERCENT / 100);
                     const oldPrice = (product.price + discountAmount).toFixed(2);
 
+                    // first available stock id
+                    const firstStock = product.stockDTOList && product.stockDTOList.length > 0
+                        ? product.stockDTOList.find(s => s.quantity > 0) || product.stockDTOList[0]
+                        : null;
+                    const stockId = firstStock ? firstStock.stockId : null;
+
                     let card = `
                 <div class="col-md-6 col-lg-3 product-item isotope-item filter-clothing">
                     <div class="product-card">
@@ -29,7 +35,7 @@ async function loadProducts() {
                             <img src="${image}" alt="Product" class="img-fluid main-img">
                             <img src="${image}" alt="Product Hover" class="img-fluid hover-img">
                             <div class="product-overlay">
-                                <a href="#" class="btn-cart" onclick="addToCart(${product.id},1);"><i class="bi bi-cart-plus"></i> Add to Cart</a>
+                                <a class="btn btn-cart" onclick="addToCart(${stockId},1);"><i class="bi bi-cart-plus"></i> Add to Cart</a>
                                 <div class="product-actions">
                                     <a href="#" class="action-btn"><i class="bi bi-heart"></i></a>
                                     <a href="single-product.html?pId=${product.id}" class="action-btn"><i class="bi bi-eye"></i></a>

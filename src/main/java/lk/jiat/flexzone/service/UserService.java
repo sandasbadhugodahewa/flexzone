@@ -18,6 +18,7 @@ import lk.jiat.flexzone.validation.Validator;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import lk.jiat.flexzone.service.CartService;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -66,6 +67,8 @@ public class UserService {
                         HttpSession httpSession = request.getSession();
                         System.out.println("LOGIN SESSION ID: " + httpSession.getId());
                         httpSession.setAttribute("user", singleUser);
+                        // ── Merge session cart into DB cart ──
+                        new CartService().mergeSessionCartToDb(request);
                         status = true;
                         message = "Login successful";
                     }

@@ -2,6 +2,7 @@ window.addEventListener("load", async () => {
     try {
         await loadUserName();
         await loadCategory();
+        loadCartCount();
     } finally {
         Notiflix.loading.remove();
     }
@@ -113,7 +114,6 @@ async function loadCategoryCard(){
                 container.innerHTML = "";
 
                 data.categories.forEach(category => {
-                    console.log(category);
                     let card = `
                    <div class="swiper-slide">
                         <div class="category-card rounded" data-aos="fade-up" data-aos-delay="100">
