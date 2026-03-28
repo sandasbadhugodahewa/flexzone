@@ -1,0 +1,181 @@
+package lk.jiat.flexzone.service;
+
+import com.google.gson.JsonObject;
+import lk.jiat.flexzone.dto.ProductDTO;
+import lk.jiat.flexzone.dto.StockDTO;
+import lk.jiat.flexzone.entity.*;
+import lk.jiat.flexzone.util.AppUtil;
+import lk.jiat.flexzone.util.HibernateUtil;
+import org.hibernate.Session;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class ProductService {
+
+    public String loadProducts(){
+
+        JsonObject responseObject = new JsonObject();
+        boolean status = false;
+        String message;
+
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Status activeStatus = session.createQuery(
+                        "FROM Status WHERE value = :value", Status.class)
+                .setParameter("value","ACTIVE")
+                .uniqueResult();
+
+        List<Product> productList = session.createQuery(
+                        "FROM Product p WHERE p.status = :status", Product.class)
+                .setParameter("status", activeStatus)
+                .getResultList();
+
+        if(productList.isEmpty()){
+            message = "No products found!";
+        }else{
+
+            List<ProductDTO> dtoList = new ArrayList<>();
+
+            for(Product product : productList){
+
+                ProductDTO dto = new ProductDTO();
+
+                dto.setId(product.getId());
+                dto.setTitle(product.getTitle());
+                dto.setDescription(product.getDescription());
+
+                dto.setCategoryId(product.getCategory().getId());
+                dto.setCategoryName(product.getCategory().getName());
+
+                dto.setSubCategoryId(product.getSubcategory().getId());
+                dto.setSubCategoryName(product.getSubcategory().getName());
+
+                dto.setBrandId(product.getBrand().getId());
+                dto.setBrandName(product.getBrand().getName());
+
+                dto.setColorId(product.getColor().getId());
+                dto.setColorValue(product.getColor().getValue());
+                dto.setColorHex(product.getColor().getHexCode());
+
+                dto.setGenderId(product.getGender().getId());
+                dto.setGenderName(product.getGender().getName());
+
+                dto.setImages(product.getImages());
+
+                List<StockDTO> stockDTOList = new ArrayList<>();
+
+                for(Stock stock : product.getStocks()){
+
+                    StockDTO stockDTO = new StockDTO();
+
+                    stockDTO.setStockId(stock.getId());
+                    stockDTO.setPrice(stock.getPrice());
+                    stockDTO.setQuantity(stock.getQuantity());
+
+                    if (stock.getSize() != null) {
+                        stockDTO.setSizeId(stock.getSize().getId());
+                        stockDTO.setSizeValue(stock.getSize().getValue());
+                    }
+
+                    stockDTOList.add(stockDTO);
+
+                    dto.setPrice(stock.getPrice());
+                    dto.setQuantity(stock.getQuantity());
+                }
+
+                dto.setStockDTOList(stockDTOList);
+
+                dtoList.add(dto);
+            }
+
+            responseObject.add("products", AppUtil.GSON.toJsonTree(dtoList));
+
+            status = true;
+            message = "Products loaded successfully!";
+        }
+
+        session.close();
+
+        responseObject.addProperty("status", status);
+        responseObject.addProperty("message", message);
+
+        return AppUtil.GSON.toJson(responseObject);
+    }
+
+    public String loadSingleProduct(int id){
+
+        JsonObject responseObject = new JsonObject();
+        boolean status = false;
+        String message;
+
+        Session session = HibernateUtil.getSessionFactory().openSession();
+
+        Product product = session.get(Product.class, id);
+
+        if(product == null){
+            message = "No product found!";
+        }else{
+
+            ProductDTO pdto = new ProductDTO();
+
+            pdto.setId(product.getId());
+            pdto.setTitle(product.getTitle());
+            pdto.setDescription(product.getDescription());
+
+            pdto.setCategoryId(product.getCategory().getId());
+            pdto.setCategoryName(product.getCategory().getName());
+
+            pdto.setSubCategoryId(product.getSubcategory().getId());
+            pdto.setSubCategoryName(product.getSubcategory().getName());
+
+            pdto.setBrandId(product.getBrand().getId());
+            pdto.setBrandName(product.getBrand().getName());
+
+            pdto.setColorId(product.getColor().getId());
+            pdto.setColorValue(product.getColor().getValue());
+            pdto.setColorHex(product.getColor().getHexCode());
+
+            pdto.setGenderId(product.getGender().getId());
+            pdto.setGenderName(product.getGender().getName());
+
+            pdto.setImages(product.getImages());
+
+            List<StockDTO> stockDTOList = new ArrayList<>();
+
+            for(Stock stock : product.getStocks()){
+
+                StockDTO sdto = new StockDTO();
+
+                sdto.setStockId(stock.getId());
+                sdto.setProductId(product.getId());
+                sdto.setPrice(stock.getPrice());
+                sdto.setQuantity(stock.getQuantity());
+
+                if (stock.getSize() != null) {
+                    sdto.setSizeId(stock.getSize().getId());
+                    sdto.setSizeValue(stock.getSize().getValue());
+                }
+
+                stockDTOList.add(sdto);
+
+                pdto.setPrice(stock.getPrice());
+                pdto.setQuantity(stock.getQuantity());
+            }
+
+            pdto.setStockDTOList(stockDTOList);
+
+            responseObject.add("productData", AppUtil.GSON.toJsonTree(pdto));
+
+            status = true;
+            message = "Product loaded successfully!";
+        }
+
+        responseObject.addProperty("status", status);
+        responseObject.addProperty("message", message);
+
+        session.close();
+
+        return AppUtil.GSON.toJson(responseObject);
+    }
+
+}

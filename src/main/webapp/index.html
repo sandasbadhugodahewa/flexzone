@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Home - fleXZone</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+
+    <meta name="robots" content="noindex, nofollow">
+
+    <!-- Favicons -->
+    <link href="https://bootstrapmade.com/content/demo/eStore/assets/img/favicon.png" rel="icon">
+    <link href="https://bootstrapmade.com/content/demo/eStore/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/" rel="preconnect">
+    <link href="https://fonts.gstatic.com/" rel="preconnect" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&amp;family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;family=Nunito:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+          rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/css/bootstrap-icons.css" rel="stylesheet">
+    <link href="assets/css/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="assets/css/swiper-bundle.min.css" rel="stylesheet">
+    <link href="assets/css/aos.css" rel="stylesheet">
+    <link href="assets/css/glightbox.min.css" rel="stylesheet">
+    <link href="assets/css/drift-basic.css" rel="stylesheet">
+
+    <!-- Main CSS File -->
+    <link href="assets/css/main.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+
+    <script>
+        fetch("header.html")
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("header").innerHTML = data;
+            });
+
+        fetch("footer.html")
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("footer").innerHTML = data;
+            });
+    </script>
+
+</head>
+
+<body class="index-page" onload="loadProducts(); loadCategoryCard();">
+
+<div id="header"></div>
+
+<main class="main">
+
+    <!-- Hero Section -->
+    <section class="ecommerce-hero-1 hero section" id="hero">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 content-col" data-aos="fade-right" data-aos-delay="100">
+                    <div class="content">
+                        <span class="promo-badge">New Collection 2026</span>
+                        <h1>Discover Stylish <span>Fashion</span> For Every Season</h1>
+                        <p>Upgrade your wardrobe with the latest trends and timeless essentials.
+                            Quality styles designed for comfort, confidence, and every occasion..</p>
+                        <div class="hero-cta">
+                            <a href="#" class="btn btn-shop">Shop Now <i class="bi bi-arrow-right"></i></a>
+                            <a href="#" class="btn btn-collection">View Collection</a>
+                        </div>
+                        <div class="hero-features">
+                            <div class="feature-item">
+                                <i class="bi bi-truck"></i>
+                                <span>Free Shipping</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="bi bi-shield-check"></i>
+                                <span>Secure Payment</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="bi bi-arrow-repeat"></i>
+                                <span>Easy Returns</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 image-col" data-aos="fade-left" data-aos-delay="200">
+                    <div class="hero-image">
+                        <img src="https://bootstrapmade.com/content/demo/eStore/assets/img/product/product-m-3.webp"
+                             alt="Fashion Product" class="main-product" loading="lazy">
+                        <div class="floating-product product-1" data-aos="fade-up" data-aos-delay="300">
+                            <img src="https://bootstrapmade.com/content/demo/eStore/assets/img/product/product-4.webp"
+                                 alt="Product 2">
+                            <div class="product-info">
+                                <h4>Summer Collection</h4>
+                                <span class="price">Rs.5999.00</span>
+                            </div>
+                        </div>
+                        <div class="floating-product product-2" data-aos="fade-up" data-aos-delay="400">
+                            <img src="https://bootstrapmade.com/content/demo/eStore/assets/img/product/product-3.webp"
+                                 alt="Product 3">
+                            <div class="product-info">
+                                <h4>Casual Wear</h4>
+                                <span class="price">Rs.1499.00</span>
+                            </div>
+                        </div>
+                        <div class="discount-badge" data-aos="zoom-in" data-aos-delay="500">
+                            <span class="percent">30%</span>
+                            <span class="text">OFF</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section><!-- /Hero Section -->
+
+    <!-- Info Cards Section -->
+    <section id="info-cards" class="info-cards section light-background">
+
+        <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+            <div class="row g-4 justify-content-center">
+                <!-- Info Card 1 -->
+                <div class="col-12 col-sm-6 col-lg-3" data-aos="fade-up" data-aos-delay="200">
+                    <div class="info-card text-center">
+                        <div class="icon-box">
+                            <i class="bi bi-truck"></i>
+                        </div>
+                        <h3>Free Shipping</h3>
+                        <p>Enjoy free delivery on selected orders. Shop your favorite clothing and
+                            get it delivered to your doorstep without extra shipping costs.</p>
+                    </div>
+                </div><!-- End Info Card 1 -->
+
+                <!-- Info Card 2 -->
+                <div class="col-12 col-sm-6 col-lg-3" data-aos="fade-up" data-aos-delay="300">
+                    <div class="info-card text-center">
+                        <div class="icon-box">
+                            <i class="bi bi-piggy-bank"></i>
+                        </div>
+                        <h3>Money Back Guarantee</h3>
+                        <p>Shop with confidence. If you are not satisfied with your purchase, you can return it
+                            and get your money back according to our return policy.</p>
+                    </div>
+                </div><!-- End Info Card 2 -->
+
+                <!-- Info Card 3 -->
+                <div class="col-12 col-sm-6 col-lg-3" data-aos="fade-up" data-aos-delay="400">
+                    <div class="info-card text-center">
+                        <div class="icon-box">
+                            <i class="bi bi-percent"></i>
+                        </div>
+                        <h3>Discount Offers</h3>
+                        <p>Take advantage of special deals and seasonal discounts. Save more on your favorite
+                            fashion items with our exclusive offers.</p>
+                    </div>
+                </div><!-- End Info Card 3 -->
+
+                <!-- Info Card 4 -->
+                <div class="col-12 col-sm-6 col-lg-3" data-aos="fade-up" data-aos-delay="500">
+                    <div class="info-card text-center">
+                        <div class="icon-box">
+                            <i class="bi bi-headset"></i>
+                        </div>
+                        <h3>24/7 Support</h3>
+                        <p>Our support team is available anytime to help you. Contact us whenever
+                            you have questions about orders, products, or services.</p>
+                    </div>
+                </div><!-- End Info Card 4 -->
+            </div>
+
+        </div>
+
+    </section><!-- /Info Cards Section -->
+
+    <!-- Category Cards Section -->
+    <section id="category-cards" class="category-cards section">
+
+        <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+            <div class="category-slider swiper init-swiper">
+                <script type="application/json" class="swiper-config">
+                    {
+                        "loop": true,
+                        "autoplay": {
+                            "delay": 5000,
+                            "disableOnInteraction": false
+                        },
+                        "grabCursor": true,
+                        "speed": 600,
+                        "slidesPerView": "auto",
+                        "spaceBetween": 20,
+                        "navigation": {
+                            "nextEl": ".swiper-button-next",
+                            "prevEl": ".swiper-button-prev"
+                        },
+                        "breakpoints": {
+                            "320": {
+                                "slidesPerView": 2,
+                                "spaceBetween": 15
+                            },
+                            "576": {
+                                "slidesPerView": 3,
+                                "spaceBetween": 15
+                            },
+                            "768": {
+                                "slidesPerView": 4,
+                                "spaceBetween": 20
+                            },
+                            "992": {
+                                "slidesPerView": 5,
+                                "spaceBetween": 20
+                            },
+                            "1200": {
+                                "slidesPerView": 6,
+                                "spaceBetween": 20
+                            }
+                        }
+                    }
+                </script>
+
+                <div class="swiper-wrapper" id="categoryCardContainer">
+
+                    <!-- Category Card Slider Container -->
+
+                </div>
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+            </div>
+        </div>
+    </section><!-- /Category Cards Section -->
+
+    <!-- Best Sellers Section -->
+    <section id="best-sellers" class="best-sellers section">
+        <div class="container section-title" data-aos="fade-up">
+            <h2>Best Selling Items</h2>
+        </div>
+        <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+            <div class="row gy-4">
+                <!-- Product 1 -->
+                <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="100">
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="https://bootstrapmade.com/content/demo/eStore/assets/img/product/product-1.webp"
+                                 class="img-fluid default-image" alt="Product" loading="lazy">
+                            <img src="https://bootstrapmade.com/content/demo/eStore/assets/img/product/product-1-variant.webp"
+                                 class="img-fluid hover-image" alt="Product hover" loading="lazy">
+                            <div class="product-tags">
+                                <span class="badge bg-accent">New</span>
+                            </div>
+                            <div class="product-actions">
+                                <button class="btn-wishlist" type="button" aria-label="Add to wishlist">
+                                    <i class="bi bi-heart"></i>
+                                </button>
+                                <button class="btn-quickview" type="button" aria-label="Quick view">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-title"><a
+                                    href="https://bootstrapmade.com/content/demo/eStore/product-details.html">Brown Leather Bag</a></h3>
+                            <div class="product-price">
+                                <span class="current-price">Rs.4599.00</span>
+                            </div>
+                            <div class="product-rating">
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-half"></i>
+                                <span class="rating-count">(42)</span>
+                            </div>
+                            <button class="btn btn-add-to-cart">
+                                <i class="bi bi-bag-plus me-2"></i>Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div><!-- End Product 1 -->
+
+                <!-- Product 2 -->
+                <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="150">
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="https://bootstrapmade.com/content/demo/eStore/assets/img/product/product-4.webp"
+                                 class="img-fluid default-image" alt="Product" loading="lazy">
+                            <img src="https://bootstrapmade.com/content/demo/eStore/assets/img/product/product-4-variant.webp"
+                                 class="img-fluid hover-image" alt="Product hover" loading="lazy">
+                            <div class="product-tags">
+                                <span class="badge bg-sale">Sale</span>
+                            </div>
+                            <div class="product-actions">
+                                <button class="btn-wishlist" type="button" aria-label="Add to wishlist">
+                                    <i class="bi bi-heart"></i>
+                                </button>
+                                <button class="btn-quickview" type="button" aria-label="Quick view">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-title"><a
+                                    href="https://bootstrapmade.com/content/demo/eStore/product-details.html">Men Cold Jersey</a></h3>
+                            <div class="product-price">
+                                <span class="current-price">Rs.3800.00</span>
+                                <span class="original-price">Rs.4390.00</span>
+                            </div>
+                            <div class="product-rating">
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star"></i>
+                                <span class="rating-count">(28)</span>
+                            </div>
+                            <button class="btn btn-add-to-cart">
+                                <i class="bi bi-bag-plus me-2"></i>Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div><!-- End Product 2 -->
+
+                <!-- Product 3 -->
+                <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="200">
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="https://bootstrapmade.com/content/demo/eStore/assets/img/product/product-7.webp"
+                                 class="img-fluid default-image" alt="Product" loading="lazy">
+                            <img src="https://bootstrapmade.com/content/demo/eStore/assets/img/product/product-7-variant.webp"
+                                 class="img-fluid hover-image" alt="Product hover" loading="lazy">
+                            <div class="product-actions">
+                                <button class="btn-wishlist" type="button" aria-label="Add to wishlist">
+                                    <i class="bi bi-heart"></i>
+                                </button>
+                                <button class="btn-quickview" type="button" aria-label="Quick view">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-title"><a
+                                    href="https://bootstrapmade.com/content/demo/eStore/product-details.html">Women Jacket</a></h3>
+                            <div class="product-price">
+                                <span class="current-price">Rs.2450.00</span>
+                            </div>
+                            <div class="product-rating">
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <span class="rating-count">(56)</span>
+                            </div>
+                            <button class="btn btn-add-to-cart">
+                                <i class="bi bi-bag-plus me-2"></i>Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div><!-- End Product 3 -->
+
+                <!-- Product 4 -->
+                <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="250">
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="https://bootstrapmade.com/content/demo/eStore/assets/img/product/product-12.webp"
+                                 class="img-fluid default-image" alt="Product" loading="lazy">
+                            <img src="https://bootstrapmade.com/content/demo/eStore/assets/img/product/product-12-variant.webp"
+                                 class="img-fluid hover-image" alt="Product hover" loading="lazy">
+                            <div class="product-tags">
+                                <span class="badge bg-sold-out">Sold Out</span>
+                            </div>
+                            <div class="product-actions">
+                                <button class="btn-wishlist" type="button" aria-label="Add to wishlist">
+                                    <i class="bi bi-heart"></i>
+                                </button>
+                                <button class="btn-quickview" type="button" aria-label="Quick view">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-title"><a
+                                    href="https://bootstrapmade.com/content/demo/eStore/product-details.html">Men Women Cashual Shoes</a></h3>
+                            <div class="product-price">
+                                <span class="current-price">Rs.5990.00</span>
+                            </div>
+                            <div class="product-rating">
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star"></i>
+                                <i class="bi bi-star"></i>
+                                <span class="rating-count">(15)</span>
+                            </div>
+                            <button class="btn btn-add-to-cart btn-disabled" disabled="">
+                                <i class="bi bi-bag-plus me-2"></i>Sold Out
+                            </button>
+                        </div>
+                    </div>
+                </div><!-- End Product 4 -->
+            </div>
+
+        </div>
+
+    </section><!-- /Best Sellers Section -->
+
+    <!-- Product List Section -->
+    <section id="product-list" class="product-list section">
+
+        <div class="container isotope-layout" data-aos="fade-up" data-aos-delay="100" data-default-filter="*"
+             data-layout="masonry" data-sort="original-order">
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="product-filters isotope-filters mb-5 d-flex justify-content-center" data-aos="fade-up">
+                        <ul class="d-flex flex-wrap gap-2 list-unstyled">
+                            <li class="filter-active" data-filter="*">All</li>
+                            <li data-filter=".filter-clothing">Men</li>
+                            <li data-filter=".filter-accessories">Women</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row product-container" id="productContainer" data-aos="fade-up" data-aos-delay="200">
+
+<!--                &lt;!&ndash; Product Item 1 &ndash;&gt;-->
+<!--                <div class="col-md-6 col-lg-3 product-item isotope-item filter-clothing">-->
+<!--                    <div class="product-card">-->
+<!--                        <div class="product-image">-->
+<!--                            <span class="badge">Sale</span>-->
+<!--                            <img src="https://bootstrapmade.com/content/demo/eStore/assets/img/product/product-11.webp"-->
+<!--                                 alt="Product" class="img-fluid main-img">-->
+<!--                            <img src="https://bootstrapmade.com/content/demo/eStore/assets/img/product/product-11-variant.webp"-->
+<!--                                 alt="Product Hover" class="img-fluid hover-img">-->
+<!--                            <div class="product-overlay">-->
+<!--                                <a href="https://bootstrapmade.com/content/demo/eStore/cart.html" class="btn-cart"><i-->
+<!--                                        class="bi bi-cart-plus"></i> Add to Cart</a>-->
+<!--                                <div class="product-actions">-->
+<!--                                    <a href="#" class="action-btn"><i class="bi bi-heart"></i></a>-->
+<!--                                    <a href="#" class="action-btn"><i class="bi bi-eye"></i></a>-->
+<!--                                    <a href="#" class="action-btn"><i class="bi bi-arrow-left-right"></i></a>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="product-info">-->
+<!--                            <h5 class="product-title"><a-->
+<!--                                    href="https://bootstrapmade.com/content/demo/eStore/product-details.html">Velocity X Sport Shoe</a></h5>-->
+<!--                            <div class="product-price">-->
+<!--                                <span class="current-price">Rs.4599.00</span>-->
+<!--                                <span class="old-price">Rs.5199.00</span>-->
+<!--                            </div>-->
+<!--                            <div class="product-rating">-->
+<!--                                <i class="bi bi-star-fill"></i>-->
+<!--                                <i class="bi bi-star-fill"></i>-->
+<!--                                <i class="bi bi-star-fill"></i>-->
+<!--                                <i class="bi bi-star-fill"></i>-->
+<!--                                <i class="bi bi-star-half"></i>-->
+<!--                                <span>(24)</span>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>&lt;!&ndash; End Product Item &ndash;&gt;-->
+
+
+
+            </div>
+
+            <div class="text-center mt-5" data-aos="fade-up">
+                <a href="#" class="view-all-btn">View All Products <i class="bi bi-arrow-right"></i></a>
+            </div>
+
+        </div>
+
+    </section><!-- /Product List Section -->
+
+</main>
+
+<div id="footer"></div>
+
+<!-- Scroll Top -->
+<a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i
+        class="bi bi-arrow-up-short"></i></a>
+
+<!-- Preloader -->
+<div id="preloader"></div>
+
+<!-- Vendor JS Files -->
+<script data-cfasync="false" src="assets/js/vendor/email-decode.min.js">
+</script>
+<script src="assets/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/vendor/validate.js"></script>
+<script src="assets/js/vendor/swiper-bundle.min.js"></script>
+<script src="assets/js/vendor/aos.js"></script>
+<script src="assets/js/vendor/imagesloaded.pkgd.min.js"></script>
+<script src="assets/js/vendor/isotope.pkgd.min.js"></script>
+<script src="assets/js/vendor/glightbox.min.js"></script>
+<script src="assets/js/vendor/Drift.min.js"></script>
+<script src="assets/js/vendor/purecounter_vanilla.js"></script>
+<script src="assets/js/notiflix-aio-3.2.8.min.js"></script>
+
+<!-- Main JS File -->
+<script src="assets/js/vendor/main.js"></script>
+<script src="assets/js/header.js"></script>
+<script src="assets/js/home.js"></script>
+<script src="assets/js/cart.js"></script>
+
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015"
+        integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ=="
+        data-cf-beacon='{"version":"2024.11.0","token":"68c5ca450bae485a842ff76066d69420","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}'
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

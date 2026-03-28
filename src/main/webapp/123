@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Index - fleXZone Bootstrap Template</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+
+    <meta name="robots" content="noindex, nofollow">
+
+    <!-- Favicons -->
+    <link href="https://bootstrapmade.com/content/demo/eStore/assets/img/favicon.png" rel="icon">
+    <link href="https://bootstrapmade.com/content/demo/eStore/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/" rel="preconnect">
+    <link href="https://fonts.gstatic.com/" rel="preconnect" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&amp;family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;family=Nunito:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+          rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/css/bootstrap-icons.css" rel="stylesheet">
+    <link href="assets/css/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="assets/css/swiper-bundle.min.css" rel="stylesheet">
+    <link href="assets/css/aos.css" rel="stylesheet">
+    <link href="assets/css/glightbox.min.css" rel="stylesheet">
+    <link href="assets/css/drift-basic.css" rel="stylesheet">
+
+    <!-- Main CSS File -->
+    <link href="assets/css/main.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+
+    <script>
+        fetch("header.html")
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("header").innerHTML = data;
+            });
+
+        fetch("footer.html")
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("footer").innerHTML = data;
+            });
+    </script>
+
+</head>
+<body>
+<div id="header"></div>
+
+
+
+
+
+<div id="footer"></div>
+
+<!-- Scroll Top -->
+<a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i
+        class="bi bi-arrow-up-short"></i></a>
+
+<!-- Preloader -->
+<div id="preloader"></div>
+
+<!-- Vendor JS Files -->
+<script data-cfasync="false" src="assets/js/vendor/email-decode.min.js">
+</script>
+<script src="assets/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/vendor/validate.js"></script>
+<script src="assets/js/vendor/swiper-bundle.min.js"></script>
+<script src="assets/js/vendor/aos.js"></script>
+<script src="assets/js/vendor/imagesloaded.pkgd.min.js"></script>
+<script src="assets/js/vendor/isotope.pkgd.min.js"></script>
+<script src="assets/js/vendor/glightbox.min.js"></script>
+<script src="assets/js/vendor/Drift.min.js"></script>
+<script src="assets/js/vendor/purecounter_vanilla.js"></script>
+<script src="assets/js/notiflix-aio-3.2.8.min.js"></script>
+
+<!-- Main JS File -->
+<script src="assets/js/vendor/main.js"></script>
+
+
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015"
+        integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ=="
+        data-cf-beacon='{"version":"2024.11.0","token":"68c5ca450bae485a842ff76066d69420","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}'
+        crossorigin="anonymous"></script>
+
+</body>
+</html>
+
+
+
+<!-- Address Card 2 -->
+<!--                                    <div class="address-card" data-aos="fade-up" data-aos-delay="200">-->
+<!--                                        <div class="card-header">-->
+<!--                                            <h4>Office</h4>-->
+<!--                                        </div>-->
+<!--                                        <div class="card-body">-->
+<!--                                            <p class="address-text">456 Business Ave<br>Suite 200<br>San Francisco, CA-->
+<!--                                                94107<br>United States</p>-->
+<!--                                            <div class="contact-info">-->
+<!--                                                <div><i class="bi bi-person"></i> Sarah Anderson</div>-->
+<!--                                                <div><i class="bi bi-telephone"></i> +1 (555) 987-6543</div>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                        <div class="card-actions">-->
+<!--                                            <button type="button" class="btn-edit">-->
+<!--                                                <i class="bi bi-pencil"></i>-->
+<!--                                                Edit-->
+<!--                                            </button>-->
+<!--                                            <button type="button" class="btn-remove">-->
+<!--                                                <i class="bi bi-trash"></i>-->
+<!--                                                Remove-->
+<!--                                            </button>-->
+<!--                                            <button type="button" class="btn-make-default">Make Default</button>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+
+

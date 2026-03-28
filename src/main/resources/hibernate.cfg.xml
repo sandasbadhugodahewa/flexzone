@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+  <session-factory>
+
+    <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+    <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+    <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/flexzone?useSSL=false&amp;allowPublicKeyRetrieval=true</property>
+    <property name="hibernate.connection.username">root</property>
+    <property name="hibernate.connection.password">Pass#word2005</property>
+    <property name="hibernate.hbm2ddl.auto">update</property>
+    <property name="hibernate.show_sql">true</property>
+
+    <mapping class="lk.jiat.flexzone.entity.Province"/>
+    <mapping class="lk.jiat.flexzone.entity.Address"/>
+    <mapping class="lk.jiat.flexzone.entity.Brand"/>
+    <mapping class="lk.jiat.flexzone.entity.Cart"/>
+    <mapping class="lk.jiat.flexzone.entity.Category"/>
+    <mapping class="lk.jiat.flexzone.entity.Color"/>
+    <mapping class="lk.jiat.flexzone.entity.DeliveryType"/>
+    <mapping class="lk.jiat.flexzone.entity.Discount"/>
+    <mapping class="lk.jiat.flexzone.entity.Order"/>
+    <mapping class="lk.jiat.flexzone.entity.OrderItem"/>
+    <mapping class="lk.jiat.flexzone.entity.Product"/>
+    <mapping class="lk.jiat.flexzone.entity.Size"/>
+    <mapping class="lk.jiat.flexzone.entity.Status"/>
+    <mapping class="lk.jiat.flexzone.entity.Stock"/>
+    <mapping class="lk.jiat.flexzone.entity.User"/>
+    <mapping class="lk.jiat.flexzone.entity.Gender"/>
+    <mapping class="lk.jiat.flexzone.entity.Subcategory"/>
+
+  </session-factory>
+</hibernate-configuration>
