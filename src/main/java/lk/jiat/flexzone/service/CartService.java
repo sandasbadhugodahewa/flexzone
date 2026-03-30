@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lk.jiat.flexzone.dto.CartDTO;
 import lk.jiat.flexzone.entity.Cart;
+import lk.jiat.flexzone.entity.DeliveryType;
 import lk.jiat.flexzone.entity.Stock;
 import lk.jiat.flexzone.entity.User;
 import lk.jiat.flexzone.util.AppUtil;
@@ -346,6 +347,7 @@ public class CartService {
                 dto.setImages(stock.getProduct().getImages());
                 dto.setPrice(stock.getPrice());
                 dto.setQty(cart.getQty());
+                dto.setColorValue(stock.getProduct().getColor().getValue());
 
                 // Size — only if stock has a size (after your DB migration)
                 if (stock.getSize() != null) {
@@ -365,4 +367,21 @@ public class CartService {
     private List<Cart> getSessionCart(HttpSession httpSession) {
         return (List<Cart>) httpSession.getAttribute("sessionCart");
     }
+
+    public String loadDeliveryTypes() {
+        JsonObject responseObject = new JsonObject();
+        Session hibernateSession = HibernateUtil.getSessionFactory().openSession();
+        try {
+            List<DeliveryType> list = hibernateSession
+                    .createQuery("FROM DeliveryType", DeliveryType.class)
+                    .getResultList();
+
+            responseObject.add("deliveryTypes", AppUtil.GSON.toJsonTree(list));
+            responseObject.addProperty("status", true);
+        } finally {
+            hibernateSession.close();
+        }
+        return AppUtil.GSON.toJson(responseObject);
+    }
+
 }

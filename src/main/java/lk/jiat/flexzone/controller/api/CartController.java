@@ -29,4 +29,22 @@ public class CartController {
         return Response.ok().entity(json).build();
     }
 
+    @DELETE
+    @Path("/remove-cart/{cartId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response removeCartItem(
+            @PathParam("cartId") int cartId,
+            @Context HttpServletRequest request) {
+        String json = cartService.removeCartItem(cartId, request);
+        return Response.ok().entity(json).build();
+    }
+
+    @GET
+    @Path("/delivery-types")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getDeliveryTypes() {
+        String json = cartService.loadDeliveryTypes();
+        return Response.ok().entity(json).build();
+    }
+
 }
