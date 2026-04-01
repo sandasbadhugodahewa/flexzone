@@ -331,7 +331,7 @@ public class CartService {
 
 
     // Build CartDTO list from Cart entity list
-    private List<CartDTO> buildCartDTOs(List<Cart> cartList) {
+    public List<CartDTO> buildCartDTOs(List<Cart> cartList) {
         List<CartDTO> dtoList = new ArrayList<>();
         Session hibernateSession = HibernateUtil.getSessionFactory().openSession();
         try {

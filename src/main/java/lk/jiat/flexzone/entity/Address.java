@@ -32,6 +32,9 @@ public class Address implements Serializable {
     @JoinColumn(name = "status_id", nullable = false)
     private Status status;
 
+    @Column(name = "is_primary", nullable = false)
+    private boolean isPrimary = false;
+
     public User getUser() {
         return user;
     }
@@ -102,6 +105,14 @@ public class Address implements Serializable {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public boolean isPrimary() {
+        return isPrimary;
+    }
+
+    public void setIsPrimary(boolean isPrimary) {
+        this.isPrimary = isPrimary;
     }
 }
 

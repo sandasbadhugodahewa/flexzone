@@ -132,7 +132,7 @@ function renderCartTable(cartItems) {
             : "assets/images/default.png";
 
         const subtotal = (cart.price * cart.qty).toFixed(2);
-        const size = cart.sizeValue ? `<small class="text-muted d-block">Size: ${cart.sizeValue}</small>` : "";
+        const size = cart.sizeValue ? `<small class="text-muted d-block"> ${cart.sizeValue}</small>` : "";
 
         tbody.innerHTML += `
            
