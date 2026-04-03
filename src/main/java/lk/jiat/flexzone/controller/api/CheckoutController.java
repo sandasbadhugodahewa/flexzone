@@ -34,5 +34,31 @@ public class CheckoutController {
         String json = checkoutService.placeOrder(dto, request);
         return Response.ok().entity(json).build();
     }
+
+    @IsUser
+    @POST
+    @Path("/buy-now")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response buyNow(String requestData, @Context HttpServletRequest request) {
+        CheckoutRequestDTO dto = AppUtil.GSON.fromJson(requestData, CheckoutRequestDTO.class);
+        dto.setBuyNow(true); // ensure flag is set
+        String json = checkoutService.placeOrder(dto, request);
+        return Response.ok().entity(json).build();
+    }
+
+    // Buy Now checkout page data — same as normal but no cart check
+    @IsUser
+    @GET
+    @Path("/buynow-data")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getBuyNowData(
+            @QueryParam("stockId") int stockId,
+            @QueryParam("qty") int qty,
+            @Context HttpServletRequest request) {
+        String json = checkoutService.getBuyNowData(stockId, qty, request);
+        return Response.ok().entity(json).build();
+    }
+
 }
 

@@ -1,22 +1,71 @@
-// ─────────────────────────────────────────────
-//  ON PAGE LOAD
-// ─────────────────────────────────────────────
+
 window.addEventListener("load", async () => {
     try {
         Notiflix.Loading.pulse("Loading checkout...", {
             clickToClose: false,
             svgColor: '#0284c7'
         });
-        await loadCheckoutData();
+
+        // Check if this is a Buy Now request (stockId in URL)
+        const params  = new URLSearchParams(window.location.search);
+        const stockId = params.get("stockId");
+        const qty     = params.get("qty") || "1";
+
+        if (stockId) {
+            await loadBuyNowData(stockId, qty);
+        } else {
+            await loadCheckoutData();
+        }
     } finally {
         Notiflix.Loading.remove();
     }
 });
 
+// ─────────────────────────────────────────────
+//  BUY NOW — load single product checkout data
+// ─────────────────────────────────────────────
+let buyNowMode    = false;
+let buyNowStockId = null;
+let buyNowQty     = 1;
 
-// ─────────────────────────────────────────────
-//  LOAD CHECKOUT DATA FROM BACKEND
-// ─────────────────────────────────────────────
+async function loadBuyNowData(stockId, qty) {
+    buyNowMode    = true;
+    buyNowStockId = parseInt(stockId);
+    buyNowQty     = parseInt(qty);
+
+    try {
+        const response = await fetch(
+            `api/checkouts/buynow-data?stockId=${stockId}&qty=${qty}`
+        );
+
+        if (response.redirected || !response.ok) {
+            document.querySelector(".main")?.style.setProperty("display", "none");
+            Notiflix.Report.info('Login Required', 'Please login first!', 'OK', () => {
+                window.location = "sign-in.html";
+            });
+            return;
+        }
+
+        const data = await response.json();
+        if (!data.status) {
+            Notiflix.Notify.failure(data.message, { position: 'center-top' });
+            return;
+        }
+
+        // Reuse the exact same rendering functions as normal checkout
+        prefillCustomerInfo(data);
+        fillProvinceDropdown(data.provinces);
+        if (data.primaryAddress) fillPrimaryAddress(data.primaryAddress);
+        buildDeliveryOptions(data.deliveryTypes);
+        buildOrderSummary(data.cartItems, data.deliveryTypes);
+
+    } catch (e) {
+        Notiflix.Notify.failure(e.message, { position: 'center-top' });
+    }
+}
+
+
+//cart
 async function loadCheckoutData() {
     try {
         const response = await fetch("api/checkouts/checkout-data");
@@ -236,7 +285,7 @@ function recalculateSummary() {
     const selectedRadio = document.querySelector('input[name="deliveryType"]:checked');
     const shippingCost = selectedRadio ? parseFloat(selectedRadio.getAttribute("data-price")) : 0;
 
-    const TAX_RATE = 0.03;
+    const TAX_RATE = 0.035;
     const tax = subtotal * TAX_RATE;
     const total = subtotal + shippingCost + tax;
 
@@ -255,71 +304,89 @@ function setTextContent(id, val) {
 
 async function placeOrder() {
 
-    // ── Terms check ──
     const termsChecked = document.getElementById("terms")?.checked;
     if (!termsChecked) {
-        Notiflix.Notify.warning("Please agree to the Terms and Conditions.", {position: 'center-top'});
+        Notiflix.Notify.warning("Please agree to the Terms and Conditions.",
+            { position: 'center-top' });
         return;
     }
 
-    const useSaved = document.getElementById("useSavedAddress")?.checked || false;
-    const firstName = document.getElementById("first-name")?.value.trim() || "";
-    const lastName = document.getElementById("last-name")?.value.trim() || "";
-    const lineOne = document.getElementById("line-one")?.value.trim() || "";
-    const lineTwo = document.getElementById("line-two")?.value.trim() || "";
-    const city = document.getElementById("city")?.value.trim() || "";
+    const useSaved   = document.getElementById("useSavedAddress")?.checked || false;
+    const firstName  = document.getElementById("first-name")?.value.trim()  || "";
+    const lastName   = document.getElementById("last-name")?.value.trim()   || "";
+    const lineOne    = document.getElementById("line-one")?.value.trim()    || "";
+    const lineTwo    = document.getElementById("line-two")?.value.trim()    || "";
+    const city       = document.getElementById("city")?.value.trim()        || "";
     const postalCode = document.getElementById("postal-code")?.value.trim() || "";
-    const mobile = document.getElementById("mobile")?.value.trim() || "";
+    const mobile     = document.getElementById("mobile")?.value.trim()      || "";
     const provinceId = parseInt(document.getElementById("province")?.value) || 0;
 
     const selectedDelivery = document.querySelector('input[name="deliveryType"]:checked');
     if (!selectedDelivery) {
-        Notiflix.Notify.warning("Please select a delivery type.", {position: 'center-top'});
+        Notiflix.Notify.warning("Please select a delivery type.", { position: 'center-top' });
         return;
     }
 
+    // Build request — include Buy Now fields if in Buy Now mode
     const checkoutData = {
         isCurrentAddress: useSaved,
-        firstName,
-        lastName,
-        lineOne,
-        lineTwo,
-        city,
-        postalCode,
-        mobile,
-        provinceId,
-        deliveryTypeId: parseInt(selectedDelivery.value)
+        firstName, lastName, lineOne, lineTwo,
+        city, postalCode, mobile, provinceId,
+        deliveryTypeId: parseInt(selectedDelivery.value),
+        // Buy Now fields (ignored by backend if isBuyNow=false)
+        isBuyNow:      buyNowMode,
+        buyNowStockId: buyNowStockId || 0,
+        buyNowQty:     buyNowQty     || 1
     };
 
-    try {
-        Notiflix.Loading.pulse("Placing order...", {clickToClose: false, svgColor: '#0284c7'});
+    // Use /buy-now endpoint for Buy Now, /place-order for normal cart
+    const endpoint = buyNowMode
+        ? "api/checkouts/buy-now"
+        : "api/checkouts/place-order";
 
-        const response = await fetch("api/checkouts/place-order", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify(checkoutData)
+    try {
+        Notiflix.Loading.pulse("Preparing payment...",
+            { clickToClose: false, svgColor: '#0284c7' });
+
+        const response = await fetch(endpoint, {
+            method:  "POST",
+            headers: { "Content-Type": "application/json" },
+            body:    JSON.stringify(checkoutData)
         });
 
-        if (response.ok) {
-            const data = await response.json();
-            if (data.status) {
-                Notiflix.Report.success(
-                    'Order Placed!',
-                    `Your order #${data.orderId} has been placed successfully.`,
-                    'OK',
-                    () => {
-                        window.location = "account.html";
-                    }
-                );
-            } else {
-                Notiflix.Notify.failure(data.message, {position: 'center-top'});
-            }
+        const data = await response.json();
+
+        if (data.status) {
+            payhere.startPayment(data.paymentDetails);
         } else {
-            Notiflix.Notify.failure("Order placement failed!", {position: 'center-top'});
+            Notiflix.Notify.failure(data.message, { position: 'center-top' });
         }
+
     } catch (e) {
-        Notiflix.Notify.failure(e.message, {position: 'center-top'});
+        Notiflix.Notify.failure(e.message, { position: 'center-top' });
     } finally {
         Notiflix.Loading.remove();
     }
 }
+
+// ── PayHere event handlers ──────────────────────────────
+
+// Fires when the PayHere popup closes after payment attempt
+payhere.onCompleted = function onCompleted(orderId) {
+    console.log("PayHere completed. OrderID: " + orderId);
+    // Server already handled stock + cart via /notify
+    // Just redirect user to their invoice
+    window.location = "invoice.html?orderId=" + orderId;
+};
+
+// Fires when user closes the PayHere popup without paying
+payhere.onDismissed = function onDismissed() {
+    Notiflix.Notify.warning("Payment was cancelled. Your order is still pending.", {
+        position: 'center-top'
+    });
+};
+
+// Fires on SDK-level errors
+payhere.onError = function onError(error) {
+    Notiflix.Notify.failure("Payment error: " + error, { position: 'center-top' });
+};

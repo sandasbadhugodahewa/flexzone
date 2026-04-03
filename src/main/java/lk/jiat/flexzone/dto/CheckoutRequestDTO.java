@@ -13,6 +13,35 @@ public class CheckoutRequestDTO {
     private String city;
     private int deliveryTypeId;
 
+    // ── Buy Now fields (used when bypassing cart) ──
+    private boolean isBuyNow;      // true = single product checkout
+    private int     buyNowStockId; // which stock item to buy
+    private int     buyNowQty;     // quantity to buy
+
+    public boolean isBuyNow() {
+        return isBuyNow;
+    }
+
+    public void setBuyNow(boolean buyNow) {
+        isBuyNow = buyNow;
+    }
+
+    public int getBuyNowStockId() {
+        return buyNowStockId;
+    }
+
+    public void setBuyNowStockId(int buyNowStockId) {
+        this.buyNowStockId = buyNowStockId;
+    }
+
+    public int getBuyNowQty() {
+        return buyNowQty;
+    }
+
+    public void setBuyNowQty(int buyNowQty) {
+        this.buyNowQty = buyNowQty;
+    }
+
     public boolean isCurrentAddress() {
         return isCurrentAddress;
     }

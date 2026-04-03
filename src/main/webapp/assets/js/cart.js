@@ -11,6 +11,19 @@ function addToCartFromProductPage() {
     addToCart(selectedStock.stockId, qty);
 }
 
+function buyNow() {
+    if (!selectedStock) {
+        Notiflix.Notify.warning("Please select a size first.", { position: "center-top" });
+        return;
+    }
+    if (selectedStock.quantity <= 0) {
+        Notiflix.Notify.warning("This size is out of stock.", { position: "center-top" });
+        return;
+    }
+    const qty = parseInt(document.querySelector(".quantity-input")?.value) || 1;
+    window.location = `checkout.html?stockId=${selectedStock.stockId}&qty=${qty}`;
+}
+
 async function addToCart(stockId, qty) {
 
     if (!stockId) {
@@ -260,7 +273,7 @@ function updateSummaryTotals(cartItems) {
         if (shippingEl) shippingEl.textContent = `Free Shipping Over Rs.5000`;
     }
 
-    const TAX_RATE = 0.03;
+    const TAX_RATE = 0.035;
     const tax      = subtotal * TAX_RATE;
     const discount = 0; // wire up coupon later
     const total    = subtotal + shippingCost + tax - discount;
