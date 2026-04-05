@@ -48,7 +48,7 @@
     </script>
 
 </head>
-<body onload="loadProductsDetails();">
+<body onload="loadProductsDetails(); loadWishlistCount()">
 <div id="header"></div>
 
 
@@ -187,14 +187,14 @@
                         </div>
 
                         <!-- Action Buttons -->
-                        <div class="product-actions">
+                        <div class="product-actions" id="actionBtns">
                             <button class="btn btn-primary add-to-cart-btn" onclick="addToCartFromProductPage()">
                                 <i class="bi bi-cart-plus"></i> Add to Cart
                             </button>
                             <button class="btn btn-outline-primary buy-now-btn" onclick="buyNow();">
                                 <i class="bi bi-lightning-fill"></i> Buy Now
                             </button>
-                            <button class="btn btn-outline-secondary wishlist-btn">
+                            <button class="btn btn-outline-secondary wishlist-btn" onclick="handleWishlist();">
                                 <i class="bi bi-heart"></i>
                             </button>
                         </div>
@@ -585,6 +585,7 @@
 <script src="assets/js/header.js"></script>
 <script src="assets/js/home.js"></script>
 <script src="assets/js/cart.js"></script>
+<script src="assets/js/wishlist.js"></script>
 
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015"
         integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ=="

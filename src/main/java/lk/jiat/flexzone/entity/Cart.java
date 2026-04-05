@@ -10,7 +10,6 @@ public class Cart implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-
     @Column(nullable = false)
     private int qty;
 

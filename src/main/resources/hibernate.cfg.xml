@@ -30,6 +30,7 @@
     <mapping class="lk.jiat.flexzone.entity.User"/>
     <mapping class="lk.jiat.flexzone.entity.Gender"/>
     <mapping class="lk.jiat.flexzone.entity.Subcategory"/>
+    <mapping class="lk.jiat.flexzone.entity.Wishlist"/>
 
   </session-factory>
 </hibernate-configuration>

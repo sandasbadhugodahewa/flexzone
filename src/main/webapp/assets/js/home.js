@@ -37,7 +37,7 @@ async function loadProducts() {
                             <div class="product-overlay">
                                 <a class="btn btn-cart" onclick="addToCart(${stockId},1);"><i class="bi bi-cart-plus"></i> Add to Cart</a>
                                 <div class="product-actions">
-                                    <a href="#" class="action-btn"><i class="bi bi-heart"></i></a>
+                                    <a class="action-btn" onclick="addToWishList(${stockId});"><i class="bi bi-heart"></i></a>
                                     <a href="single-product.html?pId=${product.id}" class="action-btn"><i class="bi bi-eye"></i></a>
                                     <a href="#" class="action-btn"><i class="bi bi-arrow-left-right"></i></a>
                                 </div>
@@ -285,6 +285,15 @@ function handleQuantityClick(e) {
         const current = parseInt(qtyInput.value) || 1;
         if (current > 1) qtyInput.value = current - 1;
     }
+}
+
+function handleWishlist() {
+    if (!selectedStock) {
+        Notiflix.Notify.warning("Please select a size first.", { position: "center-top" });
+        return;
+    }
+
+    addToWishList(selectedStock.stockId);
 }
 
 document.removeEventListener("click", handleQuantityClick);

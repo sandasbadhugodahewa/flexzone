@@ -362,8 +362,7 @@ public class CartService {
         return dtoList;
     }
 
-    // Get session cart safely (suppress unchecked cast warning)
-    @SuppressWarnings("unchecked")
+
     private List<Cart> getSessionCart(HttpSession httpSession) {
         return (List<Cart>) httpSession.getAttribute("sessionCart");
     }
