@@ -21,9 +21,6 @@ window.addEventListener("load", async () => {
     }
 });
 
-// ─────────────────────────────────────────────
-//  BUY NOW — load single product checkout data
-// ─────────────────────────────────────────────
 let buyNowMode    = false;
 let buyNowStockId = null;
 let buyNowQty     = 1;

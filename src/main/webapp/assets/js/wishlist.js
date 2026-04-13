@@ -7,6 +7,13 @@ async function addToWishList(stockId) {
 
         const response = await fetch(`api/wishlist/add-to-wishlist?sId=${stockId}`);
 
+        if (response.redirected || !response.ok) {
+            Notiflix.Report.info('Login Required', 'Please login first!', 'OK', () => {
+                window.location = "sign-in.html";
+            });
+            return;
+        }
+
         if (response.ok) {
             const data = await response.json();
             if (data.status) {
@@ -16,18 +23,6 @@ async function addToWishList(stockId) {
                     Notiflix.Notify.info(data.message, {position: "center-top"});
                 }
                 await loadWishlistCount();
-            } else {
-                if (data.message === "Please login first!") {
-                    Notiflix.Report.info("Login Required",
-                        "Please login to save items to your wishlist.",
-                        "Sign In",
-                        () => {
-                            window.location = "sign-in.html";
-                        }
-                    );
-                } else {
-                    Notiflix.Notify.failure(data.message, {position: "center-top"});
-                }
             }
         } else if (response.status === 401) {
             Notiflix.Report.info("Login Required",

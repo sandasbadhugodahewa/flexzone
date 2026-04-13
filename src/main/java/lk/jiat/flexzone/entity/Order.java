@@ -30,6 +30,10 @@ public class Order extends BaseEntity {
     @JoinColumn(name = "users_id")
     private User user;
 
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_id")
+    private Address address;
+
     @OneToMany(mappedBy = "order")
     private Set<OrderItem> orderItems = new HashSet<>();
 
@@ -83,5 +87,13 @@ public class Order extends BaseEntity {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
     }
 }

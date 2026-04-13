@@ -23,4 +23,19 @@ public class OrderController {
         String json = orderService.getInvoiceData(orderId, request);
         return Response.ok().entity(json).build();
     }
+
+    @GET
+    @Path("/my-orders")
+    public Response getMyOrders(@Context HttpServletRequest request) {
+        return Response.ok(orderService.getUserOrders(request)).build();
+    }
+
+    @IsUser
+    @GET
+    @Path("/count")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getCount(@Context HttpServletRequest request) {
+        String json = OrderService.getOrderCount(request);
+        return Response.ok().entity(json).build();
+    }
 }

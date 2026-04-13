@@ -1,12 +1,20 @@
 package lk.jiat.flexzone.service;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import lk.jiat.flexzone.dto.OrderDTO;
+import lk.jiat.flexzone.dto.OrderItemDTO;
 import lk.jiat.flexzone.entity.*;
+import lk.jiat.flexzone.util.AppUtil;
 import lk.jiat.flexzone.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 public class OrderService {
@@ -88,23 +96,21 @@ public class OrderService {
     }
 
     public String getInvoiceData(String orderId, HttpServletRequest request) {
-        com.google.gson.JsonObject responseObject = new com.google.gson.JsonObject();
-        boolean status = false;
-        String message;
 
-        jakarta.servlet.http.HttpSession httpSession = request.getSession(false);
+        JsonObject responseObject = new JsonObject();
+
+        HttpSession httpSession = request.getSession(false);
 
         if (httpSession == null || httpSession.getAttribute("user") == null) {
-            message = "Please login first!";
             responseObject.addProperty("status", false);
-            responseObject.addProperty("message", message);
-            return lk.jiat.flexzone.util.AppUtil.GSON.toJson(responseObject);
+            responseObject.addProperty("message", "Please login first!");
+            return AppUtil.GSON.toJson(responseObject);
         }
 
-        lk.jiat.flexzone.entity.User sessionUser =
-                (lk.jiat.flexzone.entity.User) httpSession.getAttribute("user");
+        User sessionUser = (User) httpSession.getAttribute("user");
 
         Session hibernateSession = HibernateUtil.getSessionFactory().openSession();
+
         try {
 
             Order order = hibernateSession
@@ -113,93 +119,225 @@ public class OrderService {
                     .getSingleResultOrNull();
 
             if (order == null) {
-                message = "Order not found!";
                 responseObject.addProperty("status", false);
-                responseObject.addProperty("message", message);
-                return lk.jiat.flexzone.util.AppUtil.GSON.toJson(responseObject);
+                responseObject.addProperty("message", "Order not found!");
+                return AppUtil.GSON.toJson(responseObject);
             }
 
-            // Security: only the owner can view their invoice
             if (order.getUser().getId() != sessionUser.getId()) {
-                message = "Unauthorized!";
                 responseObject.addProperty("status", false);
-                responseObject.addProperty("message", message);
-                return lk.jiat.flexzone.util.AppUtil.GSON.toJson(responseObject);
+                responseObject.addProperty("message", "Unauthorized!");
+                return AppUtil.GSON.toJson(responseObject);
             }
 
-            com.google.gson.JsonObject orderJson = new com.google.gson.JsonObject();
-            orderJson.addProperty("orderId",      order.getOrderId());
-            orderJson.addProperty("createdAt",    order.getCreatedAt().format(
-                    java.time.format.DateTimeFormatter.ofPattern("dd MMM yyyy, hh:mm a")));
-            orderJson.addProperty("status",       order.getStatus().getValue());
-            orderJson.addProperty("deliveryType", order.getDeliveryType().getName());
-            orderJson.addProperty("deliveryPrice",order.getDeliveryType().getPrice());
-            orderJson.addProperty("total",        order.getTotal());
+            OrderDTO dto = new OrderDTO();
 
-            // User info
-            lk.jiat.flexzone.entity.User u = order.getUser();
-            orderJson.addProperty("firstName",    u.getFirstName());
-            orderJson.addProperty("lastName",     u.getLastName());
-            orderJson.addProperty("email",        u.getEmail());
+            dto.setOrderId(order.getOrderId());
+            dto.setCreatedAt(order.getCreatedAt().format(
+                    DateTimeFormatter.ofPattern("dd MMM yyyy, hh:mm a")));
+            dto.setStatus(order.getStatus().getValue());
+            dto.setDeliveryType(order.getDeliveryType().getName());
+            dto.setDeliveryPrice(order.getDeliveryType().getPrice());
+            dto.setTotal(order.getTotal());
 
-            // Primary delivery address
-            lk.jiat.flexzone.entity.Address addr = hibernateSession
-                    .createQuery("FROM Address a WHERE a.user.id=:uid AND a.isPrimary=true",
-                            lk.jiat.flexzone.entity.Address.class)
-                    .setParameter("uid", u.getId())
-                    .getSingleResultOrNull();
+            User u = order.getUser();
+            dto.setFirstName(u.getFirstName());
+            dto.setLastName(u.getLastName());
+            dto.setEmail(u.getEmail());
+
+            // ── ADDRESS ──
+//            Address addr = hibernateSession
+//                    .createQuery("FROM Address a WHERE a.user.id=:uid AND a.isPrimary=true", Address.class)
+//                    .setParameter("uid", u.getId())
+//                    .getSingleResultOrNull();
+
+            Address addr = order.getAddress();
 
             if (addr != null) {
-                orderJson.addProperty("lineOne",    addr.getLineOne());
-                orderJson.addProperty("lineTwo",    addr.getLineTwo() != null ? addr.getLineTwo() : "");
-                orderJson.addProperty("city",       addr.getCity());
-                orderJson.addProperty("postalCode", addr.getPostalCode());
-                orderJson.addProperty("mobile",     addr.getMobile());
-                if (addr.getProvince() != null)
-                    orderJson.addProperty("province", addr.getProvince().getProvinces());
+                dto.setLineOne(addr.getLineOne());
+                dto.setLineTwo(addr.getLineTwo());
+                dto.setCity(addr.getCity());
+                dto.setPostalCode(addr.getPostalCode());
+                dto.setMobile(addr.getMobile());
+
+                if (addr.getProvince() != null) {
+                    dto.setProvince(addr.getProvince().getProvinces());
+                }
             }
 
-            // Order items
+            // ── ITEMS ──
             List<OrderItem> orderItems = hibernateSession
                     .createQuery("FROM OrderItem oi WHERE oi.order.id=:oid", OrderItem.class)
                     .setParameter("oid", order.getId())
                     .getResultList();
 
-            com.google.gson.JsonArray itemsArray = new com.google.gson.JsonArray();
+            List<OrderItemDTO> itemDTOList = new ArrayList<>();
+
             for (OrderItem oi : orderItems) {
-                lk.jiat.flexzone.entity.Stock stock = oi.getStock();
-                lk.jiat.flexzone.entity.Product product = stock.getProduct();
 
-                com.google.gson.JsonObject itemJson = new com.google.gson.JsonObject();
-                itemJson.addProperty("stockId",      stock.getId());
-                itemJson.addProperty("productTitle", product.getTitle());
-                itemJson.addProperty("qty",          oi.getQty());
-                itemJson.addProperty("price",        stock.getPrice());
-                itemJson.addProperty("sizeValue",
-                        stock.getSize() != null ? stock.getSize().getValue() : "");
+                OrderItemDTO itemDTO = new OrderItemDTO();
 
-                // First image
-                com.google.gson.JsonArray imgArr = new com.google.gson.JsonArray();
-                if (product.getImages() != null) {
-                    product.getImages().forEach(imgArr::add);
+                Stock stock = oi.getStock();
+                Product product = stock.getProduct();
+
+                itemDTO.setStockId(stock.getId());
+                itemDTO.setProductTitle(product.getTitle());
+                itemDTO.setQty(oi.getQty());
+                itemDTO.setPrice(stock.getPrice());
+
+                if (stock.getSize() != null) {
+                    itemDTO.setSizeValue(stock.getSize().getValue());
                 }
-                itemJson.add("images", imgArr);
 
-                itemsArray.add(itemJson);
+                itemDTO.setImages(product.getImages());
+
+                itemDTOList.add(itemDTO);
             }
-            orderJson.add("items", itemsArray);
 
-            responseObject.add("order", orderJson);
-            status  = true;
-            message = "Invoice loaded!";
+            dto.setItems(itemDTOList);
+
+            responseObject.add("order", AppUtil.GSON.toJsonTree(dto));
+            responseObject.addProperty("status", true);
+            responseObject.addProperty("message", "Invoice loaded!");
 
         } finally {
             hibernateSession.close();
         }
 
-        responseObject.addProperty("status", status);
-        responseObject.addProperty("message", message);
-        return lk.jiat.flexzone.util.AppUtil.GSON.toJson(responseObject);
+        return AppUtil.GSON.toJson(responseObject);
+    }
+
+    public String getUserOrders(HttpServletRequest request) {
+
+        JsonObject responseObject = new JsonObject();
+
+        HttpSession httpSession = request.getSession(false);
+
+        if (httpSession == null || httpSession.getAttribute("user") == null) {
+            responseObject.addProperty("status", false);
+            responseObject.addProperty("message", "Please login first!");
+            return AppUtil.GSON.toJson(responseObject);
+        }
+
+        User user = (User) httpSession.getAttribute("user");
+
+        Session hibernateSession = HibernateUtil.getSessionFactory().openSession();
+
+        try {
+
+            List<Order> orders = hibernateSession.createQuery(
+                            "FROM Order o WHERE o.user.id=:uid ORDER BY o.id DESC", Order.class)
+                    .setParameter("uid", user.getId())
+                    .getResultList();
+
+            if (orders.isEmpty()) {
+                responseObject.addProperty("status", false);
+                responseObject.addProperty("message", "No orders found!");
+                return AppUtil.GSON.toJson(responseObject);
+            }
+
+            List<OrderDTO> dtoList = new ArrayList<>();
+
+            for (Order order : orders) {
+
+                OrderDTO dto = new OrderDTO();
+
+                dto.setOrderId(order.getOrderId());
+                dto.setCreatedAt(order.getCreatedAt().format(
+                        DateTimeFormatter.ofPattern("dd MMM yyyy, hh:mm a")));
+                dto.setStatus(order.getStatus().getValue());
+                dto.setDeliveryType(order.getDeliveryType().getName());
+                dto.setDeliveryPrice(order.getDeliveryType().getPrice());
+                dto.setTotal(order.getTotal());
+
+                User u = order.getUser();
+                dto.setFirstName(u.getFirstName());
+                dto.setLastName(u.getLastName());
+                dto.setEmail(u.getEmail());
+
+                Address addr = order.getAddress();
+                if (addr != null) {
+                    dto.setLineOne(addr.getLineOne());
+                    dto.setLineTwo(addr.getLineTwo());
+                    dto.setCity(addr.getCity());
+                    dto.setPostalCode(addr.getPostalCode());
+                    dto.setMobile(addr.getMobile());
+
+                    if (addr.getProvince() != null) {
+                        dto.setProvince(addr.getProvince().getProvinces());
+                    }
+                }
+
+                // ── ITEMS ──
+                List<OrderItem> orderItems = hibernateSession
+                        .createQuery("FROM OrderItem oi WHERE oi.order.id=:oid", OrderItem.class)
+                        .setParameter("oid", order.getId())
+                        .getResultList();
+
+                List<OrderItemDTO> itemDTOList = new ArrayList<>();
+
+                for (OrderItem oi : orderItems) {
+
+                    OrderItemDTO itemDTO = new OrderItemDTO();
+
+                    Stock stock = oi.getStock();
+                    Product product = stock.getProduct();
+
+                    itemDTO.setStockId(stock.getId());
+                    itemDTO.setProductTitle(product.getTitle());
+                    itemDTO.setQty(oi.getQty());
+                    itemDTO.setPrice(stock.getPrice());
+
+                    if (stock.getSize() != null) {
+                        itemDTO.setSizeValue(stock.getSize().getValue());
+                    }
+
+                    itemDTO.setImages(product.getImages());
+
+                    itemDTOList.add(itemDTO);
+                }
+
+                dto.setItems(itemDTOList);
+
+                dtoList.add(dto);
+            }
+
+            responseObject.add("orders", AppUtil.GSON.toJsonTree(dtoList));
+            responseObject.addProperty("status", true);
+            responseObject.addProperty("message", "Orders loaded!");
+
+        } finally {
+            hibernateSession.close();
+        }
+
+        return AppUtil.GSON.toJson(responseObject);
+    }
+
+    public static String getOrderCount(HttpServletRequest request) {
+        JsonObject responseObject = new JsonObject();
+
+        HttpSession httpSession = request.getSession(false);
+        if (httpSession == null || httpSession.getAttribute("user") == null) {
+            responseObject.addProperty("count", 0);
+            return AppUtil.GSON.toJson(responseObject);
+        }
+
+        User sessionUser = (User) httpSession.getAttribute("user");
+        Session hibernateSession = HibernateUtil.getSessionFactory().openSession();
+
+        try {
+            Long count = hibernateSession
+                    .createQuery("SELECT COUNT(o) FROM Order o WHERE o.user.id = :userId",
+                            Long.class)
+                    .setParameter("userId", sessionUser.getId())
+                    .getSingleResult();
+
+            responseObject.addProperty("count", count);
+        } finally {
+            hibernateSession.close();
+        }
+
+        return AppUtil.GSON.toJson(responseObject);
     }
 
 }

@@ -192,19 +192,6 @@ public class CheckoutService {
                         .setMaxResults(1).getSingleResult();
             }
 
-            // ── 3. Load cart ──────────────────────────────────────────────────
-//            List<Cart> cartList = hibernateSession
-//                    .createQuery("FROM Cart c WHERE c.user.id=:uid", Cart.class)
-//                    .setParameter("uid", dbUser.getId())
-//                    .getResultList();
-//
-//            if (cartList.isEmpty()) {
-//                responseObject.addProperty("status", false);
-//                responseObject.addProperty("message", "Your cart is empty!");
-//                return AppUtil.GSON.toJson(responseObject);
-//            }
-
-
             boolean isBuyNow = dto.isBuyNow();
             List<Stock> buyNowStocks = new ArrayList<>();
             List<Integer> buyNowQtys = new ArrayList<>();
@@ -284,6 +271,7 @@ public class CheckoutService {
             order.setUser(dbUser);
             order.setDeliveryType(deliveryType);
             order.setStatus(pendingStatus);
+            order.setAddress(deliveryAddress);  // ✅ IMPORTANT
             order.setTotal(0); // temporary, updated below
 
 // ── FIX: set a temporary orderId before persist ──
