@@ -14,8 +14,12 @@ async function loadProducts() {
 
                 data.products.forEach(product => {
 
-                    let image = product.images && product.images.length > 0
+                    let image1 = product.images && product.images.length > 0
                         ? "assets/images/" + product.images[0]
+                        : "assets/images/default.png";
+
+                    let image2 = product.images && product.images.length > 1
+                        ? "assets/images/" + product.images[1]
                         : "assets/images/default.png";
 
                     const discountAmount = product.price * (DISCOUNT_PERCENT / 100);
@@ -32,8 +36,8 @@ async function loadProducts() {
                     <div class="product-card">
                         <div class="product-image">
                             <span class="badge">New</span>
-                            <img src="${image}" alt="Product" class="img-fluid main-img">
-                            <img src="${image}" alt="Product Hover" class="img-fluid hover-img">
+                            <img src="${image1}" alt="Product" class="img-fluid main-img">
+                            <img src="${image2}" alt="Product Hover" class="img-fluid hover-img">
                             <div class="product-overlay">
                                 <a class="btn btn-cart" onclick="addToCart(${stockId},1);"><i class="bi bi-cart-plus"></i> Add to Cart</a>
                                 <div class="product-actions">

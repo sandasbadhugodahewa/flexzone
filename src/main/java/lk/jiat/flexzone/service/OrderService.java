@@ -130,6 +130,14 @@ public class OrderService {
                 return AppUtil.GSON.toJson(responseObject);
             }
 
+            String orderStatus = order.getStatus().getValue();
+
+            if (orderStatus.equalsIgnoreCase("PENDING") || orderStatus.equalsIgnoreCase("CANCELED")) {
+                responseObject.addProperty("status", false);
+                responseObject.addProperty("message", "Invoice not available for this order yet!");
+                return AppUtil.GSON.toJson(responseObject);
+            }
+
             OrderDTO dto = new OrderDTO();
 
             dto.setOrderId(order.getOrderId());
@@ -145,12 +153,6 @@ public class OrderService {
             dto.setLastName(u.getLastName());
             dto.setEmail(u.getEmail());
 
-            // ── ADDRESS ──
-//            Address addr = hibernateSession
-//                    .createQuery("FROM Address a WHERE a.user.id=:uid AND a.isPrimary=true", Address.class)
-//                    .setParameter("uid", u.getId())
-//                    .getSingleResultOrNull();
-
             Address addr = order.getAddress();
 
             if (addr != null) {
@@ -165,7 +167,6 @@ public class OrderService {
                 }
             }
 
-            // ── ITEMS ──
             List<OrderItem> orderItems = hibernateSession
                     .createQuery("FROM OrderItem oi WHERE oi.order.id=:oid", OrderItem.class)
                     .setParameter("oid", order.getId())

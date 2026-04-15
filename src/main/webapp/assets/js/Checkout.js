@@ -83,21 +83,16 @@ async function loadCheckoutData() {
             return;
         }
 
-        // ── Step 1: Prefill Customer Info from session user ──
         prefillCustomerInfo(data);
 
-        // ── Step 2: Fill province dropdown ──
         fillProvinceDropdown(data.provinces);
 
-        // ── Step 3: Show saved address banner if one exists ──
         if (data.primaryAddress) {
             fillPrimaryAddress(data.primaryAddress);
         }
 
-        // ── Step 4: Build delivery radio buttons ──
         buildDeliveryOptions(data.deliveryTypes);
 
-        // ── Step 5: Build order summary with real cart items ──
         buildOrderSummary(data.cartItems, data.deliveryTypes);
 
     } catch (e) {
@@ -105,10 +100,6 @@ async function loadCheckoutData() {
     }
 }
 
-
-// ─────────────────────────────────────────────
-//  PREFILL CUSTOMER INFO (email from session)
-// ─────────────────────────────────────────────
 function prefillCustomerInfo(data) {
     // primaryAddress has firstName/lastName; email comes from session via /api/header
     if (data.primaryAddress) {
@@ -124,13 +115,9 @@ function prefillCustomerInfo(data) {
             }
         })
         .catch(() => {
-        }); // silently ignore if not available
+        });
 }
 
-
-// ─────────────────────────────────────────────
-//  FILL PROVINCE DROPDOWN
-// ─────────────────────────────────────────────
 function fillProvinceDropdown(provinces) {
     const select = document.getElementById("province");
     if (!select) return;

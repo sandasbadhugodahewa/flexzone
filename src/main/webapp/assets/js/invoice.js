@@ -60,19 +60,6 @@ function renderInvoice(order) {
          ${order.city}, ${order.postalCode}<br>
          ${order.province || ""}`;
 
-    // Status
-    const statusEl = document.getElementById("orderStatus");
-    const statusMap = {
-        "PENDING":   { cls: "status-pending",   icon: "bi-clock",        label: "Pending" },
-        "COMPLETED": { cls: "status-completed",  icon: "bi-check-circle", label: "Completed" },
-        "CANCELLED": { cls: "status-cancelled",  icon: "bi-x-circle",     label: "Cancelled" },
-        "PACKING":   { cls: "status-pending",    icon: "bi-box-seam",     label: "Packing" },
-        "DELIVERED": { cls: "status-completed",  icon: "bi-truck",        label: "Delivered" },
-    };
-    const s = statusMap[order.status] || { cls: "status-pending", icon: "bi-clock", label: order.status };
-    statusEl.className = "status-badge " + s.cls;
-    statusEl.innerHTML = `<i class="bi ${s.icon}"></i> ${s.label}`;
-
     document.getElementById("deliveryType").textContent = order.deliveryType || "—";
 
     // Items table

@@ -2,7 +2,8 @@ window.addEventListener("load", async () => {
     try {
         await loadUserName();
         await loadCategory();
-        loadCartCount();
+        await loadCartCount();
+        await loadWishlistCount();
     } finally {
         Notiflix.loading.remove();
     }

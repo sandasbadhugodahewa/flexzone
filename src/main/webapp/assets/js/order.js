@@ -140,6 +140,7 @@ function buildOrderCard(order, index) {
     const isCancelled = s.timelineStep < 0;
     const isPending = order.status === "PENDING";
     const showBuyNow = isCancelled || isPending;
+    const isDelivered = order.status === "DELIVERED";
 
     const timelineHtml = isCancelled
         ? `<div style="text-align:center;padding:20px;color:#dc3545;">
@@ -242,7 +243,7 @@ function buildOrderCard(order, index) {
                           <div style="font-size:11px;font-weight:700;text-transform:uppercase;
                           letter-spacing:0.5px;color:var(--accent-color);margin-bottom:2px;"> Invoice
                     </div>
-                    <a href="invoice.html?orderId=${order.orderId}" 
+                    <a href="invoice.html?orderId=${order.orderId}" target="_blank" rel="noopener noreferrer"
                     style="font-size:13px;font-weight:600;color:var(--accent-color); text-decoration:none;">
                     <i class="bi bi-download me-1"></i>View
                     </a>
@@ -257,26 +258,59 @@ function buildOrderCard(order, index) {
                                           padding-top:14px;border-top:1px solid
                                           color-mix(in srgb,var(--accent-color),transparent 88%);">
                                           
-                ${showBuyNow ? `
-                   <button type="button"
-                      class="btn-track" onclick="buyAgain('${order.orderId}')" style="flex:1;min-width:120px;background:#198754;">
-                       <i class="bi bi-cart-plus me-1"></i>Buy Again
-                   </button>
-                ` : `
-                   <button type="button"
-                      class="btn-track" data-bs-toggle="collapse" data-bs-target="#tracking${order.orderId}"
-                       aria-expanded="false" style="flex:1;min-width:120px;">
-                       <i class="bi bi-geo-alt me-1"></i>Track Order
-                   </button>
-                   <button type="button"
-                       class="btn-details"
-                       data-bs-toggle="collapse"
-                       data-bs-target="#details${order.orderId}"
-                       aria-expanded="false"
-                       style="flex:1;min-width:120px;">
-                     <i class="bi bi-list-ul me-1"></i>View Details
-                   </button>
-                `}
+${showBuyNow ? `
+
+    <button type="button"
+        class="btn-track"
+        onclick="buyAgain('${order.orderId}')"
+        style="flex:1;min-width:120px;background:#198754;">
+        <i class="bi bi-cart-plus me-1"></i>Buy Again
+    </button>
+
+` : isDelivered ? `
+
+    <button type="button"
+        class="btn-track"
+        data-bs-toggle="collapse"
+        data-bs-target="#tracking${order.orderId}"
+        style="flex:1;min-width:120px;">
+        <i class="bi bi-geo-alt me-1"></i>Track Order
+    </button>
+
+    <button type="button"
+        class="btn-details"
+        data-bs-toggle="collapse"
+        data-bs-target="#details${order.orderId}"
+        style="flex:1;min-width:120px;">
+        <i class="bi bi-list-ul me-1"></i>View Details
+    </button>
+
+    <button type="button"
+        class="btn-review"
+        onclick="openReview('${order.orderId}')"
+        style="flex:1;min-width:120px;background:#ffc107;color:#000;">
+        <i class="bi bi-star me-1"></i>Review
+    </button>
+
+` : `
+
+    <button type="button"
+        class="btn-track"
+        data-bs-toggle="collapse"
+        data-bs-target="#tracking${order.orderId}"
+        style="flex:1;min-width:120px;">
+        <i class="bi bi-geo-alt me-1"></i>Track Order
+    </button>
+
+    <button type="button"
+        class="btn-details"
+        data-bs-toggle="collapse"
+        data-bs-target="#details${order.orderId}"
+        style="flex:1;min-width:120px;">
+        <i class="bi bi-list-ul me-1"></i>View Details
+    </button>
+
+`}
             
         </div>
 
