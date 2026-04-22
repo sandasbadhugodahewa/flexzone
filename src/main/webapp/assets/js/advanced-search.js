@@ -31,8 +31,24 @@ async function loadAllData() {
         asTotalCount = data.allProductCount;
 
         buildSidebar(data);
-        renderProducts(data.productList);
-        buildPagination(asTotalCount);
+
+        // ── NEW: check for keyword in URL ──
+        const params  = new URLSearchParams(window.location.search);
+        const keyword = params.get("q");
+
+        if (keyword) {
+
+            const toolbarInput = document.getElementById("asKeyword");
+            if (toolbarInput) toolbarInput.value = keyword;
+
+            asActiveFilters.keyword = keyword;
+            await runSearch();
+            buildPagination(asTotalCount);
+            updateActiveFilterTags();
+        } else {
+            renderProducts(data.productList);
+            buildPagination(asTotalCount);
+        }
 
     } catch (e) {
         Notiflix.Notify.failure(e.message, { position: "center-top" });

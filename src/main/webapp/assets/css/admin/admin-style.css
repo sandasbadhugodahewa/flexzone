@@ -1,0 +1,38 @@
+.welcome-box {
+    background: #fff;
+    border: 1px solid color-mix(in srgb, var(--accent-color), transparent 88%);
+    border-radius: 14px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+}
+
+.dt-pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: color-mix(in srgb, var(--accent-color), transparent 93%);
+    border: 1px solid color-mix(in srgb, var(--accent-color), transparent 82%);
+    border-radius: 10px;
+    padding: 10px 16px;
+}
+
+.dt-pill i {
+    font-size: 18px;
+    color: var(--accent-color);
+    flex-shrink: 0;
+}
+
+.dt-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: color-mix(in srgb, var(--accent-color), transparent 30%);
+    margin-bottom: 2px;
+}
+
+.dt-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--heading-color);
+}

@@ -9,6 +9,17 @@ window.addEventListener("load", async () => {
     }
 });
 
+document.addEventListener("submit", function(event) {
+    const form = event.target;
+    if (form.classList.contains("search-form")) {
+        event.preventDefault();
+        const input   = form.querySelector('input[name="q"]');
+        const keyword = input ? input.value.trim() : "";
+        if (!keyword) return;
+        window.location.href = `advanced-search.html?q=${encodeURIComponent(keyword)}`;
+    }
+});
+
 async function loadUserName() {
 
     let signinBtn = document.getElementById("signInBtn");

@@ -75,9 +75,18 @@
                 </a>
 
                 <!-- Search -->
+<!--                <form class="search-form desktop-search-form">-->
+<!--                    <div class="input-group">-->
+<!--                        <input type="text" class="form-control" placeholder="Search for products" name="q">-->
+<!--                        <button class="btn" type="submit">-->
+<!--                            <i class="bi bi-search"></i>-->
+<!--                        </button>-->
+<!--                    </div>-->
+<!--                </form>-->
+
                 <form class="search-form desktop-search-form">
                     <div class="input-group">
-                        <input type="text" id="basicSearch" class="form-control" placeholder="Search for products">
+                        <input type="text" class="form-control" placeholder="Search for products" name="q">
                         <button class="btn" type="submit">
                             <i class="bi bi-search"></i>
                         </button>
@@ -742,9 +751,9 @@
     <!-- Mobile Search Form -->
     <div class="collapse" id="mobileSearch">
         <div class="container">
-            <form class="search-form">
+            <form class="search-form" onsubmit="goToSearch(event, this)">
                 <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Search for products">
+                    <input type="text" class="form-control" placeholder="Search for products" name="q">
                     <button class="btn" type="submit">
                         <i class="bi bi-search"></i>
                     </button>
