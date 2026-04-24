@@ -1,6 +1,7 @@
 package lk.jiat.flexzone;
 
 import lk.jiat.flexzone.config.AppConfig;
+import lk.jiat.flexzone.provider.MailServiceProvider;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.startup.Tomcat;
@@ -14,7 +15,7 @@ public class Main {
     private static final String CONTEXT_PATH = "/flexzone";
 
     public static void main(String[] args) {
-
+        MailServiceProvider.getInstance().start();
         try {
             Tomcat tomcat = new Tomcat();
             tomcat.setPort(SERVER_PORT);

@@ -35,6 +35,16 @@ public class User extends BaseEntity {
     @JoinColumn(name = "status_id", nullable = false)
     private Status status;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "role_id", nullable = false)
+    private Role role;
+
+    @Column(name = "otp_code", length = 10)
+    private String otpCode;
+
+    @Column(name = "otp_expires_at")
+    private java.time.LocalDateTime otpExpiresAt;
+
     @OneToMany(mappedBy = "user")
     private Set<Address> addresses = new HashSet<>();
 
@@ -102,6 +112,30 @@ public class User extends BaseEntity {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public String getOtpCode() {
+        return otpCode;
+    }
+
+    public void setOtpCode(String otpCode) {
+        this.otpCode = otpCode;
+    }
+
+    public java.time.LocalDateTime getOtpExpiresAt() {
+        return otpExpiresAt;
+    }
+
+    public void setOtpExpiresAt(java.time.LocalDateTime otpExpiresAt) {
+        this.otpExpiresAt = otpExpiresAt;
     }
 
     public String getVerificationCode() {

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlexZone | Admin Login</title>
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="description" content="EliteAdmin - Bootstrap Admin Template">
+    <meta name="keywords" content="admin, dashboard">
+
+    <link href="assets/images/logo/favicon.ico" rel="icon">
+    <link href="https://bootstrapmade.com/content/demo/EliteAdmin/assets/img/apple-touch-icon.png"
+          rel="apple-touch-icon">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com/">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&amp;display=swap"
+          rel="stylesheet">
+
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/css/bootstrap-icons.css" rel="stylesheet">
+    <link href="assets/css/admin/remixicon.css" rel="stylesheet">
+    <link href="assets/css/bootstrap-icons.css" rel="stylesheet">
+    <link href="assets/css/admin/all.min.css" rel="stylesheet">
+    <link href="assets/css/admin/admin-style.css" rel="stylesheet">
+    <link href="assets/css/admin/phosphor-icons.css" rel="stylesheet">
+    <link href="https://bootstrapmade.com/content/vendors/lucide-icons/lucide.css" rel="stylesheet">
+    <link href="https://bootstrapmade.com/content/vendors/simple-datatables/style.css" rel="stylesheet">
+    <link href="https://bootstrapmade.com/content/vendors/quill/quill.snow.css" rel="stylesheet">
+    <link href="https://bootstrapmade.com/content/vendors/quill/quill.bubble.css" rel="stylesheet">
+    <link href="https://bootstrapmade.com/content/vendors/choices.js/choices.min.css" rel="stylesheet">
+    <link href="https://bootstrapmade.com/content/vendors/flatpickr/flatpickr.min.css" rel="stylesheet">
+
+    <link href="assets/css/admin/admin-main.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+</head>
+<body>
+
+
+<div class="auth-split">
+    <!-- Branded Panel -->
+    <div class="auth-split-brand">
+        <div class="auth-split-brand-content">
+            <a href="#" class="auth-brand-logo">
+                <img src="https://bootstrapmade.com/content/demo/EliteAdmin/assets/img/logo.webp" alt="EliteAdmin">
+                <span>FleXZone</span>
+            </a>
+            <div class="auth-brand-text">
+                <h2 class="auth-brand-heading">Start managing your projects with ease</h2>
+                <p class="auth-brand-desc">Powerful tools and insights to help you grow your business, streamline
+                    operations, and boost productivity.</p>
+            </div>
+            <div class="auth-brand-features">
+                <div class="auth-brand-feature">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <span>Real-time analytics dashboard</span>
+                </div>
+                <div class="auth-brand-feature">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <span>Team collaboration tools</span>
+                </div>
+                <div class="auth-brand-feature">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <span>Advanced reporting & exports</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form Panel -->
+    <div class="auth-split-form">
+        <div class="auth-container">
+            <div class="auth-card">
+                <div class="auth-card-header">
+                    <h1 class="auth-title">Welcome back</h1>
+                    <p class="auth-subtitle">Enter your credentials to access your account</p>
+                </div>
+
+                <form class="auth-form" onsubmit="return false;">
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email address</label>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com"
+                               required>
+                        <div class="invalid-feedback">Please enter a valid email address.</div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <label for="password" class="form-label">Password</label>
+                            <a href="https://bootstrapmade.com/content/demo/EliteAdmin/auth-forgot-password.html"
+                               class="auth-link small">Forgot password?</a>
+                        </div>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="password" name="password"
+                                   placeholder="Enter your password" required>
+                            <button class="btn btn-outline-secondary" type="button" data-toggle-password>
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                        <div class="invalid-feedback">Please enter your password.</div>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="remember" name="remember">
+                        <label class="form-check-label" for="remember">Remember me</label>
+                    </div>
+
+                    <button type="button" class="btn btn-primary btn-block" onclick="adminSignIn();">Sign in</button>
+
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script data-cfasync="false"
+        src="https://bootstrapmade.com/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js" defer></script>
+<script src="https://bootstrapmade.com/content/vendors/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="https://bootstrapmade.com/content/vendors/apexcharts/apexcharts.min.js"></script>
+<script src="https://bootstrapmade.com/content/vendors/chart.js/chart.umd.js"></script>
+<script src="https://bootstrapmade.com/content/vendors/echarts/echarts.min.js"></script>
+<script src="https://bootstrapmade.com/content/vendors/simple-datatables/simple-datatables.js"></script>
+<script src="https://bootstrapmade.com/content/vendors/quill/quill.js"></script>
+<script src="https://bootstrapmade.com/content/vendors/tinymce/tinymce.min.js"></script>
+<script src="https://bootstrapmade.com/content/vendors/choices.js/choices.min.js"></script>
+<script src="https://bootstrapmade.com/content/vendors/flatpickr/flatpickr.min.js"></script>
+<script src="https://bootstrapmade.com/content/vendors/php-email-form/validate.js"></script>
+
+<script src="https://bootstrapmade.com/content/demo/EliteAdmin/assets/js/theme.js"></script>
+<script src="https://bootstrapmade.com/content/demo/EliteAdmin/assets/js/main.js"></script>
+
+<script src="https://bootstrapmade.com/content/demo/EliteAdmin/assets/js/apps-sidebar-toggle.js"></script>
+<script src="assets/js/admin-login.js"></script>
+<script src="assets/js/notiflix-aio-3.2.8.min.js"></script>
+
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516"
+        integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg=="
+        data-cf-beacon='{"version":"2024.11.0","token":"68c5ca450bae485a842ff76066d69420","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}'
+        crossorigin="anonymous"></script>
+</body>
+</html>

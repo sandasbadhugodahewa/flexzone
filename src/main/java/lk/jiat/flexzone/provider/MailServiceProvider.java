@@ -59,7 +59,11 @@ public class MailServiceProvider {
         }
     }
 
+//    public void sendMail(Mailable mailable){
+//        boolean offer = blockingQueue.offer(mailable);
+//    }
+
     public void sendMail(Mailable mailable){
-        boolean offer = blockingQueue.offer(mailable);
+        executor.execute(mailable);
     }
 }

@@ -11,6 +11,7 @@ public class UserDTO implements Serializable {
     private String email;
     private String password;
     private String verificationCode;
+    private String otpCode;
     private String lineOne;
     private String lineTwo;
     private String postalCode;
@@ -24,6 +25,14 @@ public class UserDTO implements Serializable {
 
 
     public UserDTO() {
+    }
+
+    public String getOtpCode() {
+        return otpCode;
+    }
+
+    public void setOtpCode(String otpCode) {
+        this.otpCode = otpCode;
     }
 
     public String getMobile() {
@@ -154,4 +163,6 @@ public class UserDTO implements Serializable {
         this.verificationCode = verificationCode;
     }
 }
+
+
 

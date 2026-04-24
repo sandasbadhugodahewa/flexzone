@@ -1,11 +1,13 @@
 package lk.jiat.flexzone.controller.api;
 
+import com.google.gson.JsonObject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import lk.jiat.flexzone.annotation.IsAdmin;
 import lk.jiat.flexzone.annotation.IsUser;
 import lk.jiat.flexzone.dto.UserDTO;
 import lk.jiat.flexzone.service.UserService;
@@ -46,5 +48,39 @@ public class UserController {
         UserDTO userDTO = AppUtil.GSON.fromJson(jsonData, UserDTO.class);
         String responseJson = new UserService().userLogin(userDTO, request);
         return Response.ok().entity(responseJson).build();
+    }
+
+    @POST
+    @Path("/admin-login")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response adminLogin(String jsonData) {
+        UserDTO userDTO = AppUtil.GSON.fromJson(jsonData, UserDTO.class);
+        String responseJson = new UserService().adminLogin(userDTO);
+        return Response.ok().entity(responseJson).build();
+    }
+
+    @POST
+    @Path("/admin-verify-otp")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response verifyAdminOtp(String jsonData,
+                                   @Context HttpServletRequest request) {
+        UserDTO userDTO = AppUtil.GSON.fromJson(jsonData, UserDTO.class);
+        String responseJson = new UserService().verifyAdminOtp(userDTO, request);
+        return Response.ok().entity(responseJson).build();
+    }
+
+    @GET
+    @Path("/admin-check")
+    @Produces(MediaType.APPLICATION_JSON)
+    @IsAdmin
+    public Response adminCheck() {
+
+        JsonObject json = new JsonObject();
+        json.addProperty("status", true);
+        json.addProperty("message", "Authorized");
+
+        return Response.ok(json.toString()).build();
     }
 }

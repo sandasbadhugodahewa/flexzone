@@ -8,8 +8,10 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
 import lk.jiat.flexzone.dto.UserDTO;
 import lk.jiat.flexzone.entity.Address;
+import lk.jiat.flexzone.entity.Role;
 import lk.jiat.flexzone.entity.Status;
 import lk.jiat.flexzone.entity.User;
+import lk.jiat.flexzone.mail.AdminOtpMail;
 import lk.jiat.flexzone.mail.VerificationMail;
 import lk.jiat.flexzone.provider.MailServiceProvider;
 import lk.jiat.flexzone.util.AppUtil;
@@ -32,7 +34,6 @@ public class UserService {
         boolean status = false;
         String message = "";
 
-        ///  login handling code | user authentication part-start
         if (userDTO.getEmail() == null) {
             message = "Email is required!";
         } else if (userDTO.getEmail().isBlank()) {
@@ -67,18 +68,15 @@ public class UserService {
                         HttpSession httpSession = request.getSession();
                         System.out.println("LOGIN SESSION ID: " + httpSession.getId());
                         httpSession.setAttribute("user", singleUser);
-                        // ── Merge session cart into DB cart ──
                         new CartService().mergeSessionCartToDb(request);
                         status = true;
                         message = "Login successful";
+                        responseObject.addProperty("role", singleUser.getRole().getValue());
                     }
                 }
             }
             hibernateSession.close();
         }
-        ///  login handling code | user authentication part-end
-
-
         responseObject.addProperty("status", status);
         responseObject.addProperty("message", message);
         return AppUtil.GSON.toJson(responseObject);
@@ -192,6 +190,12 @@ public class UserService {
 
                 u.setStatus(pendingStatus);
 
+                Role userRole = hibernateSession
+                        .createQuery("FROM Role r WHERE r.value = :val", Role.class)
+                        .setParameter("val", Role.Type.USER.name())
+                        .getSingleResult();
+                u.setRole(userRole);
+
                 Transaction transaction = hibernateSession.beginTransaction();
 
                 try {
@@ -215,6 +219,125 @@ public class UserService {
             hibernateSession.close();
         }
         responseObject.addProperty("status", status);
+        responseObject.addProperty("message", message);
+        return AppUtil.GSON.toJson(responseObject);
+    }
+
+    // ── STEP 1: Admin login — validate credentials, send OTP ──
+    public String adminLogin(UserDTO userDTO) {
+        JsonObject responseObject = new JsonObject();
+        boolean status = false;
+        String message;
+
+        if (userDTO.getEmail() == null || userDTO.getEmail().isBlank()) {
+            message = "Email is required!";
+        } else if (!userDTO.getEmail().matches(Validator.EMAIL_VALIDATION)) {
+            message = "Please provide a valid email address!";
+        } else if (userDTO.getPassword() == null || userDTO.getPassword().isBlank()) {
+            message = "Password is required!";
+        } else {
+            Session hibernateSession = HibernateUtil.getSessionFactory().openSession();
+            Transaction transaction = hibernateSession.beginTransaction();
+            try {
+                User user = hibernateSession
+                        .createNamedQuery("User.getByEmail", User.class)
+                        .setParameter("email", userDTO.getEmail())
+                        .getSingleResultOrNull();
+
+                if (user == null) {
+                    message = "Account not found!";
+                } else if (!user.getPassword().equals(userDTO.getPassword())) {
+                    message = "Invalid credentials!";
+                } else if (user.getRole() == null ||
+                        !user.getRole().getValue().equals("ADMIN")) {
+                    message = "Access denied. Admin accounts only!";
+                } else {
+                    // Generate 6-digit OTP
+                    String otp = AppUtil.generateCode(); // your existing method
+
+                    // Save OTP + expiry (5 minutes)
+                    user.setOtpCode(otp);
+                    user.setOtpExpiresAt(
+                            java.time.LocalDateTime.now().plusMinutes(5)
+                    );
+                    hibernateSession.merge(user);
+                    transaction.commit();
+
+                    // Send OTP email
+                    AdminOtpMail mail = new AdminOtpMail(user.getEmail(), otp);
+                    MailServiceProvider.getInstance().sendMail(mail);
+
+                    status  = true;
+                    message = "OTP sent to your email. Please check your inbox.";
+                }
+            } catch (Exception e) {
+                transaction.rollback();
+                e.printStackTrace();
+                message = "Something went wrong. Please try again!";
+            } finally {
+                hibernateSession.close();
+            }
+        }
+
+        responseObject.addProperty("status",  status);
+        responseObject.addProperty("message", message);
+        return AppUtil.GSON.toJson(responseObject);
+    }
+
+
+    // ── STEP 2: Verify OTP, create session, go to dashboard ──
+    public String verifyAdminOtp(UserDTO userDTO,
+                                 HttpServletRequest request) {
+        JsonObject responseObject = new JsonObject();
+        boolean status = false;
+        String message;
+
+        if (userDTO.getEmail() == null || userDTO.getEmail().isBlank()) {
+            message = "Email is required!";
+        } else if (userDTO.getVerificationCode() == null ||
+                userDTO.getVerificationCode().isBlank()) {
+            message = "OTP is required!";
+        } else {
+            Session hibernateSession = HibernateUtil.getSessionFactory().openSession();
+            Transaction transaction = hibernateSession.beginTransaction();
+            try {
+                User user = hibernateSession
+                        .createNamedQuery("User.getByEmail", User.class)
+                        .setParameter("email", userDTO.getEmail())
+                        .getSingleResultOrNull();
+
+                if (user == null) {
+                    message = "Account not found!";
+                } else if (user.getOtpCode() == null ||
+                        !user.getOtpCode().equals(userDTO.getVerificationCode())) {
+                    message = "Invalid OTP. Please try again!";
+                } else if (user.getOtpExpiresAt() == null ||
+                        java.time.LocalDateTime.now().isAfter(user.getOtpExpiresAt())) {
+                    message = "OTP expired. Please login again!";
+                } else {
+                    // Clear OTP after successful use
+                    user.setOtpCode(null);
+                    user.setOtpExpiresAt(null);
+                    hibernateSession.merge(user);
+                    transaction.commit();
+
+                    HttpSession httpSession = request.getSession();
+                    httpSession.setAttribute("user",  user);
+                    httpSession.setAttribute("admin", user); // admin-specific key
+
+                    status  = true;
+                    message = "Verified! Redirecting to dashboard...";
+                }
+            } catch (Exception e) {
+                transaction.rollback();
+                e.printStackTrace();
+                message = "Verification failed. Please try again!";
+            } finally {
+                hibernateSession.close();
+            }
+        }
+
+        responseObject.addProperty("status",  status);
         responseObject.addProperty("message", message);
         return AppUtil.GSON.toJson(responseObject);
     }

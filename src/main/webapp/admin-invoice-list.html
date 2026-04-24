@@ -40,6 +40,11 @@
                 document.getElementById("sidebar").innerHTML = data;
             });
     </script>
+    <style>
+        .main {
+            display: none;
+        }
+    </style>
 
 </head>
 <body>
@@ -162,7 +167,7 @@
                             <td>
                                 <div class="form-check"><input class="form-check-input" type="checkbox"></div>
                             </td>
-                            <td><a href="https://bootstrapmade.com/content/demo/EliteAdmin/invoice.html" class="inv-id">#INV-2024-001</a>
+                            <td><a href="https://bootstrapmade.com/content/demo/EliteAdmin/invoice.html" class="inv-id">#FZ0001</a>
                             </td>
                             <td>
                                 <div class="inv-client">
@@ -429,7 +434,10 @@
 <script src="https://bootstrapmade.com/content/demo/EliteAdmin/assets/js/theme.js"></script>
 <script src="https://bootstrapmade.com/content/demo/EliteAdmin/assets/js/main.js"></script>
 <script src="assets/js/notiflix-aio-3.2.8.min.js"></script>
-
+<script src="assets/js/auth.js"></script>
+<script>
+    window.addEventListener("load", checkAdmin);
+</script>
 <script src="https://bootstrapmade.com/content/demo/EliteAdmin/assets/js/apps-sidebar-toggle.js"></script>
 
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516"
