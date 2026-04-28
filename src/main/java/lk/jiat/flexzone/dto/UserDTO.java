@@ -22,6 +22,8 @@ public class UserDTO implements Serializable {
     private String sinceAt;
     private String newPassword;
     private String confirmPassword;
+    private String roleValue;    // "USER" or "ADMIN"
+    private String statusValue;
 
 
     public UserDTO() {
@@ -162,7 +164,25 @@ public class UserDTO implements Serializable {
     public void setVerificationCode(String verificationCode) {
         this.verificationCode = verificationCode;
     }
+
+    public String getRoleValue() {
+        return roleValue;
+    }
+
+    public void setRoleValue(String roleValue) {
+        this.roleValue = roleValue;
+    }
+
+    public String getStatusValue() {
+        return statusValue;
+    }
+
+    public void setStatusValue(String statusValue) {
+        this.statusValue = statusValue;
+    }
 }
+
+
 
 
 
