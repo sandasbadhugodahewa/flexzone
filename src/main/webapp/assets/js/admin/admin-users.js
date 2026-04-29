@@ -80,6 +80,7 @@ function buildUserRow(u) {
         "PENDING":  { cls: "badge-soft-warning", label: "Pending" },
         "BLOCKED":  { cls: "badge-soft-danger",  label: "Blocked" },
         "ACTIVE":   { cls: "badge-soft-success", label: "Active" },
+        "INACTIVE": { cls: "badge-soft-secondary",label: "Inactive" },
     };
     const s = statusMap[u.status] || { cls: "badge-soft-secondary", label: u.status };
 
@@ -91,6 +92,7 @@ function buildUserRow(u) {
 
     const isAdmin   = u.role === "ADMIN";
     const isBlocked = u.status === "BLOCKED";
+    const isInactive = u.status === "INACTIVE";
 
     return `
     <tr data-user-id="${u.id}">
@@ -132,21 +134,21 @@ function buildUserRow(u) {
                         </a>
                     </li>
                     <li><a class="dropdown-item" href="#"><i class="bi bi-envelope me-2"></i> Send Email</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    ${!isBlocked ? `
-                    <li>
-                        <a class="dropdown-item text-danger" href="#"
-                           onclick="blockUser(${u.id}); return false;">
-                            <i class="bi bi-slash-circle me-2"></i>Block User
-                        </a>
-                    </li>` : `
-                    <li>
-                        <a class="dropdown-item text-success" href="#"
-                           onclick="unblockUser(${u.id}); return false;">
-                            <i class="bi bi-check-circle me-2"></i>Activate User
-                        </a>
-                    </li>`}
+                    ${!isInactive ? `
+                       <li><hr class="dropdown-divider"></li>
 
+                       ${!isBlocked ? `
+                           <li>
+                             <a class="dropdown-item text-danger action-btn" data-action="block" data-id="${u.id}">
+                             <i class="bi bi-slash-circle me-2"></i>Block User</a>
+                           </li>
+                       ` : `
+                           <li>
+                             <a class="dropdown-item text-success action-btn" data-action="unblock" data-id="${u.id}">
+                             <i class="bi bi-check-circle me-2"></i>Activate User</a>
+                           </li>
+                       `}
+                    ` : ""}
                 </ul>
             </div>
         </td>
@@ -201,7 +203,7 @@ function renderPagination(totalCount, page) {
         addPageItem(nav, totalPages - 1, page);
     }
 
-    // ── Next ──
+    //Next
     const nextLi = document.createElement("li");
     nextLi.className = `page-item ${page === totalPages - 1 ? "disabled" : ""}`;
     nextLi.innerHTML = `<a class="page-link" href="#"><i class="bi bi-chevron-right"></i></a>`;
@@ -239,10 +241,6 @@ function updatePaginationInfo(totalCount, page) {
     infoEl.innerHTML = `Showing <strong>${totalCount === 0 ? 0 : start}–${end}</strong> of <strong>${totalCount}</strong> users`;
 }
 
-
-// ─────────────────────────────────────────────
-//  FILTER TABS
-// ─────────────────────────────────────────────
 function wireFilterTabs() {
     document.querySelectorAll(".users-filter-tab").forEach(btn => {
         btn.addEventListener("click", () => {

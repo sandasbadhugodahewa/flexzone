@@ -10,11 +10,11 @@ import lk.jiat.flexzone.util.AppUtil;
 
 @IsAdmin
 @Path("/admin")
-public class AdminController {
+public class AdminUserController {
 
     private final AdminUserService adminUserService = new AdminUserService();
 
-    // ── LIST users ──
+    //Get users
     @GET
     @Path("/users")
     @Produces(MediaType.APPLICATION_JSON)
@@ -25,7 +25,7 @@ public class AdminController {
         return Response.ok(adminUserService.getUserList(filter, search, page)).build();
     }
 
-    // ── GET single user for edit page ──
+    //Get user for edit page
     @GET
     @Path("/users/{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -33,7 +33,7 @@ public class AdminController {
         return Response.ok(adminUserService.getSingleUser(userId)).build();
     }
 
-    // ── UPDATE user ──
+    //Update user
     @PUT
     @Path("/users/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -43,7 +43,7 @@ public class AdminController {
         return Response.ok(adminUserService.updateUser(userId, dto)).build();
     }
 
-    // ── BLOCK ──
+    //Block user
     @PUT
     @Path("/users/{id}/block")
     @Produces(MediaType.APPLICATION_JSON)
@@ -51,7 +51,7 @@ public class AdminController {
         return Response.ok(adminUserService.blockUser(userId)).build();
     }
 
-    // ── UNBLOCK ──
+    //Unblock user
     @PUT
     @Path("/users/{id}/unblock")
     @Produces(MediaType.APPLICATION_JSON)
@@ -59,7 +59,7 @@ public class AdminController {
         return Response.ok(adminUserService.unblockUser(userId)).build();
     }
 
-    // ── MAKE ADMIN ──
+    //Make admin
     @PUT
     @Path("/users/{id}/make-admin")
     @Produces(MediaType.APPLICATION_JSON)
@@ -67,11 +67,12 @@ public class AdminController {
         return Response.ok(adminUserService.makeAdmin(userId)).build();
     }
 
-    // ── DELETE ──
+    //Delete user
     @DELETE
     @Path("/users/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteUser(@PathParam("id") int userId) {
         return Response.ok(adminUserService.deleteUser(userId)).build();
     }
+
 }

@@ -48,6 +48,7 @@ async function loadProducts() {
                             </div>
                         </div>
                         <div class="product-info">
+                            <div class="product-category-tag">${product.categoryName || ''}</div>
                             <h5 class="product-title">
                                 <a href="single-product.html?pId=${product.id}">${product.title}</a>
                             </h5>

@@ -44,7 +44,7 @@ public class AdminUserService {
 
             hql.append("ORDER BY u.id DESC");
 
-            // ── Count query ──
+            //Count query
             var countQuery = hibernateSession.createQuery(countHql.toString(), Long.class);
             if (filter != null && !filter.equals("all"))
                 countQuery.setParameter("filter", filter.toUpperCase());
@@ -53,13 +53,13 @@ public class AdminUserService {
 
             long totalCount = countQuery.getSingleResult();
 
-            // ── Count per status for tab badges ──
+            //Count status for tab badges
             long totalAll     = countByStatus(hibernateSession, null);
             long totalVerified = countByStatus(hibernateSession, "VERIFIED");
             long totalPending  = countByStatus(hibernateSession, "PENDING");
             long totalBlocked  = countByStatus(hibernateSession, "BLOCKED");
 
-            // ── Paginated user query ──
+            //Paginated user query
             var userQuery = hibernateSession.createQuery(hql.toString(), User.class);
             if (filter != null && !filter.equals("all"))
                 userQuery.setParameter("filter", filter.toUpperCase());
@@ -71,7 +71,6 @@ public class AdminUserService {
 
             List<User> users = userQuery.getResultList();
 
-            // ── Build response ──
             JsonArray userArray = new JsonArray();
             DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd MMM yyyy");
 
@@ -88,7 +87,7 @@ public class AdminUserService {
                 userJson.addProperty("joinedAt",
                         u.getCreatedAt() != null ? u.getCreatedAt().format(fmt) : "—");
 
-                // Get primary address mobile
+                //Get primary address mobile
                 String mobile = "—";
                 if (u.getAddresses() != null) {
                     mobile = u.getAddresses().stream()
@@ -139,10 +138,7 @@ public class AdminUserService {
         }
     }
 
-
-    // ─────────────────────────────────────────────
-    //  BLOCK USER
-    // ─────────────────────────────────────────────
+    //BLOCK USER
     public String blockUser(int userId) {
         JsonObject responseObject = new JsonObject();
         Session hibernateSession  = HibernateUtil.getSessionFactory().openSession();
@@ -180,10 +176,7 @@ public class AdminUserService {
         return AppUtil.GSON.toJson(responseObject);
     }
 
-
-    // ─────────────────────────────────────────────
-    //  UNBLOCK / ACTIVATE USER
-    // ─────────────────────────────────────────────
+    // UNBLOCK / ACTIVATE USER
     public String unblockUser(int userId) {
         JsonObject responseObject = new JsonObject();
         Session hibernateSession  = HibernateUtil.getSessionFactory().openSession();
@@ -221,10 +214,7 @@ public class AdminUserService {
         return AppUtil.GSON.toJson(responseObject);
     }
 
-
-    // ─────────────────────────────────────────────
-    //  MAKE ADMIN (promote role)
-    // ─────────────────────────────────────────────
+    //MAKE ADMIN (promote role)
     public String makeAdmin(int userId) {
         JsonObject responseObject = new JsonObject();
         Session hibernateSession  = HibernateUtil.getSessionFactory().openSession();
@@ -262,10 +252,7 @@ public class AdminUserService {
         return AppUtil.GSON.toJson(responseObject);
     }
 
-
-    // ─────────────────────────────────────────────
-    //  DELETE USER (hard delete — use with care)
-    // ─────────────────────────────────────────────
+    //DELETE USER
     public String deleteUser(int userId) {
         JsonObject responseObject = new JsonObject();
         Session hibernateSession  = HibernateUtil.getSessionFactory().openSession();
@@ -279,8 +266,6 @@ public class AdminUserService {
                 return AppUtil.GSON.toJson(responseObject);
             }
 
-            // Soft delete — set status to BLOCKED instead of hard delete
-            // to preserve order history
             Status blockedStatus = hibernateSession
                     .createNamedQuery("Status.findByValue", Status.class)
                     .setParameter("value", Status.Type.INACTIVE.name())
@@ -334,7 +319,7 @@ public class AdminUserService {
             userJson.addProperty("updatedAt",
                     user.getUpdatedAt() != null ? user.getUpdatedAt().format(dateFmt) : "—");
 
-            // Addresses
+            //Addresses
             JsonArray addressArray = new JsonArray();
             if (user.getAddresses() != null) {
                 for (Address addr : user.getAddresses()) {
@@ -360,7 +345,6 @@ public class AdminUserService {
             }
             userJson.add("addresses", addressArray);
 
-            // Mobile from primary address
             String mobile = user.getAddresses() == null ? "—" :
                     user.getAddresses().stream()
                             .filter(a -> a.isPrimary())
@@ -397,7 +381,7 @@ public class AdminUserService {
                 return AppUtil.GSON.toJson(responseObject);
             }
 
-            // Update basic info
+            //Update basic info
             if (dto.getFirstName() != null && !dto.getFirstName().isBlank())
                 user.setFirstName(dto.getFirstName());
             if (dto.getLastName() != null && !dto.getLastName().isBlank())
@@ -412,7 +396,7 @@ public class AdminUserService {
                 if (role != null) user.setRole(role);
             }
 
-            // Update status
+            //Update status
             if (dto.getStatusValue() != null && !dto.getStatusValue().isBlank()) {
                 Status status = hibernateSession
                         .createNamedQuery("Status.findByValue", Status.class)
@@ -421,7 +405,7 @@ public class AdminUserService {
                 if (status != null) user.setStatus(status);
             }
 
-            // Update password — only if provided and confirmed
+            //Update password
             if (dto.getNewPassword() != null && !dto.getNewPassword().isBlank()) {
                 if (dto.getNewPassword().equals(dto.getConfirmPassword())) {
                     user.setPassword(dto.getNewPassword());

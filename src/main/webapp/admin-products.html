@@ -66,9 +66,9 @@
             </div>
             <div class="page-header-actions">
                 <button class="btn btn-outline-secondary"><i class="bi bi-download me-1"></i> Export</button>
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                <a href="admin-add-product.html" class="btn btn-primary btn-block">
                     <i class="bi bi-plus-lg me-1"></i> Add Product
-                </button>
+                </a>
             </div>
         </div>
 
@@ -81,7 +81,7 @@
                         <i class="bi bi-box-seam"></i>
                     </div>
                     <div class="users-stat-info">
-                        <span class="users-stat-value" id="totalProducts">250</span>
+                        <span class="users-stat-value" id="totalProducts">0</span>
                         <span class="users-stat-label">Total Products</span>
                     </div>
                 </div>
@@ -93,7 +93,7 @@
                         <i class="bi bi-check-circle"></i>
                     </div>
                     <div class="users-stat-info">
-                        <span class="users-stat-value">186</span>
+                        <span class="users-stat-value" id="activeProducts">0</span>
                         <span class="users-stat-label">Active Products</span>
                     </div>
                 </div>
@@ -105,7 +105,7 @@
                         <i class="bi bi-exclamation-triangle"></i>
                     </div>
                     <div class="users-stat-info">
-                        <span class="users-stat-value">24</span>
+                        <span class="users-stat-value" id="lowStockProducts">0</span>
                         <span class="users-stat-label">Low Stock</span>
                     </div>
                 </div>
@@ -117,7 +117,7 @@
                         <i class="bi bi-x-circle"></i>
                     </div>
                     <div class="users-stat-info">
-                        <span class="users-stat-value">38</span>
+                        <span class="users-stat-value" id="outofStockProducts">0</span>
                         <span class="users-stat-label">Out of Stock</span>
                     </div>
                 </div>
@@ -130,31 +130,20 @@
             <div class="users-toolbar">
                 <div class="users-toolbar-left">
                     <div class="users-filter-tabs">
-                        <button class="users-filter-tab active" data-filter="all">All <span class="users-filter-count">248</span>
+                        <button class="users-filter-tab active" data-filter="all">All <span class="users-filter-count" id="allProductCount">0</span>
                         </button>
-                        <button class="users-filter-tab" data-filter="active">Active <span class="users-filter-count">186</span>
+                        <button class="users-filter-tab" data-filter="active">Active <span class="users-filter-count" id="activeProductCount">0</span>
                         </button>
                         <button class="users-filter-tab" data-filter="pending">Low Stock <span
-                                class="users-filter-count">24</span></button>
+                                class="users-filter-count" id="lowStockProductCount">0</span></button>
                         <button class="users-filter-tab" data-filter="inactive">Outof Stock <span
-                                class="users-filter-count">38</span></button>
+                                class="users-filter-count" id="outofStockProductCount">0</span></button>
                     </div>
                 </div>
                 <div class="users-toolbar-right">
                     <div class="users-search">
                         <i class="bi bi-search"></i>
-                        <input type="text" placeholder="Search users..." autocomplete="off">
-                    </div>
-                    <div class="dropdown">
-                        <button class="users-toolbar-btn dropdown-toggle" data-bs-toggle="dropdown">
-                            <i class="bi bi-sliders"></i> Role
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="#">All Roles</a></li>
-                            <li><a class="dropdown-item" href="#">Admin</a></li>
-                            <li><a class="dropdown-item" href="#">Manager</a></li>
-                            <li><a class="dropdown-item" href="#">User</a></li>
-                        </ul>
+                        <input type="text" id="productSearchInput" placeholder="Search products..." autocomplete="off">
                     </div>
                 </div>
             </div>
@@ -168,7 +157,7 @@
                         <th>Product</th>
                         <th>Category</th>
                         <th>Price Range</th>
-                        <th>Stock</th>
+                        <th>InStock</th>
                         <th>Sold</th>
                         <th>Status</th>
                         <th>Created</th>
@@ -176,78 +165,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td class="users-meta">1</td>
-                        <td>
-                            <div class="users-user">
-                                <div class="users-avatar-wrap">
-                                    <img src="assets/images/t-shirt-1.png" alt="" class="users-avatar">
-                                </div>
-                                <div class="users-user-info">
-                                    <a href="#" class="users-user-name">Men Oversize T-Shirt Pink</a>
-                                    <span class="users-user-email">Nolimit</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td><span class="users-role user"><i class="bi bi-bag"></i> Casual</span></td>
-                        <td><span class="users-meta">Rs.2300–Rs.2500</span></td>
-                        <td class="users-meta">60</td>
-                        <td class="users-meta">26</td>
-                        <td><span class="users-status active"><span class="users-status-dot"></span> Active</span></td>
-                        <td class="users-meta">Jan 15, 2024</td>
-                        <td>
-                            <div class="users-actions">
-                                <a href="https://bootstrapmade.com/content/demo/EliteAdmin/users-view.html"
-                                   class="users-action-btn" title="View"><i class="bi bi-eye"></i></a>
-                                <div class="dropdown">
-                                    <button class="users-action-btn dropdown-toggle" data-bs-toggle="dropdown"><i
-                                            class="bi bi-three-dots"></i></button>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li><a class="dropdown-item" href="#"><i class="bi bi bi-pencil me-2"></i> Edit</a>
-                                        </li>
-                                        <li><a class="dropdown-item text-danger" href="#"><i
-                                                class="bi bi-trash me-2"></i> Delete</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="users-meta">2</td>
-                        <td>
-                            <div class="users-user">
-                                <div class="users-avatar-wrap">
-                                    <img src="assets/images/women-oversize-tshirt-pink-1.png" alt="" class="users-avatar">
-                                </div>
-                                <div class="users-user-info">
-                                    <a href="#" class="users-user-name">Women Oversize T-Shirt Pink</a>
-                                    <span class="users-user-email">Nolimit</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td><span class="users-role user"><i class="bi bi-bag"></i> Casual</span></td>
-                        <td><span class="users-meta">Rs.1300–Rs.2500</span></td>
-                        <td class="users-meta">55</td>
-                        <td class="users-meta">16</td>
-                        <td><span class="users-status inactive"><span class="users-status-dot"></span> Inactive</span></td>
-                        <td class="users-meta">Jan 15, 2024</td>
-                        <td>
-                            <div class="users-actions">
-                                <a href="https://bootstrapmade.com/content/demo/EliteAdmin/users-view.html"
-                                   class="users-action-btn" title="View"><i class="bi bi-eye"></i></a>
-                                <div class="dropdown">
-                                    <button class="users-action-btn dropdown-toggle" data-bs-toggle="dropdown"><i
-                                            class="bi bi-three-dots"></i></button>
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li><a class="dropdown-item" href="#"><i class="bi bi bi-pencil me-2"></i> Edit</a>
-                                        </li>
-                                        <li><a class="dropdown-item text-danger" href="#"><i
-                                                class="bi bi-trash me-2"></i> Delete</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
+
 
 
                     </tbody>
@@ -384,6 +302,7 @@
 <script src="https://bootstrapmade.com/content/demo/EliteAdmin/assets/js/main.js"></script>
 <script src="assets/js/notiflix-aio-3.2.8.min.js"></script>
 <script src="assets/js/auth.js"></script>
+<script src="assets/js/admin/admin-product.js"></script>
 <script>
     window.addEventListener("load", checkAdmin);
 </script>

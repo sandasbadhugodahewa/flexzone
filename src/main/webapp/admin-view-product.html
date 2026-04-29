@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlexZone | View Product</title>
+    <meta name="robots" content="noindex, nofollow">
+
+    <link href="assets/images/logo/favicon.ico" rel="icon">
+    <link href="https://bootstrapmade.com/content/demo/EliteAdmin/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com/">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/css/bootstrap-icons.css" rel="stylesheet">
+    <link href="assets/css/admin/remixicon.css" rel="stylesheet">
+    <link href="assets/css/admin/all.min.css" rel="stylesheet">
+    <link href="assets/css/admin/phosphor-icons.css" rel="stylesheet">
+    <link href="https://bootstrapmade.com/content/vendors/lucide-icons/lucide.css" rel="stylesheet">
+    <link href="assets/css/admin/admin-main.css" rel="stylesheet">
+    <link href="assets/css/admin/admin-products.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/light/style.css">
+
+    <script>
+        fetch("admin-sidebar.html").then(r => r.text()).then(d => {
+            document.getElementById("sidebar").innerHTML = d;
+        });
+    </script>
+</head>
+<body>
+
+<div id="sidebar"></div>
+
+<main class="main">
+    <div class="main-content page-users-view">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div>
+                <h1 class="page-title" id="pvProductTitle">
+                    <span style="display:inline-block;width:220px;height:28px;">Product View</span>
+                </h1>
+                <nav class="breadcrumb">
+                    <a href="admin-dashboard.html" class="breadcrumb-item">Home</a>
+                    <a href="admin-products.html" class="breadcrumb-item">Products</a>
+                    <span class="breadcrumb-item active" id="pvBreadcrumbTitle">View Product</span>
+                </nav>
+            </div>
+            <div class="page-header-actions">
+                <a href="admin-products.html" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-1"></i> Back to Products
+                </a>
+                <a href="admin-add-product.html" class="btn btn-outline-primary" id="pvEditBtn">
+                    <i class="bi bi-pencil me-1"></i> Edit
+                </a>
+            </div>
+        </div>
+
+        <div class="row g-4">
+
+            <!-- ══════════════ LEFT: Main Content ══════════════ -->
+            <div class="col-xl-8">
+
+                <!-- ── Hero Card ── -->
+                <div class="card mb-4">
+                    <div class="card-body">
+
+                        <div class="pv-hero">
+
+                            <!-- Main Image -->
+                            <div>
+                                <img id="pvMainImage"
+                                     src="assets/images/default.png"
+                                     alt="Product" class="pv-main-image"
+                                     onerror="this.src='assets/images/default.png'">
+                                <!-- Thumbnail strip -->
+                                <div class="pv-thumb-strip" id="pvThumbStrip"></div>
+                            </div>
+
+                            <!-- Info -->
+                            <div class="pv-hero-info">
+                                <h2 class="pv-product-title" id="pvHeroTitle">—</h2>
+
+                                <!-- Meta pills -->
+                                <div class="pv-meta-row" id="pvMetaRow"></div>
+
+                                <!-- Price -->
+                                <div class="pv-price-range" id="pvPriceRange">—</div>
+
+                                <!-- Stat boxes -->
+                                <div class="pv-stat-row">
+                                    <div class="pv-stat-box">
+                                        <span class="val" id="pvTotalStock">—</span>
+                                        <span class="lbl">In Stock</span>
+                                    </div>
+                                    <div class="pv-stat-box">
+                                        <span class="val" id="pvStockVariants">—</span>
+                                        <span class="lbl">Size Variants</span>
+                                    </div>
+                                    <div class="pv-stat-box">
+                                        <span class="val" id="pvSoldCount">—</span>
+                                        <span class="lbl">Total Sold</span>
+                                    </div>
+                                </div>
+
+                                <!-- Action buttons -->
+                                <div class="pv-action-bar">
+                                    <a href="#" class="btn btn-primary btn-sm" id="pvEditBtn2">
+                                        <i class="bi bi-pencil me-1"></i> Edit Product
+                                    </a>
+                                    <button class="btn btn-outline-secondary btn-sm"
+                                            onclick="toggleProductStatus()">
+                                        <i class="bi bi-toggle-on me-1"></i> Toggle Status
+                                    </button>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- ── Description ── -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title">
+                            <i class="bi bi-text-paragraph me-2" style="color:var(--accent-color);"></i>
+                            Description
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="pv-description" id="pvDescription">—</div>
+                    </div>
+                </div>
+
+                <!-- ── Stock Table ── -->
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-boxes me-2" style="color:var(--accent-color);"></i>
+                            Stock &amp; Pricing
+                        </h5>
+                        <span id="pvStockSummary" style="font-size:12px;color:var(--muted-color);"></span>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead>
+                                <tr>
+                                    <th style="width:40px;">#</th>
+                                    <th>Size</th>
+                                    <th>Price</th>
+                                    <th>InStock</th>
+                                    <th>Sold</th>
+                                    <th>Discount</th>
+                                </tr>
+                                </thead>
+                                <tbody id="pvStockTableBody">
+                                <tr>
+                                    <td colspan="5" class="text-center py-3">
+                                        <div class="ap-skeleton" style="height:16px;width:40%;margin:0 auto;"></div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- /LEFT -->
+
+            <!-- ══════════════ RIGHT: Sidebar ══════════════ -->
+            <div class="col-xl-4">
+                <div class="ap-sticky-sidebar">
+
+                    <!-- Product Info -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="card-title">
+                                <i class="bi bi-info-circle me-2" style="color:var(--accent-color);"></i>
+                                Product Info
+                            </h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <ul class="pv-info-list px-3">
+                                <li class="pv-info-item">
+                                    <span class="pv-info-label">Category</span>
+                                    <span class="pv-info-value" id="pvInfoCategory">—</span>
+                                </li>
+                                <li class="pv-info-item">
+                                    <span class="pv-info-label">Sub Category</span>
+                                    <span class="pv-info-value" id="pvInfoSubcat">—</span>
+                                </li>
+                                <li class="pv-info-item">
+                                    <span class="pv-info-label">Brand</span>
+                                    <span class="pv-info-value" id="pvInfoBrand">—</span>
+                                </li>
+                                <li class="pv-info-item">
+                                    <span class="pv-info-label">Color</span>
+                                    <span class="pv-info-value" id="pvInfoColor">—</span>
+                                </li>
+                                <li class="pv-info-item">
+                                    <span class="pv-info-label">Gender</span>
+                                    <span class="pv-info-value" id="pvInfoGender">—</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Dates -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="card-title">
+                                <i class="bi bi-calendar3 me-2" style="color:var(--accent-color);"></i>
+                                Timeline
+                            </h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <ul class="pv-info-list px-3">
+                                <li class="pv-info-item">
+                                    <span class="pv-info-label">Created</span>
+                                    <span class="pv-info-value" id="pvInfoCreated">—</span>
+                                </li>
+                                <li class="pv-info-item">
+                                    <span class="pv-info-label">Last Updated</span>
+                                    <span class="pv-info-value" id="pvInfoUpdated">—</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Danger Zone -->
+                    <div class="card" style="border:1px solid var(--danger-color-light);">
+                        <div class="card-header" style="background:var(--danger-color-light);">
+                            <h5 class="card-title" style="color:var(--danger-color);">
+                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                Danger Zone
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p style="font-size:13px;color:var(--muted-color);margin-bottom:12px;">
+                                Deactivating this product will remove it and all its stock entries permanently.
+                            </p>
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-danger btn-sm"
+                                        onclick="deleteProduct()">
+                                    <i class="bi bi-trash me-1"></i> Deactivate Product
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!-- /RIGHT -->
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-copyright">&copy; 2026 <a href="#">FlexZone</a>. All Rights Reserved.</div>
+        </div>
+    </footer>
+</main>
+
+<a href="#" class="back-to-top"><i class="bi bi-arrow-up"></i></a>
+
+<!-- Vendor JS -->
+<script data-cfasync="false"
+        src="https://bootstrapmade.com/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js" defer></script>
+<script src="https://bootstrapmade.com/content/vendors/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="https://bootstrapmade.com/content/vendors/apexcharts/apexcharts.min.js"></script>
+<script src="https://bootstrapmade.com/content/vendors/chart.js/chart.umd.js"></script>
+<script src="https://bootstrapmade.com/content/vendors/echarts/echarts.min.js"></script>
+<script src="https://bootstrapmade.com/content/vendors/simple-datatables/simple-datatables.js"></script>
+<script src="https://bootstrapmade.com/content/vendors/quill/quill.js"></script>
+<script src="https://bootstrapmade.com/content/vendors/tinymce/tinymce.min.js"></script>
+<script src="https://bootstrapmade.com/content/vendors/choices.js/choices.min.js"></script>
+<script src="https://bootstrapmade.com/content/vendors/flatpickr/flatpickr.min.js"></script>
+<script src="https://bootstrapmade.com/content/vendors/php-email-form/validate.js"></script>
+
+<script src="https://bootstrapmade.com/content/demo/EliteAdmin/assets/js/theme.js"></script>
+<script src="https://bootstrapmade.com/content/demo/EliteAdmin/assets/js/main.js"></script>
+<script src="assets/js/notiflix-aio-3.2.8.min.js"></script>
+<script src="assets/js/auth.js"></script>
+<script src="assets/js/admin/admin-view-product.js"></script>
+<script>
+    window.addEventListener("load", checkAdmin);
+</script>
+
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516"
+        integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg=="
+        data-cf-beacon='{"version":"2024.11.0","token":"68c5ca450bae485a842ff76066d69420","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}'
+        crossorigin="anonymous"></script>
+</body>
+</html>

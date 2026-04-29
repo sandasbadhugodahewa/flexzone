@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlexZone | Add Product</title>
+    <meta name="robots" content="noindex, nofollow">
+
+    <link href="assets/images/logo/favicon.ico" rel="icon">
+    <link href="https://bootstrapmade.com/content/demo/EliteAdmin/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com/">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/css/bootstrap-icons.css" rel="stylesheet">
+    <link href="assets/css/admin/remixicon.css" rel="stylesheet">
+    <link href="assets/css/admin/all.min.css" rel="stylesheet">
+    <link href="assets/css/admin/phosphor-icons.css" rel="stylesheet">
+    <link href="https://bootstrapmade.com/content/vendors/lucide-icons/lucide.css" rel="stylesheet">
+    <link href="assets/css/admin/admin-main.css" rel="stylesheet">
+    <link href="assets/css/admin/admin-products.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/light/style.css">
+
+    <script>
+        fetch("admin-sidebar.html").then(r => r.text()).then(d => {
+            document.getElementById("sidebar").innerHTML = d;
+        });
+    </script>
+    <style>
+        .main {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div id="sidebar"></div>
+
+<main class="main">
+    <div class="main-content page-users">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Add New Product</h1>
+                <nav class="breadcrumb">
+                    <a href="admin-dashboard.html" class="breadcrumb-item">Home</a>
+                    <a href="admin-products.html" class="breadcrumb-item">Products</a>
+                    <span class="breadcrumb-item active">Add Product</span>
+                </nav>
+            </div>
+            <div class="page-header-actions">
+                <a href="admin-products.html" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-1"></i> Back
+                </a>
+                <button class="btn btn-success" onclick="saveDraft()">
+                    <i class="bi bi-eye me-1"></i> Live Demo
+                </button>
+            </div>
+        </div>
+
+        <!-- ── Main Grid ── -->
+        <div class="row g-4">
+
+            <!-- ══════════════════════ LEFT COLUMN ══════════════════════ -->
+            <div class="col-xl-8">
+
+                <!-- Basic Info -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title">
+                            <i class="bi bi-info-circle me-2" style="color:var(--accent-color);"></i>
+                            Basic Information
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+
+                            <div class="col-12">
+                                <div class="ap-section-label">
+                                    <i class="bi bi-tag"></i> Product Details
+                                </div>
+                            </div>
+
+                            <!-- Title -->
+                            <div class="col-12">
+                                <label class="form-label">Product Title <span class="ap-req">*</span></label>
+                                <input type="text" class="form-control" id="titleInput"
+                                       placeholder="e.g. Men Oversize T-Shirt Pink">
+                                <p class="ap-hint">Use a clear, descriptive title. Include size, color or style if needed.</p>
+                            </div>
+
+                            <!-- Description -->
+                            <div class="col-12">
+                                <label class="form-label">Description</label>
+                                <textarea class="form-control" id="descriptionInput" rows="4"
+                                          maxlength="1000"
+                                          placeholder="Describe the product — material, fit, occasion, care instructions..."></textarea>
+                                <div class="ap-char-count" id="descCharCount">0/1000</div>
+                            </div>
+
+                            <!-- Category + Subcategory -->
+                            <div class="col-md-6">
+                                <label class="form-label">Category <span class="ap-req">*</span></label>
+                                <select class="form-select" id="categorySelect">
+                                    <option value="">Select category...</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Sub Category <span class="ap-req">*</span></label>
+                                <select class="form-select" id="subcategorySelect">
+                                    <option value="">Select subcategory...</option>
+                                </select>
+                            </div>
+
+                            <!-- Brand + Color -->
+                            <div class="col-md-6">
+                                <label class="form-label">Brand <span class="ap-req">*</span></label>
+                                <select class="form-select" id="brandSelect">
+                                    <option value="">Select brand...</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Color <span class="ap-req">*</span></label>
+                                <select class="form-select" id="colorSelect">
+                                    <option value="">Select color...</option>
+                                </select>
+                            </div>
+
+                            <!-- Gender -->
+                            <div class="col-md-6">
+                                <label class="form-label">Gender <span class="ap-req">*</span></label>
+                                <select class="form-select" id="genderSelect">
+                                    <option value="">Select gender...</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Fit Type <span class="ap-hint">(Don't select if there is no fit type)</span></label>
+                                <select class="form-select" id="fitTypeSelect">
+                                    <option value="">Select Fit Type...</option>
+                                </select>
+                            </div>
+
+
+                            <!------------------ Material & Fabric --------------------->
+                            <div class="col-12 mt-5">
+                                <div class="ap-section-label">
+                                    <i class="bi bi-tag"></i> Material & Fabric
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Fabric <span class="ap-hint">(Optional)</span></label>
+                                <select class="form-select" id="4">
+                                    <option value="">Select fabric...</option>
+                                    <option value="">100% Cotton / Polyester Blend.</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Material Type <span class="ap-hint">(Optional)</span></label>
+                                <select class="form-select" id="5">
+                                    <option value="">Select material Type...</option>
+                                    <option value="">Soft Knit / Denim / Linen</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Stretchability <span class="ap-hint">(Optional)</span></label>
+                                <select class="form-select" id="1">
+                                    <option value="">Select stretchability...</option>
+                                    <option value="">Stretchable</option>
+                                    <option value="">Non-Stretch</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Thickness <span class="ap-hint">(Optional)</span></label>
+                                <select class="form-select" id="2">
+                                    <option value="">Select thickness...</option>
+                                    <option value="">Lightweight</option>
+                                    <option value="">Medium</option>
+                                    <option value="">Heavy</option>
+                                </select>
+                            </div>
+
+
+                            <!------------------ Dimensions & Style --------------------->
+                            <div class="col-12 mt-5">
+                                <div class="ap-section-label">
+                                    <i class="bi bi-tag"></i> Dimensions & Style
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Chest Size <span class="ap-hint">(Optional)</span></label>
+                                <select class="form-select" id="chestSize">
+                                    <option value="">Select Chest Size...</option>
+                                    <option value="">38" - 44"</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Waist size <span class="ap-hint">(Optional)</span></label>
+                                <select class="form-select" id="waistSize">
+                                    <option value="">Select Waist size...</option>
+                                    <option value="">38" - 44"</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Neck Type <span class="ap-hint">(Optional)</span></label>
+                                <select class="form-select" id="neckSize">
+                                    <option value="">Select Neck Type...</option>
+                                    <option value="">Round Neck / Polo</option>
+                                    <option value="">V-Neck</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Pattern <span class="ap-hint">(Optional)</span></label>
+                                <select class="form-select" id="pattern">
+                                    <option value="">Select Pattern...</option>
+                                    <option value="">Solid / Printed / Striped</option>
+                                    <option value="">XL</option>
+                                    <option value="">S</option>
+                                </select>
+                            </div>
+
+
+                            <!------------------ Additional Features --------------------->
+                            <div class="col-12 mt-5">
+                                <div class="ap-section-label">
+                                    <i class="bi bi-tag"></i> Additional Features
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Season <span class="ap-hint">(Optional)</span></label>
+                                <select class="form-select" id="2">
+                                    <option value="">Select Season...</option>
+                                    <option value="">Summer</option>
+                                    <option value="">Winter</option>
+                                    <option value="">All-season</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Washing <span class="ap-hint">(Optional)</span></label>
+                                <input type="text" class="form-control" id="titleInput"
+                                       placeholder="e.g. Use mild detergent only">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Ironing <span class="ap-hint">(Optional)</span></label>
+                                <input type="text" class="form-control" id="titleInput"
+                                       placeholder="e.g. Do not tumble dry">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Special Care <span class="ap-hint">(Optional)</span></label>
+                                <input type="text" class="form-control" id="titleInput"
+                                       placeholder="e.g. Do not wring excessively">
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Images -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title">
+                            <i class="bi bi-images me-2" style="color:var(--accent-color);"></i>
+                            Product Images
+                        </h5>
+                        <span style="font-size:12px;color:var(--muted-color);">First image = main image &nbsp;|&nbsp; Max 6 images</span>
+                    </div>
+                    <div class="card-body">
+
+                        <!-- Upload Zone -->
+                        <div class="ap-upload-zone" id="uploadZone">
+                            <input type="file" id="imageInput" multiple accept="image/*">
+                            <div class="ap-upload-icon">
+                                <i class="bi bi-cloud-upload"></i>
+                            </div>
+                            <div class="ap-upload-title">Drag & drop images here</div>
+                            <p class="ap-upload-sub">or click to browse &nbsp;·&nbsp; JPG, PNG, WebP &nbsp;·&nbsp; Max 6 photos</p>
+                        </div>
+
+                        <!-- Preview Grid -->
+                        <div class="ap-image-preview-grid" id="imagePreviewGrid" style="display:none;"></div>
+
+                    </div>
+                </div>
+
+                <!-- Stock -->
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-boxes me-2" style="color:var(--accent-color);"></i>
+                            Stock &amp; Pricing
+                        </h5>
+                        <span style="font-size:12px;color:var(--muted-color);">
+                        Add one row per size variant
+                    </span>
+                    </div>
+                    <div class="card-body p-0">
+
+                        <div class="table-responsive">
+                            <table class="ap-stock-table">
+                                <thead>
+                                <tr>
+                                    <th style="width:140px;">Size <span class="ap-req">*</span></th>
+                                    <th style="width:140px;">Price (Rs.) <span class="ap-req">*</span></th>
+                                    <th style="width:120px;">Quantity <span class="ap-req">*</span></th>
+                                    <th style="width:180px;">Discount</th>
+                                    <th style="width:50px;"></th>
+                                </tr>
+                                </thead>
+                                <tbody id="stockTableBody"></tbody>
+                            </table>
+                        </div>
+
+                        <div class="px-3 py-2" style="border-top:1px solid var(--border-color);">
+                            <button class="ap-add-stock-row" onclick="addStockRow()" type="button">
+                                <i class="bi bi-plus-circle"></i> Add Size Variant
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-xl-4">
+                <div class="ap-sticky-sidebar">
+
+                    <!-- Publish Card -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="card-title">
+                                <i class="bi bi-send me-2" style="color:var(--accent-color);"></i>
+                                Publish
+                            </h5>
+                        </div>
+                        <div class="card-body">
+
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-primary" onclick="saveProduct()">
+                                    <i class="bi bi-check-lg me-1"></i> Publish Product
+                                </button>
+                                <button class="btn btn-outline-secondary" onclick="saveDraft()">
+                                    <i class="bi bi-floppy me-1"></i> Save as Draft
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="card-title">
+                                <i class="bi bi-lightbulb me-2" style="color:var(--warning-color);"></i>
+                                Tips
+                            </h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item" style="font-size:12.5px;color:var(--muted-color);border-color:var(--border-color);">
+                                    <i class="bi bi-check-circle text-success me-2"></i>
+                                    Optional — add if applicable
+                                </li>
+                                <li class="list-group-item" style="font-size:12.5px;color:var(--muted-color);border-color:var(--border-color);">
+                                    <i class="bi bi-check-circle text-success me-2"></i>
+                                    Upload high-quality images (800×800px+)
+                                </li>
+                                <li class="list-group-item" style="font-size:12.5px;color:var(--muted-color);border-color:var(--border-color);">
+                                    <i class="bi bi-check-circle text-success me-2"></i>
+                                    First image becomes the main display image
+                                </li>
+                                <li class="list-group-item" style="font-size:12.5px;color:var(--muted-color);border-color:var(--border-color);">
+                                    <i class="bi bi-check-circle text-success me-2"></i>
+                                    Add a separate row for each size variant
+                                </li>
+                                <li class="list-group-item" style="font-size:12.5px;color:var(--muted-color);border-color:var(--border-color);">
+                                    <i class="bi bi-check-circle text-success me-2"></i>
+                                    Use discounts to run limited-time offers
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title">
+                                <i class="bi bi-list-check me-2" style="color:var(--accent-color);"></i>
+                                Checklist
+                            </h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <ul class="list-group list-group-flush" id="checklistItems">
+                                <li class="list-group-item d-flex align-items-center gap-2" style="font-size:13px;border-color:var(--border-color);" id="chk_title">
+                                    <i class="bi bi-circle" style="color:var(--muted-color);font-size:14px;"></i>
+                                    Product title
+                                </li>
+                                <li class="list-group-item d-flex align-items-center gap-2" style="font-size:13px;border-color:var(--border-color);" id="chk_cat">
+                                    <i class="bi bi-circle" style="color:var(--muted-color);font-size:14px;"></i>
+                                    Category selected
+                                </li>
+                                <li class="list-group-item d-flex align-items-center gap-2" style="font-size:13px;border-color:var(--border-color);" id="chk_img">
+                                    <i class="bi bi-circle" style="color:var(--muted-color);font-size:14px;"></i>
+                                    At least 1 image uploaded
+                                </li>
+                                <li class="list-group-item d-flex align-items-center gap-2" style="font-size:13px;border-color:var(--border-color);" id="chk_stock">
+                                    <i class="bi bi-circle" style="color:var(--muted-color);font-size:14px;"></i>
+                                    Stock entry added
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-copyright">&copy; 2026 <a href="#">FlexZone</a>. All Rights Reserved.</div>
+        </div>
+    </footer>
+</main>
+
+<a href="#" class="back-to-top"><i class="bi bi-arrow-up"></i></a>
+
+<!-- Vendor JS -->
+<script data-cfasync="false"
+        src="https://bootstrapmade.com/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js" defer></script>
+<script src="https://bootstrapmade.com/content/vendors/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="https://bootstrapmade.com/content/vendors/apexcharts/apexcharts.min.js"></script>
+<script src="https://bootstrapmade.com/content/vendors/chart.js/chart.umd.js"></script>
+<script src="https://bootstrapmade.com/content/vendors/echarts/echarts.min.js"></script>
+<script src="https://bootstrapmade.com/content/vendors/simple-datatables/simple-datatables.js"></script>
+<script src="https://bootstrapmade.com/content/vendors/quill/quill.js"></script>
+<script src="https://bootstrapmade.com/content/vendors/tinymce/tinymce.min.js"></script>
+<script src="https://bootstrapmade.com/content/vendors/choices.js/choices.min.js"></script>
+<script src="https://bootstrapmade.com/content/vendors/flatpickr/flatpickr.min.js"></script>
+<script src="https://bootstrapmade.com/content/vendors/php-email-form/validate.js"></script>
+
+<script src="https://bootstrapmade.com/content/demo/EliteAdmin/assets/js/theme.js"></script>
+<script src="https://bootstrapmade.com/content/demo/EliteAdmin/assets/js/main.js"></script>
+<script src="assets/js/notiflix-aio-3.2.8.min.js"></script>
+<script src="assets/js/auth.js"></script>
+<script src="https://bootstrapmade.com/content/demo/EliteAdmin/assets/js/apps-sidebar-toggle.js"></script>
+<script src="assets/js/admin-add-product.js"></script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516"
+        integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg=="
+        data-cf-beacon='{"version":"2024.11.0","token":"68c5ca450bae485a842ff76066d69420","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}'
+        crossorigin="anonymous"></script>
+
+<script>
+    window.addEventListener("load", checkAdmin);
+
+    // Live checklist
+    function updateChecklist() {
+        const checks = {
+            chk_title:  document.getElementById("titleInput")?.value.trim().length > 0,
+            chk_cat:    document.getElementById("categorySelect")?.value !== "",
+            chk_img:    uploadedImages?.length > 0,
+            chk_stock:  document.getElementById("stockTableBody")?.children.length > 0
+        };
+        Object.entries(checks).forEach(([id, ok]) => {
+            const el   = document.getElementById(id);
+            const icon = el?.querySelector("i");
+            if (!el || !icon) return;
+            icon.className = ok
+                ? "bi bi-check-circle-fill"
+                : "bi bi-circle";
+            icon.style.color = ok ? "var(--success-color)" : "var(--muted-color)";
+        });
+    }
+
+    // Run checklist on any input change
+    document.addEventListener("input",  updateChecklist);
+    document.addEventListener("change", updateChecklist);
+
+    // Observer for stock rows (no event fires when JS adds rows)
+    const stockObs = new MutationObserver(updateChecklist);
+    document.addEventListener("DOMContentLoaded", () => {
+        const tb = document.getElementById("stockTableBody");
+        if (tb) stockObs.observe(tb, { childList: true });
+    });
+</script>
+</body>
+</html>

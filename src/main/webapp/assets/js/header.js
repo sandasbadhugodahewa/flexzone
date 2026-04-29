@@ -94,7 +94,7 @@ async function loadCategory() {
                 data.categories.forEach(category => {
                     let item = `
                         <li>
-                            <a href="#">${category.name}</a>
+                            <a href="category.html?categoryId=${category.id}&categoryName=${encodeURIComponent(category.name)}">${category.name}</a>
                         </li>
                     `;
                     dropdown.innerHTML += item;

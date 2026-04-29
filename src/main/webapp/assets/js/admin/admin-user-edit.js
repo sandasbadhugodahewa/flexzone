@@ -44,20 +44,19 @@ async function loadUser() {
             document.getElementById("deleteBtn")?.setAttribute("disabled", true);
         }
 
-        // ── Personal info ──
+        //Personal info
         setVal("firstName", u.firstName);
         setVal("lastName", u.lastName);
         setVal("emailField", u.email);
         setVal("mobileField", u.mobile);
 
-        // ── Role select ──
+        //Role
         setVal("roleSelect", u.role);
         setVal("statusSelect", u.status);
 
-        // ── Account status card ──
         updateStatusCard(u);
 
-        // ── Page title / breadcrumb ──
+        //breadcrumb ──
         const fullName = `${u.firstName} ${u.lastName}`;
         const nameEl = document.getElementById("userFullName");
         if (nameEl) nameEl.textContent = fullName;
@@ -65,7 +64,6 @@ async function loadUser() {
         const deleteNameEl = document.getElementById("deleteUserName");
         if (deleteNameEl) deleteNameEl.textContent = fullName;
 
-        // ── Addresses ──
         await renderAddresses(u.addresses);
 
     } catch (e) {
@@ -77,89 +75,127 @@ async function loadUser() {
 
 function updateStatusCard(u) {
     const statusMap = {
-        "VERIFIED": {cls: "active", label: "Active"},
-        "PENDING": {cls: "pending", label: "Pending"},
-        "BLOCKED": {cls: "inactive", label: "Blocked"},
+        "VERIFIED": { cls: "active",   dot: "#198754", label: "Active" },
+        "PENDING":  { cls: "pending",  dot: "#f59e0b", label: "Pending" },
+        "BLOCKED":  { cls: "inactive", dot: "#dc3545", label: "Blocked" },
     };
-    const s = statusMap[u.status] || {cls: "inactive", label: u.status};
+    const s = statusMap[u.status] || { cls: "inactive", dot: "#dc3545", label: u.status };
 
-    const statusEl = document.querySelector(".users-status");
-    if (statusEl) {
-        statusEl.className = `users-status ${s.cls}`;
-        statusEl.innerHTML = `<span class="users-status-dot"></span> ${s.label}`;
+    const statusBadge = document.getElementById("statusBadge");
+    if (statusBadge) {
+        statusBadge.className = `users-status ${s.cls}`;
+        statusBadge.innerHTML = `<span class="users-status-dot"></span> ${s.label}`;
     }
 
-    const verifiedEl = document.querySelector(".uv-info-check");
-    if (verifiedEl) {
+    //Role
+    const roleMap = {
+        "ADMIN": { cls: "admin", icon: "bi-shield-check", label: "Admin" },
+        "USER":  { cls: "user",  icon: "bi-person",       label: "User" },
+    };
+    const r = roleMap[u.role] || { cls: "user", icon: "bi-person", label: u.role };
+
+    const roleBadge = document.getElementById("roleBadge");
+    if (roleBadge) {
+        roleBadge.className = `users-role ${r.cls}`;
+        roleBadge.innerHTML = `<i class="bi ${r.icon}"></i> ${r.label}`;
+    }
+
+    //Email Verified
+    const emailVerifiedBadge = document.getElementById("emailVerifiedBadge");
+    if (emailVerifiedBadge) {
         const isVerified = u.status === "VERIFIED";
-        verifiedEl.innerHTML = isVerified
-            ? `<i class="bi bi-check-circle-fill text-success"></i> Yes`
-            : `<i class="bi bi-x-circle-fill text-danger"></i> No`;
+        if (isVerified) {
+            emailVerifiedBadge.innerHTML = `<i class="bi bi-check-circle-fill"></i> Yes`;
+            emailVerifiedBadge.style.color = "#198754";
+        } else {
+            emailVerifiedBadge.innerHTML = `<i class="bi bi-x-circle-fill"></i> No`;
+            emailVerifiedBadge.style.color = "#dc3545";
+        }
     }
 
-    // Joined / Updated dates
-    const infoValues = document.querySelectorAll(".uv-info-value");
-    if (infoValues.length >= 2) {
-        infoValues[0].textContent = u.joinedAt || "—";
-        infoValues[1].textContent = u.updatedAt || "—";
-    }
+    const joinedEl  = document.getElementById("joinedDate");
+    const updatedEl = document.getElementById("updatedDate");
+    if (joinedEl)  joinedEl.textContent  = u.joinedAt  || "—";
+    if (updatedEl) updatedEl.textContent = u.updatedAt || "—";
 }
 
 async function renderAddresses(addresses) {
+    const container = document.getElementById("addressContainer");
+    if (!container) return;
+    container.innerHTML = "";
 
-    try {
-        let container = document.getElementById("addressContainer");
-        container.innerHTML = "";
-
-        if (!addresses || addresses.length === 0) {
-            let card = `
-                       <div class="card-body text-center py-4">
-                       <i class="bi bi-geo-alt" style="font-size:28px;color:#d1d5db;"></i>
-                       <p style="font-size:13px;color:#9ca3af;margin-top:8px;">No address on record</p>
-            `;
-            container.innerHTML += card;
-        } else {
-            addresses.forEach((address, index) => {
-                console.log(address);
-                let card = `
-                                <div class="col-md-6" >
-                                    <div class="card h-100 shadow-sm">
-                                        <div class="card-header">
-                                            <h6 class="mb-0">Address ${index + 1}</h6>
-                                            <div style="font-size:12px;color:#6c757d;"><i class="bi bi-clipboard" style="cursor:pointer; margin-left:8px;"></i></div>
-                                        </div>
-                                        <div class="card-body">
-                                            <!-- Address Text -->
-                                            <div class="address-text">
-                                                ${address.lineOne},<br>
-                                                ${address.lineTwo},<br>
-                                                ${address.city}, ${address.postalCode},<br>
-                                                ${address.provinceName}
-                                            </div>
-                                            <div class="contact-info">
-                                                <div><i class="bi bi-telephone"> </i> ${address.mobile}</div>
-                                            </div>
-                                            <div class="mt-3 d-flex gap-2">
-                                                <button class="btn btn-light btn-sm">
-                                                    <i class="bi bi-pencil"></i> Edit
-                                                </button>
-                                                <button class="btn btn-danger btn-sm">
-                                                    <i class="bi bi-trash"></i> Remove
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-                    `;
-                container.innerHTML += card;
-            });
-        }
-
-    } catch (e) {
-        Notiflix.Notify.failure(e.message, {position: "center-top"});
+    if (!addresses || addresses.length === 0) {
+        container.innerHTML = `
+            <div class="col-12 text-center py-4" style="color:#9ca3af;">
+                <i class="bi bi-geo-alt" style="font-size:32px;display:block;margin-bottom:8px;"></i>
+                <p style="font-size:13px;margin:0;">No address on record</p>
+            </div>`;
+        return;
     }
 
+    addresses.forEach((addr, index) => {
+        const label      = `Address ${index + 1}`;
+        const primaryBadge = addr.isPrimary
+            ? `<span class="badge badge-soft-primary ms-1" style="font-size:10px;vertical-align:middle;">Primary</span>`
+            : "";
+        const line2 = addr.lineTwo ? addr.lineTwo + ",<br>" : "";
+        const copyText = [addr.lineOne, addr.lineTwo, `${addr.city} ${addr.postalCode}`, addr.provinceName]
+            .filter(Boolean).join(", ");
+
+        container.innerHTML += `
+            <div class="col-md-6">
+                <div class="card h-100" style="border:1px solid #e5e7eb;border-radius:10px;">
+                    <div class="card-header d-flex justify-content-between align-items-center"
+                         style="background:#f9fafb;border-bottom:1px solid #e5e7eb;border-radius:10px 10px 0 0;padding:10px 14px;">
+                        <h6 class="mb-0" style="font-size:13px;font-weight:700;">
+                            ${label} ${primaryBadge}
+                        </h6>
+                        <button type="button" class="btn btn-sm btn-outline-secondary"
+                                style="padding:2px 8px;font-size:11px;border-radius:6px;"
+                                id="copyBtn_${index}"
+                                onclick="copyAddress('${copyText.replace(/'/g,"\'")}', ${index})">
+                            <i class="bi bi-clipboard"></i> Copy
+                        </button>
+                    </div>
+                    <div class="card-body" style="padding:14px;">
+                        <div style="font-size:13px;line-height:1.8;color:#374151;">
+                            ${addr.lineOne},<br>
+                            ${line2}
+                            ${addr.city}, ${addr.postalCode},<br>
+                            ${addr.provinceName || ""}
+                            <div style="font-size:13px;color:#6b7280;margin-top:8px;">
+                               <i class="bi bi-telephone me-1"></i>${addr.mobile}
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>`;
+    });
+}
+
+//Copy address to clipboard
+function copyAddress(text, index) {
+    const btn = document.getElementById(`copyBtn_${index}`);
+    navigator.clipboard.writeText(text).then(() => {
+        if (btn) {
+            const orig = btn.innerHTML;
+            btn.innerHTML = `<i class="bi bi-check-lg"></i> Copied!`;
+            btn.classList.replace("btn-outline-secondary", "btn-success");
+            setTimeout(() => {
+                btn.innerHTML = orig;
+                btn.classList.replace("btn-success", "btn-outline-secondary");
+            }, 2000);
+        }
+    }).catch(() => {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+        Notiflix.Notify.success("Address copied!", { position: "center-top" });
+    });
 }
 
 
@@ -171,7 +207,6 @@ async function saveUserChanges() {
     const newPassword = getVal("newPassword");
     const confirmPassword = getVal("confirmPassword");
 
-    // Basic validation
     if (!firstName || !lastName) {
         Notiflix.Notify.warning("First name and last name are required!", {position: "center-top"});
         return;
@@ -215,10 +250,7 @@ async function saveUserChanges() {
     }
 }
 
-
-// ─────────────────────────────────────────────
-//  DELETE USER (from danger zone modal)
-// ─────────────────────────────────────────────
+//Delete User
 async function confirmDeleteUser() {
     try {
         Notiflix.Loading.pulse("Deleting...", {svgColor: "#dc3545"});
@@ -285,10 +317,6 @@ async function quickUnblockUser() {
     }
 }
 
-
-// ─────────────────────────────────────────────
-//  HELPERS
-// ─────────────────────────────────────────────
 function setVal(id, value) {
     const el = document.getElementById(id);
     if (el && value !== null && value !== undefined) el.value = value;

@@ -1,0 +1,403 @@
+/* ═══════════════════════════════════════════════════
+   FLEXZONE ADMIN — Product Pages CSS
+   Matches admin-main.css variables & component system
+   ═══════════════════════════════════════════════════ */
+
+/* ── Image Upload Zone ── */
+.ap-upload-zone {
+    border: 2px dashed var(--border-color-dark);
+    border-radius: 12px;
+    padding: 36px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.22s ease;
+    background: var(--border-color-light);
+    position: relative;
+    overflow: hidden;
+}
+
+.ap-upload-zone:hover,
+.ap-upload-zone.dragover {
+    border-color: var(--accent-color);
+    background: color-mix(in srgb, var(--accent-color), transparent 93%);
+}
+
+.ap-upload-zone input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+}
+
+.ap-upload-icon {
+    width: 52px;
+    height: 52px;
+    background: color-mix(in srgb, var(--accent-color), transparent 88%);
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    font-size: 22px;
+    color: var(--accent-color);
+}
+
+.ap-upload-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--heading-color, #1c1917);
+    margin-bottom: 4px;
+}
+
+.ap-upload-sub {
+    font-size: 12px;
+    color: var(--muted-color);
+}
+
+/* ── Image Preview Grid ── */
+.ap-image-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.ap-image-thumb {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1.5px solid var(--border-color);
+    background: var(--border-color-light);
+}
+
+.ap-image-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.ap-image-thumb-remove {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(239,68,68,0.9);
+    color: #fff;
+    border: none;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.15s;
+}
+
+.ap-image-thumb:hover .ap-image-thumb-remove { opacity: 1; }
+
+/* ── Stock / Variant Table ── */
+.ap-stock-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.ap-stock-table thead th {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--muted-color);
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border-color);
+    white-space: nowrap;
+    background: var(--border-color-light);
+}
+
+.ap-stock-table tbody td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
+}
+
+.ap-stock-table tbody tr:last-child td { border-bottom: none; }
+
+.ap-stock-table .form-control,
+.ap-stock-table .form-select {
+    font-size: 13px;
+    padding: 5px 8px;
+    height: 34px;
+}
+
+.ap-add-stock-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent-color);
+    cursor: pointer;
+    padding: 6px 0;
+    border: none;
+    background: none;
+    transition: opacity 0.15s;
+}
+
+.ap-add-stock-row:hover { opacity: 0.75; }
+
+/* ── Section Label ── */
+.ap-section-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    color: var(--accent-color);
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+/* ── Product View ── */
+.pv-hero {
+    position: relative;
+    background: linear-gradient(135deg,
+    color-mix(in srgb, var(--accent-color), transparent 92%),
+    color-mix(in srgb, var(--accent-color), transparent 98%));
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 24px;
+    border: 1px solid color-mix(in srgb, var(--accent-color), transparent 82%);
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.pv-main-image {
+    width: 180px;
+    height: 180px;
+    border-radius: 12px;
+    object-fit: cover;
+    border: 2px solid var(--border-color);
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.pv-main-image:hover { transform: scale(1.02); }
+
+.pv-hero-info { flex: 1; min-width: 220px; }
+
+.pv-product-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--heading-color, #1c1917);
+    margin-bottom: 6px;
+    line-height: 1.3;
+}
+
+.pv-meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.pv-meta-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
+    color: var(--muted-color);
+}
+
+.pv-price-range {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--accent-color);
+    margin-bottom: 10px;
+}
+
+.pv-stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.pv-stat-box {
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 12px 14px;
+    text-align: center;
+}
+
+.pv-stat-box .val {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--heading-color, #1c1917);
+    display: block;
+}
+
+.pv-stat-box .lbl {
+    font-size: 11px;
+    color: var(--muted-color);
+    font-weight: 500;
+}
+
+/* Thumbnail strip */
+.pv-thumb-strip {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+}
+
+.pv-thumb {
+    width: 64px;
+    height: 64px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 2px solid var(--border-color);
+    cursor: pointer;
+    transition: border-color 0.15s, transform 0.15s;
+}
+
+.pv-thumb:hover, .pv-thumb.active {
+    border-color: var(--accent-color);
+    transform: scale(1.05);
+}
+
+/* Info list rows */
+.pv-info-list { list-style: none; padding: 0; margin: 0; }
+
+.pv-info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 13px;
+    gap: 12px;
+}
+
+.pv-info-item:last-child { border-bottom: none; }
+
+.pv-info-label {
+    color: var(--muted-color);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.pv-info-value {
+    font-weight: 600;
+    color: var(--heading-color, #1c1917);
+    text-align: right;
+}
+
+/* Color swatch */
+.pv-color-swatch {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border-color);
+    vertical-align: middle;
+    margin-right: 5px;
+}
+
+/* Stock table in view page */
+.pv-stock-badge-qty {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 24px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 0 8px;
+}
+
+.pv-qty-ok   { background: var(--success-color-light); color: var(--success-color); }
+.pv-qty-low  { background: var(--warning-color-light); color: var(--warning-color); }
+.pv-qty-zero { background: var(--danger-color-light);  color: var(--danger-color); }
+
+/* Description box */
+.pv-description {
+    font-size: 13px;
+    color: var(--muted-color);
+    line-height: 1.8;
+    padding: 14px;
+    background: var(--border-color-light);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+/* Quick action buttons in view hero */
+.pv-action-bar {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+}
+
+/* ── Sticky sidebar ── */
+.ap-sticky-sidebar {
+    position: sticky;
+    top: 80px;
+}
+
+/* ── Form helper text ── */
+.ap-hint {
+    font-size: 11px;
+    color: var(--muted-color);
+    margin-top: 4px;
+}
+
+/* ── Required star ── */
+.ap-req { color: var(--danger-color); margin-left: 2px; }
+
+/* ── Character counter ── */
+.ap-char-count {
+    font-size: 11px;
+    color: var(--muted-color);
+    text-align: right;
+    margin-top: 3px;
+}
+
+/* ── Loading skeleton ── */
+.ap-skeleton {
+    background: linear-gradient(90deg, var(--border-color) 25%, var(--border-color-light) 50%, var(--border-color) 75%);
+    background-size: 200% 100%;
+    animation: ap-shimmer 1.4s infinite;
+    border-radius: 6px;
+}
+
+@keyframes ap-shimmer {
+    0%   { background-position: -200% 0; }
+    100% { background-position:  200% 0; }
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+    .ap-image-preview-grid { grid-template-columns: repeat(3, 1fr); }
+    .pv-hero { padding: 18px; }
+    .pv-main-image { width: 130px; height: 130px; }
+    .pv-stat-row { grid-template-columns: repeat(2, 1fr); }
+    .pv-product-title { font-size: 18px; }
+}
