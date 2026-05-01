@@ -2,6 +2,7 @@ package lk.jiat.flexzone.entity;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,23 +19,23 @@ public class Product extends BaseEntity {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "brand_id")
     private Brand brand;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "color_id")
     private Color color;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "status_id", nullable = false)
     private Status status;
 
-    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subcategory_id", nullable = false)
     private Subcategory subcategory;
 
@@ -42,13 +43,21 @@ public class Product extends BaseEntity {
     @JoinColumn(name = "gender_id", nullable = false)
     private Gender gender;
 
+    @Column(name = "product_details", columnDefinition = "json")
+    private String productDetails;
+
     @OneToMany(mappedBy = "product")
     private Set<Stock> stocks = new HashSet<>();
 
-    @Column(name="images")
-    @CollectionTable(name = "product_images",joinColumns = @JoinColumn(name = "pr_id"))
+//    @Column(name="images")
+//    @CollectionTable(name = "product_images",joinColumns = @JoinColumn(name = "pr_id"))
+//    @ElementCollection(fetch = FetchType.EAGER)
+//    private List<String> images;
+
     @ElementCollection(fetch = FetchType.EAGER)
-    private List<String> images;
+    @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "pr_id"))
+    @Column(name = "images")
+    private List<String> images = new ArrayList<>();
 
 
     public List<String> getImages() {
@@ -107,14 +116,6 @@ public class Product extends BaseEntity {
         this.category = category;
     }
 
-//    public Size getSize() {
-//        return size;
-//    }
-//
-//    public void setSize(Size size) {
-//        this.size = size;
-//    }
-
     public Status getStatus() {
         return status;
     }
@@ -145,6 +146,14 @@ public class Product extends BaseEntity {
 
     public void setStocks(Set<Stock> stocks) {
         this.stocks = stocks;
+    }
+
+    public String getProductDetails() {
+        return productDetails;
+    }
+
+    public void setProductDetails(String productDetails) {
+        this.productDetails = productDetails;
     }
 }
 

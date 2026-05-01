@@ -13,6 +13,7 @@ public class StockDTO {
     private String createdAt;
     private String updatedAt;
     private String couponCode;
+    private Integer discountId;
     private double discountValue;
     private List<DiscountDTO> discountDTOList;
 
@@ -90,6 +91,14 @@ public class StockDTO {
 
     public void setCouponCode(String couponCode) {
         this.couponCode = couponCode;
+    }
+
+    public Integer getDiscountId() {
+        return discountId;
+    }
+
+    public void setDiscountId(Integer discountId) {
+        this.discountId = discountId;
     }
 
     public double getDiscountValue() {

@@ -49,17 +49,17 @@ function renderProduct(p) {
     const images = p.images || [];
     const mainImgEl = document.getElementById("pvMainImage");
     if (mainImgEl && images.length > 0) {
-        mainImgEl.src = "assets/images/" + images[0];
+        mainImgEl.src = "assets/images/productImg/" + images[0];
     }
 
-    // ── Thumbnail strip ──
+    //Thumbnail
     const thumbStrip = document.getElementById("pvThumbStrip");
     if (thumbStrip) {
         thumbStrip.innerHTML = images.map((img, i) => `
             <img class="pv-thumb ${i === 0 ? "active" : ""}"
-                 src="assets/images/${img}"
+                 src="assets/images/productImg/${img}"
                  alt="thumb ${i + 1}"
-                 onclick="switchImage('assets/images/${img}', this)">`
+                 onclick="switchImage('assets/images/productImg/${img}', this)">`
         ).join("");
     }
 
@@ -86,14 +86,12 @@ function renderProduct(p) {
                 : `Rs. ${minPrice.toFixed(2)} – Rs. ${maxPrice.toFixed(2)}`;
     }
 
-    // ── Stat boxes ──
     const totalStock = (p.stocks || []).reduce((s, r) => s + r.quantity, 0);
     const stockCount = (p.stocks || []).length;
     setEl("pvTotalStock", p.totalStock);
     setEl("pvStockVariants", stockCount);
     setEl("pvSoldCount", p.soldCount || 0);
 
-    // ── Info list ──
     const colorHex = p.colorHex || "#ccc";
     setEl("pvInfoColor", `<span class="pv-color-swatch" style="background:${colorHex};"></span>${p.colorValue || "—"}`);
     setEl("pvInfoBrand", p.brandName || "—");
@@ -103,13 +101,10 @@ function renderProduct(p) {
     setEl("pvInfoCreated", p.createdAt || "—");
     setEl("pvInfoUpdated", p.updatedAt || "—");
 
-    // ── Description ──
     setEl("pvDescription", p.description || "No description provided.");
 
-    // ── Stock table ──
     renderStockTable(p.stocks || []);
 
-    // ── Edit link ──
     const editBtn = document.getElementById("pvEditBtn");
     if (editBtn) editBtn.href = `admin-edit-product.html?productId=${currentProductId}`;
 }
@@ -117,17 +112,13 @@ function renderProduct(p) {
 function buildStatusBadge(status) {
     const map = {
         "ACTIVE": {cls: "badge-soft-success", label: "Active"},
-        "INACTIVE": {cls: "badge-soft-secondary", label: "Inactive"},
+        "INACTIVE": {cls: "badge-soft-warning", label: "Inactive"},
         "BLOCKED": {cls: "badge-soft-danger", label: "Blocked"},
     };
     const s = map[status] || {cls: "badge-soft-secondary", label: status || "—"};
     return `<span class="badge ${s.cls} ms-1">${s.label}</span>`;
 }
 
-
-// ─────────────────────────────────────────────
-//  STOCK TABLE
-// ─────────────────────────────────────────────
 function renderStockTable(stocks) {
     const tbody = document.getElementById("pvStockTableBody");
     if (!tbody) return;
@@ -158,10 +149,6 @@ function renderStockTable(stocks) {
     }).join("");
 }
 
-
-// ─────────────────────────────────────────────
-//  IMAGE SWITCHER
-// ─────────────────────────────────────────────
 function switchImage(src, clickedThumb) {
     const mainImg = document.getElementById("pvMainImage");
     if (mainImg) mainImg.src = src;
@@ -169,10 +156,6 @@ function switchImage(src, clickedThumb) {
     if (clickedThumb) clickedThumb.classList.add("active");
 }
 
-
-// ─────────────────────────────────────────────
-//  QUICK ACTIONS
-// ─────────────────────────────────────────────
 async function toggleProductStatus() {
     if (!productData) return;
     const newStatus = productData.status === "ACTIVE" ? "INACTIVE" : "ACTIVE";
@@ -233,10 +216,6 @@ async function deleteProduct() {
     );
 }
 
-
-// ─────────────────────────────────────────────
-//  HELPERS
-// ─────────────────────────────────────────────
 function setEl(id, html) {
     const el = document.getElementById(id);
     if (el) el.innerHTML = html;

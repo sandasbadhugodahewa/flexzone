@@ -7,9 +7,15 @@ import lk.jiat.flexzone.dto.StockDTO;
 import lk.jiat.flexzone.entity.*;
 import lk.jiat.flexzone.util.AppUtil;
 import lk.jiat.flexzone.util.HibernateUtil;
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import java.io.File;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -381,17 +387,6 @@ public class AdminProductService {
         return soldMap;
     }
 
-//    private long getSoldCount(Session session, int productId) {
-//
-//        Long result = session.createQuery(
-//                        "SELECT SUM(oi.qty) FROM OrderItem oi WHERE oi.stock.product.id = :pid",
-//                        Long.class
-//                ).setParameter("pid", productId)
-//                .uniqueResult();
-//
-//        return result != null ? result : 0;
-//    }
-
     private long countAllProducts(Session session) {
         return session.createQuery("SELECT COUNT(p) FROM Product p", Long.class)
                 .getSingleResult();
@@ -420,4 +415,139 @@ public class AdminProductService {
         }
         return arr;
     }
+
+    //Publish Product
+    public String createProduct(String productJson, List<FormDataBodyPart> imageParts) {
+
+        JsonObject response = new JsonObject();
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction tx = session.beginTransaction();
+
+        try {
+            ProductDTO dto = AppUtil.GSON.fromJson(productJson, ProductDTO.class);
+
+            // 🔹 Create Product
+            Product p = new Product();
+            p.setTitle(dto.getTitle());
+            p.setDescription(dto.getDescription());
+            p.setCreatedAt(LocalDateTime.now());
+
+            p.setCategory(session.find(Category.class, dto.getCategoryId()));
+            if (dto.getSubCategoryId() == 0) {
+                throw new RuntimeException("SubCategory is required!");
+            }
+            Subcategory sub = session.find(Subcategory.class, dto.getSubCategoryId());
+            if (sub == null) {
+                throw new RuntimeException("Invalid SubCategory ID!");
+            }
+            p.setSubcategory(sub);
+            p.setBrand(session.find(Brand.class, dto.getBrandId()));
+            p.setColor(session.find(Color.class, dto.getColorId()));
+            p.setGender(session.find(Gender.class, dto.getGenderId()));
+
+            System.out.println("STATUS FROM DTO = " + dto.getStatus());
+
+            Status status = session.createNamedQuery("Status.findByValue", Status.class)
+                    .setParameter("value", dto.getStatus())
+                    .getSingleResult();
+
+            p.setStatus(status);
+
+            // 🔹 Save product_details JSON
+            if (dto.getProductDetails() != null) {
+                p.setProductDetails(AppUtil.GSON.toJson(dto.getProductDetails()));
+            }
+
+            session.persist(p);
+
+            List<String> imageNames = saveImages(imageParts);
+
+            if (imageNames != null) {
+                for (String img : imageNames) {
+                    p.getImages().add(img);
+                }
+            }
+
+            if (dto.getStockDTOList() != null) {
+                for (StockDTO s : dto.getStockDTOList()) {
+
+                    Stock stock = new Stock();
+                    stock.setProduct(p);
+                    stock.setPrice(s.getPrice());
+                    stock.setQuantity(s.getQuantity());
+
+                    stock.setSize(session.find(Size.class, s.getSizeId()));
+
+                    if (s.getDiscountId() != null) {
+                        Discount discount = session.find(Discount.class, s.getDiscountId());
+
+                        if (discount == null) {
+                            throw new RuntimeException("Invalid discount ID!");
+                        }
+
+                        stock.setDiscount(discount);
+                    }
+
+                    Status stockStatus = session.createNamedQuery("Status.findByValue", Status.class)
+                            .setParameter("value", "ACTIVE")
+                            .getSingleResult();
+
+                    stock.setStatus(stockStatus);
+
+                    session.persist(stock);
+                }
+            }
+
+            tx.commit();
+
+            response.addProperty("status", true);
+            response.addProperty("message", "Product created successfully!");
+
+        } catch (Exception e) {
+            tx.rollback();
+            e.printStackTrace();
+            response.addProperty("status", false);
+            response.addProperty("message", "Product creation failed!");
+        } finally {
+            session.close();
+        }
+
+        return AppUtil.GSON.toJson(response);
+    }
+
+    private List<String> saveImages(List<FormDataBodyPart> imageParts) {
+
+        List<String> fileNames = new ArrayList<>();
+
+        if (imageParts == null || imageParts.isEmpty()) return fileNames;
+
+        String uploadPath = "C:/Users/DELL/IdeaProjects/WEB 2/FlexZone/src/main/webapp/assets/images/productImg/";
+
+        try {
+
+            File dir = new File(uploadPath);
+            if (!dir.exists()) dir.mkdirs();
+
+            for (FormDataBodyPart part : imageParts) {
+
+                InputStream inputStream = part.getValueAs(InputStream.class);
+
+                String originalName = part.getContentDisposition().getFileName();
+
+                String fileName = System.currentTimeMillis() + "_" + originalName;
+
+                File file = new File(uploadPath, fileName);
+
+                Files.copy(inputStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+                fileNames.add(fileName);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return fileNames;
+    }
+
 }

@@ -67,7 +67,7 @@ function renderTableBody(products) {
 
 function buildProductRow(p) {
     const image = p.image
-        ? `assets/images/${p.image}`
+        ? `assets/images/productImg/${p.image}`
         : "assets/images/default.png";
 
     // Price display
@@ -96,7 +96,7 @@ function buildProductRow(p) {
 
     return `
     <tr data-product-id="${p.id}">
-        <td class="users-meta">#${p.id}</td>
+        <td class="users-meta">${p.id}</td>
         <td>
             <div class="users-user">
                 <div class="users-avatar-wrap">

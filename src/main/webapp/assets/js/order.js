@@ -71,7 +71,7 @@ function buildOrderCard(order, index) {
 
     let productImgs = items.slice(0, 3).map(item => {
         const img = item.images && item.images.length > 0
-            ? "assets/images/" + item.images[0]
+            ? "assets/images/productImg/" + item.images[0]
             : "assets/images/default.png";
         return `<img src="${img}" alt="${item.productTitle}" loading="lazy"
                      title="${item.productTitle}"
@@ -105,7 +105,7 @@ function buildOrderCard(order, index) {
     //Items
     const itemRows = items.map(item => {
         const img = item.images && item.images.length > 0
-            ? "assets/images/" + item.images[0]
+            ? "assets/images/productImg/" + item.images[0]
             : "assets/images/default.png";
         return `
         <div class="item" style="display:flex;align-items:center;gap:14px;

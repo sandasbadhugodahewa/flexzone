@@ -141,7 +141,7 @@ function renderCartTable(cartItems) {
 
     cartItems.forEach(cart => {
         const image = cart.images && cart.images.length > 0
-            ? "assets/images/" + cart.images[0]
+            ? "assets/images/productImg/" + cart.images[0]
             : "assets/images/default.png";
 
         const subtotal = (cart.price * cart.qty).toFixed(2);

@@ -18,8 +18,8 @@ public class Stock extends BaseEntity {
     @Column(nullable = false)
     private int quantity;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "discount_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "discount_id", nullable = true)
     private Discount discount;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)

@@ -42,7 +42,6 @@
 <main class="main">
     <div class="main-content page-users">
 
-        <!-- Page Header -->
         <div class="page-header">
             <div>
                 <h1 class="page-title">Add New Product</h1>
@@ -62,10 +61,9 @@
             </div>
         </div>
 
-        <!-- ── Main Grid ── -->
+        <!-- ── Main ── -->
         <div class="row g-4">
 
-            <!-- ══════════════════════ LEFT COLUMN ══════════════════════ -->
             <div class="col-xl-8">
 
                 <!-- Basic Info -->
@@ -90,7 +88,7 @@
                                 <label class="form-label">Product Title <span class="ap-req">*</span></label>
                                 <input type="text" class="form-control" id="titleInput"
                                        placeholder="e.g. Men Oversize T-Shirt Pink">
-                                <p class="ap-hint">Use a clear, descriptive title. Include size, color or style if needed.</p>
+                                <p class="ap-hint">Only 27 Characters With Space. Use a clear, descriptive title. Include size, color or style if needed.</p>
                             </div>
 
                             <!-- Description -->
@@ -142,6 +140,11 @@
                                 <label class="form-label">Fit Type <span class="ap-hint">(Don't select if there is no fit type)</span></label>
                                 <select class="form-select" id="fitTypeSelect">
                                     <option value="">Select Fit Type...</option>
+                                    <option>Slim Fit</option>
+                                    <option>Regular Fit</option>
+                                    <option>Oversized Fit</option>
+                                    <option>Skinny Fit</option>
+                                    <option>Loose Fit</option>
                                 </select>
                             </div>
 
@@ -154,33 +157,50 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Fabric <span class="ap-hint">(Optional)</span></label>
-                                <select class="form-select" id="4">
+                                <select class="form-select" id="fabricSelect">
                                     <option value="">Select fabric...</option>
-                                    <option value="">100% Cotton / Polyester Blend.</option>
+                                    <option>Cotton Knit</option>
+                                    <option>Jersey</option>
+                                    <option>Rib Knit</option>
+                                    <option>Velvet</option>
+                                    <option>Denim</option>
+                                    <option>Satin</option>
+                                    <option>Canvas</option>
+                                    <option>Poplin</option>
+                                    <option>Wool Knit</option>
                                 </select>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Material Type <span class="ap-hint">(Optional)</span></label>
-                                <select class="form-select" id="5">
+                                <select class="form-select" id="materialSelect">
                                     <option value="">Select material Type...</option>
-                                    <option value="">Soft Knit / Denim / Linen</option>
+                                    <option>100% Cotton</option>
+                                    <option>Cotton Blend</option>
+                                    <option>Polyester</option>
+                                    <option>Polyester Blend</option>
+                                    <option>Cotton Polyester Blend</option>
+                                    <option>Silk</option>
+                                    <option>Linen</option>
+                                    <option>Denim Cotton</option>
+                                    <option>Nylon</option>
+                                    <option>Leather</option>
                                 </select>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Stretchability <span class="ap-hint">(Optional)</span></label>
-                                <select class="form-select" id="1">
+                                <select class="form-select" id="stretchSelect">
                                     <option value="">Select stretchability...</option>
-                                    <option value="">Stretchable</option>
-                                    <option value="">Non-Stretch</option>
+                                    <option>Stretchable</option>
+                                    <option>Non-Stretch</option>
                                 </select>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Thickness <span class="ap-hint">(Optional)</span></label>
-                                <select class="form-select" id="2">
+                                <select class="form-select" id="thicknessSelect">
                                     <option value="">Select thickness...</option>
-                                    <option value="">Lightweight</option>
-                                    <option value="">Medium</option>
-                                    <option value="">Heavy</option>
+                                    <option>Lightweight</option>
+                                    <option>Medium</option>
+                                    <option>Heavy</option>
                                 </select>
                             </div>
 
@@ -194,33 +214,53 @@
 
                             <div class="col-md-6">
                                 <label class="form-label">Chest Size <span class="ap-hint">(Optional)</span></label>
-                                <select class="form-select" id="chestSize">
+                                <select class="form-select" id="chestSizeSelect">
                                     <option value="">Select Chest Size...</option>
-                                    <option value="">38" - 44"</option>
+                                    <option>32"-34"</option>
+                                    <option>34"-36"</option>
+                                    <option>38"-40"</option>
+                                    <option>42"-44"</option>
+                                    <option>46"-48"</option>
+                                    <option>50"-52"</option>
+                                    <option>54"+</option>
+
                                 </select>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Waist size <span class="ap-hint">(Optional)</span></label>
-                                <select class="form-select" id="waistSize">
+                                <select class="form-select" id="waistSizeSelect">
                                     <option value="">Select Waist size...</option>
-                                    <option value="">38" - 44"</option>
+                                    <option>26"–28"</option>
+                                    <option>28"–30"</option>
+                                    <option>30"–32"</option>
+                                    <option>32"–34"</option>
+                                    <option>36"–38"</option>
+                                    <option>40"–42"</option>
+                                    <option>44"+</option>
                                 </select>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Neck Type <span class="ap-hint">(Optional)</span></label>
-                                <select class="form-select" id="neckSize">
+                                <select class="form-select" id="neckTypeSelect">
                                     <option value="">Select Neck Type...</option>
-                                    <option value="">Round Neck / Polo</option>
-                                    <option value="">V-Neck</option>
+                                    <option>Round Neck</option>
+                                    <option>Crew Neck</option>
+                                    <option>Polo Collar</option>
+                                    <option>Mandarin Collar</option>
+                                    <option>V-Neck</option>
+                                    <option>Button-Down Collar</option>
                                 </select>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Pattern <span class="ap-hint">(Optional)</span></label>
-                                <select class="form-select" id="pattern">
+                                <select class="form-select" id="patternSelect">
                                     <option value="">Select Pattern...</option>
-                                    <option value="">Solid / Printed / Striped</option>
-                                    <option value="">XL</option>
-                                    <option value="">S</option>
+                                    <option>Solid</option>
+                                    <option>Printed</option>
+                                    <option>Striped</option>
+                                    <option>Checked</option>
+                                    <option>Textured</option>
+                                    <option>Graphic Print</option>
                                 </select>
                             </div>
 
@@ -234,26 +274,26 @@
 
                             <div class="col-md-6">
                                 <label class="form-label">Season <span class="ap-hint">(Optional)</span></label>
-                                <select class="form-select" id="2">
+                                <select class="form-select" id="seasonSelect">
                                     <option value="">Select Season...</option>
-                                    <option value="">Summer</option>
-                                    <option value="">Winter</option>
-                                    <option value="">All-season</option>
+                                    <option>Summer</option>
+                                    <option>Winter</option>
+                                    <option>All-season</option>
                                 </select>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Washing <span class="ap-hint">(Optional)</span></label>
-                                <input type="text" class="form-control" id="titleInput"
+                                <input type="text" class="form-control" id="washingInput"
                                        placeholder="e.g. Use mild detergent only">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Ironing <span class="ap-hint">(Optional)</span></label>
-                                <input type="text" class="form-control" id="titleInput"
+                                <input type="text" class="form-control" id="ironingInput"
                                        placeholder="e.g. Do not tumble dry">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Special Care <span class="ap-hint">(Optional)</span></label>
-                                <input type="text" class="form-control" id="titleInput"
+                                <input type="text" class="form-control" id="specialCareInput"
                                        placeholder="e.g. Do not wring excessively">
                             </div>
 
@@ -448,7 +488,7 @@
 <script src="assets/js/notiflix-aio-3.2.8.min.js"></script>
 <script src="assets/js/auth.js"></script>
 <script src="https://bootstrapmade.com/content/demo/EliteAdmin/assets/js/apps-sidebar-toggle.js"></script>
-<script src="assets/js/admin-add-product.js"></script>
+<script src="assets/js/admin/admin-add-product.js"></script>
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516"
         integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg=="
         data-cf-beacon='{"version":"2024.11.0","token":"68c5ca450bae485a842ff76066d69420","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}'

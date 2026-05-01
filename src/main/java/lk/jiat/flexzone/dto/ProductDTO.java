@@ -2,6 +2,7 @@ package lk.jiat.flexzone.dto;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 public class ProductDTO implements Serializable {
 
@@ -22,8 +23,10 @@ public class ProductDTO implements Serializable {
     private String genderName;
     private double price;
     private int quantity;
+    private String status;
     private List<StockDTO> stockDTOList;
     private List<String> images;
+    private Map<String, Object> productDetails;
 
     public ProductDTO() {
 
@@ -179,5 +182,21 @@ public class ProductDTO implements Serializable {
 
     public void setImages(List<String> images) {
         this.images = images;
+    }
+
+    public Map<String, Object> getProductDetails() {
+        return productDetails;
+    }
+
+    public void setProductDetails(Map<String, Object> productDetails) {
+        this.productDetails = productDetails;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

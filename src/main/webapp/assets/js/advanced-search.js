@@ -323,11 +323,11 @@ function renderProducts(products) {
 
 function buildProductCard(p, index) {
     const image = p.images && p.images.length > 0
-        ? "assets/images/" + p.images[0]
+        ? "assets/images/productImg/" + p.images[0]
         : "assets/images/default.png";
 
     const image2 = p.images && p.images.length > 1
-        ? "assets/images/" + p.images[1]
+        ? "assets/images/productImg/" + p.images[1]
         : image;
 
     const discountAmount = p.price * (DISCOUNT_PERCENT / 100);

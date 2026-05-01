@@ -15,11 +15,11 @@ async function loadProducts() {
                 data.products.forEach(product => {
 
                     let image1 = product.images && product.images.length > 0
-                        ? "assets/images/" + product.images[0]
+                        ? "assets/images/productImg/" + product.images[0]
                         : "assets/images/default.png";
 
                     let image2 = product.images && product.images.length > 1
-                        ? "assets/images/" + product.images[1]
+                        ? "assets/images/productImg/" + product.images[1]
                         : "assets/images/default.png";
 
                     const discountAmount = product.price * (DISCOUNT_PERCENT / 100);
@@ -138,7 +138,7 @@ async function loadProductsDetails() {
 
 function renderImages(images) {
     const firstImage = images && images.length > 0
-        ? "assets/images/" + images[0]
+        ? "assets/images/productImg/" + images[0]
         : "assets/images/default.png";
 
     // Main image
@@ -154,7 +154,7 @@ function renderImages(images) {
     const imgList = (images && images.length > 0) ? images : ["default.png"];
 
     imgList.forEach((imgFile, index) => {
-        const imgPath = "assets/images/" + imgFile;
+        const imgPath = "assets/images/productImg/" + imgFile;
         const slide = `
             <div class="swiper-slide thumbnail-item ${index === 0 ? 'active' : ''}"
                  data-image="${imgPath}"

@@ -70,7 +70,7 @@ function renderInvoice(order) {
 
     order.items.forEach((item, index) => {
         const image    = item.images && item.images.length > 0
-            ? "assets/images/" + item.images[0]
+            ? "assets/images/productImg/" + item.images[0]
             : "assets/images/default.png";
         const itemTotal = item.price * item.qty;
         subtotal += itemTotal;

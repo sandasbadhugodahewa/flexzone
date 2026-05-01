@@ -7,6 +7,10 @@ import jakarta.ws.rs.core.Response;
 import lk.jiat.flexzone.annotation.IsAdmin;
 import lk.jiat.flexzone.service.AdminProductService;
 import lk.jiat.flexzone.util.AppUtil;
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
+import org.glassfish.jersey.media.multipart.FormDataParam;
+
+import java.util.List;
 
 @IsAdmin
 @Path("/admin/products")
@@ -14,7 +18,7 @@ public class AdminProductController {
 
     private final AdminProductService service = new AdminProductService();
 
-    // ── LIST products: filter + search + page ──
+    //products list
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getProductList(
@@ -24,7 +28,7 @@ public class AdminProductController {
         return Response.ok(service.getProductList(filter, search, page)).build();
     }
 
-    // ── GET single product for view/edit page ──
+    //Get single product for view/edit page
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -32,7 +36,7 @@ public class AdminProductController {
         return Response.ok(service.getSingleProduct(productId)).build();
     }
 
-    // ── GET dropdown form data (categories, brands, colors, etc.) ──
+    //get dropdown form data
     @GET
     @Path("/form-data")
     @Produces(MediaType.APPLICATION_JSON)
@@ -40,7 +44,7 @@ public class AdminProductController {
         return Response.ok(service.getFormData()).build();
     }
 
-    // ── UPDATE product status ──
+    //status update
     @PUT
     @Path("/{id}/status")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -51,11 +55,22 @@ public class AdminProductController {
         return Response.ok(service.updateStatus(productId, newStatus)).build();
     }
 
-    // ── DELETE product (soft delete) ──
+    //delete product
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteProduct(@PathParam("id") int productId) {
         return Response.ok(service.deleteProduct(productId)).build();
+    }
+
+    //add product
+    @POST
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response createProduct(
+            @FormDataParam("product") String productJson,
+            @FormDataParam("images") List<FormDataBodyPart> images
+    ) {
+        return Response.ok(service.createProduct(productJson, images)).build();
     }
 }
