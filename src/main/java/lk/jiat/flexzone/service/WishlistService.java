@@ -134,7 +134,7 @@ public class WishlistService {
 
                     String image = "assets/images/default.png";
                     if (product.getImages() != null && !product.getImages().isEmpty()) {
-                        image = "assets/images/" + product.getImages().get(0);
+                        image = "assets/images/productImg/" + product.getImages().get(0);
                     }
                     itemJson.addProperty("image", image);
 

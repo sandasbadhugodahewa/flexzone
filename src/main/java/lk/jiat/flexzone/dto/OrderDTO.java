@@ -19,6 +19,7 @@ public class OrderDTO {
     private String postalCode;
     private String mobile;
     private String province;
+    private String deliveryStatus;
     private List<OrderItemDTO> items;
 
     public OrderDTO() {
@@ -151,5 +152,13 @@ public class OrderDTO {
 
     public void setItems(List<OrderItemDTO> items) {
         this.items = items;
+    }
+
+    public String getDeliveryStatus() {
+        return deliveryStatus;
+    }
+
+    public void setDeliveryStatus(String deliveryStatus) {
+        this.deliveryStatus = deliveryStatus;
     }
 }

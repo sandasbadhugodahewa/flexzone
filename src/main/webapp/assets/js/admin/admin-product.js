@@ -145,7 +145,7 @@ function buildProductRow(p) {
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li>
                             <a class="dropdown-item"
-                               href="admin-add-product.html?productId=${p.id}">
+                               href="admin-edit-product.html?productId=${p.id}">
                                 <i class="bi bi-pencil me-2"></i>Edit
                             </a>
                         </li>

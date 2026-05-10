@@ -32,11 +32,17 @@ public class OrderService {
                 return;
             }
 
-            Status completeStatus = hibernateSession
+            Status paidStatus = hibernateSession
                     .createNamedQuery("Status.findByValue", Status.class)
-                    .setParameter("value", Status.Type.COMPLETED.name())
+                    .setParameter("value", Status.Type.PAID.name())
                     .getSingleResult();
-            order.setStatus(completeStatus);
+            order.setStatus(paidStatus);
+
+            DeliveryStatus approvedStatus =hibernateSession
+                    .createNamedQuery("DeliveryStatus.findByValue", DeliveryStatus.class)
+                    .setParameter("value", DeliveryStatus.Type.APPROVED.name())
+                    .getSingleResult();
+            order.setDeliveryStatus(approvedStatus);
             hibernateSession.merge(order);
 
             // decrease stock
@@ -83,6 +89,7 @@ public class OrderService {
                     .setParameter("value", Status.Type.BLOCKED.name())
                     .getSingleResult();
             order.setStatus(blockedStatus);
+            order.setDeliveryStatus(null);
             hibernateSession.merge(order);
             transaction.commit();
             System.out.println("failedOrder: " + payHereOrderId + " → BLOCKED.");
@@ -130,11 +137,24 @@ public class OrderService {
                 return AppUtil.GSON.toJson(responseObject);
             }
 
-            String orderStatus = order.getStatus().getValue();
+//            String orderStatus = order.getStatus().getValue();
+//
+//            if (orderStatus.equalsIgnoreCase("PENDING") || orderStatus.equalsIgnoreCase("CANCELED")) {
+//                responseObject.addProperty("status", false);
+//                responseObject.addProperty("message", "Invoice not available for this order yet!");
+//                return AppUtil.GSON.toJson(responseObject);
+//            }
 
-            if (orderStatus.equalsIgnoreCase("PENDING") || orderStatus.equalsIgnoreCase("CANCELED")) {
+            // In getInvoiceData() — replace the status check:
+            String paymentStatus  = order.getStatus() != null
+                    ? order.getStatus().getValue() : "";
+            String deliveryStatus = order.getDeliveryStatus() != null
+                    ? order.getDeliveryStatus().getStatus() : "";
+
+// Invoice only available if payment is PAID
+            if (!paymentStatus.equalsIgnoreCase("PAID")) {
                 responseObject.addProperty("status", false);
-                responseObject.addProperty("message", "Invoice not available for this order yet!");
+                responseObject.addProperty("message", "Invoice not available. Payment not completed.");
                 return AppUtil.GSON.toJson(responseObject);
             }
 
@@ -147,6 +167,8 @@ public class OrderService {
             dto.setDeliveryType(order.getDeliveryType().getName());
             dto.setDeliveryPrice(order.getDeliveryType().getPrice());
             dto.setTotal(order.getTotal());
+            dto.setStatus(paymentStatus);             // PAID / PENDING / BLOCKED
+            dto.setDeliveryStatus(deliveryStatus);    // APPROVED / PACKING / SHIPPED etc.
 
             User u = order.getUser();
             dto.setFirstName(u.getFirstName());
@@ -246,7 +268,11 @@ public class OrderService {
                 dto.setOrderId(order.getOrderId());
                 dto.setCreatedAt(order.getCreatedAt().format(
                         DateTimeFormatter.ofPattern("dd MMM yyyy, hh:mm a")));
-                dto.setStatus(order.getStatus().getValue());
+//                dto.setStatus(order.getStatus().getValue());
+                dto.setStatus(
+                        order.getStatus() != null ? order.getStatus().getValue() : "");
+                dto.setDeliveryStatus(
+                        order.getDeliveryStatus() != null ? order.getDeliveryStatus().getStatus() : "");
                 dto.setDeliveryType(order.getDeliveryType().getName());
                 dto.setDeliveryPrice(order.getDeliveryType().getPrice());
                 dto.setTotal(order.getTotal());

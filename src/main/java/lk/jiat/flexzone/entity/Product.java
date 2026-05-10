@@ -13,7 +13,7 @@ public class Product extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(length = 200, nullable = false)
+    @Column(length = 35, nullable = false)
     private String title;
 
     @Column(nullable = false, columnDefinition = "TEXT")
@@ -49,15 +49,18 @@ public class Product extends BaseEntity {
     @OneToMany(mappedBy = "product")
     private Set<Stock> stocks = new HashSet<>();
 
-//    @Column(name="images")
-//    @CollectionTable(name = "product_images",joinColumns = @JoinColumn(name = "pr_id"))
-//    @ElementCollection(fetch = FetchType.EAGER)
-//    private List<String> images;
-
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "pr_id"))
+    @CollectionTable(
+            name = "product_images",
+            joinColumns = @JoinColumn(name = "pr_id", referencedColumnName = "id")
+    )
     @Column(name = "images")
     private List<String> images = new ArrayList<>();
+
+//    @ElementCollection(fetch = FetchType.EAGER)
+//    @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "pr_id"))
+//    @Column(name = "images")
+//    private List<String> images = new ArrayList<>();
 
 
     public List<String> getImages() {

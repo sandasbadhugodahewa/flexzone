@@ -304,9 +304,6 @@ async function runSearch() {
     }
 }
 
-// ─────────────────────────────────────────────
-//  RENDER PRODUCTS
-// ─────────────────────────────────────────────
 function renderProducts(products) {
     const grid = document.getElementById("asProductGrid");
     document.getElementById("asProductCount").textContent = asTotalCount;

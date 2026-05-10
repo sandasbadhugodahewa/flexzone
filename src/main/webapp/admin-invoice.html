@@ -9,11 +9,13 @@
     <meta name="keywords" content="admin, dashboard">
 
     <link href="assets/images/logo/favicon.ico" rel="icon">
-    <link href="https://bootstrapmade.com/content/demo/EliteAdmin/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+    <link href="https://bootstrapmade.com/content/demo/EliteAdmin/assets/img/apple-touch-icon.png"
+          rel="apple-touch-icon">
 
     <link rel="preconnect" href="https://fonts.googleapis.com/">
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&amp;display=swap"
+          rel="stylesheet">
 
     <link href="assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="assets/css/bootstrap-icons.css" rel="stylesheet">
@@ -54,32 +56,50 @@
             <div>
                 <h1 class="page-title">Invoice #INV-2024-001</h1>
                 <nav class="breadcrumb">
-                    <a href="https://bootstrapmade.com/content/demo/EliteAdmin/index.html" class="breadcrumb-item">Home</a>
-                    <a href="https://bootstrapmade.com/content/demo/EliteAdmin/invoice-list.html" class="breadcrumb-item">Invoices</a>
+                    <a href="admin-dashboard.html"
+                       class="breadcrumb-item">Home</a>
+                    <a href="admin-invoice-list.html"
+                       class="breadcrumb-item">Invoices</a>
                     <span class="breadcrumb-item active">INV-2024-001</span>
                 </nav>
             </div>
             <div class="page-header-actions">
-                <button class="btn btn-outline-secondary"><i class="bi bi-send me-1"></i> Send</button>
-                <button class="btn btn-outline-secondary" onclick="window.print()"><i class="bi bi-printer me-1"></i> Print</button>
-                <button class="btn btn-primary"><i class="bi bi-download me-1"></i> Download PDF</button>
+                <select class="inv-filter" id="deliverySelect">
+                    <option value="">Select Delivery Status</option>
+                    <option value="APPROVED">Approved</option>
+                    <option value="PACKING">Packing</option>
+                    <option value="SHIPPED">Shipped</option>
+                    <option value="DELIVERED">Delivered</option>
+                    <option value="COMPLETED">Completed</option>
+                    <option value="CANCELED">Canceled</option>
+                </select>
+                <button class="btn btn-outline-secondary" onclick="printInvoice()">
+                    <i class="bi bi-printer me-1"></i> Print
+                </button>
+                <button class="btn btn-primary" onclick="downloadInvoicePDF()">
+                    <i class="bi bi-download me-1"></i> Download PDF
+                </button>
             </div>
         </div>
 
         <div class="row g-4">
-            <!-- Main Invoice -->
+
+            <!-- ── LEFT: Invoice Document ── -->
             <div class="col-lg-8">
-                <div class="card invoice-card">
+                <div class="card invoice-card" id="printArea">
                     <div class="card-body">
+
                         <!-- Header -->
                         <div class="invoice-header">
                             <div class="invoice-logo">
-                                <img src="https://bootstrapmade.com/content/demo/EliteAdmin/assets/img/logo.webp" alt="EliteAdmin">
-                                <span class="inv-company-name">EliteAdmin</span>
+                        <span style="font-size:22px;font-weight:800;
+                                     color:var(--accent-color);letter-spacing:-1px;">
+                            fle<span style="color:var(--heading-color);">X</span>Zone
+                        </span>
                             </div>
                             <div class="invoice-title">
                                 <h2>INVOICE</h2>
-                                <div class="invoice-number">#INV-2024-001</div>
+                                <div class="invoice-number" id="invoiceNumber">—</div>
                             </div>
                         </div>
 
@@ -88,37 +108,42 @@
                             <div class="row">
                                 <div class="col-sm-6 mb-4">
                                     <div class="inv-label">From</div>
-                                    <div class="inv-addr-name">EliteAdmin</div>
+                                    <div class="inv-addr-name">fleXZone</div>
                                     <div class="inv-addr-detail">
-                                        123 Business Street<br>
-                                        New York, NY 10001<br>
-                                        United States<br>
-                                        <a href="https://bootstrapmade.com/cdn-cgi/l/email-protection#7113181d1d181f16311409101c011d145f121e1c"><span class="__cf_email__" data-cfemail="87e5eeebebeee9e0c7e2ffe6eaf7ebe2a9e4e8ea">[email&#160;protected]</span></a>
+                                        Sri Lanka<br>
+                                        flexzone.info@gmail.com<br>
+                                        +94 75 316 6931
                                     </div>
                                 </div>
                                 <div class="col-sm-6 mb-4">
                                     <div class="inv-label">Bill To</div>
-                                    <div class="inv-addr-name">Acme Corporation</div>
+                                    <div class="inv-addr-name" id="clientName">—</div>
                                     <div class="inv-addr-detail">
-                                        456 Client Avenue<br>
-                                        San Francisco, CA 94102<br>
-                                        United States<br>
-                                        <a href="https://bootstrapmade.com/cdn-cgi/l/email-protection#c3a2a0a0acb6adb7b083a2a0aea6eda0acae"><span class="__cf_email__" data-cfemail="38595b5b574d564c4b78595b555d165b5755">[email&#160;protected]</span></a>
+                                        <span id="clientAddr">—</span><br>
+                                        <a href="#" id="clientEmail">—</a><br>
+                                        <span id="clientPhone">—</span>
                                     </div>
                                 </div>
                             </div>
                             <div class="inv-meta-row">
                                 <div class="inv-meta-item">
                                     <span class="inv-label">Invoice Date</span>
-                                    <span class="inv-meta-value">January 15, 2024</span>
+                                    <span class="inv-meta-value" id="invoiceDate">—</span>
                                 </div>
                                 <div class="inv-meta-item">
-                                    <span class="inv-label">Due Date</span>
-                                    <span class="inv-meta-value">February 14, 2024</span>
+                                    <span class="inv-label">Last Updated</span>
+                                    <span class="inv-meta-value" id="invoiceUpdated">—</span>
                                 </div>
                                 <div class="inv-meta-item">
-                                    <span class="inv-label">Status</span>
-                                    <span class="inv-status paid">Paid</span>
+                                    <span class="inv-label">Payment</span>
+                                    <!-- big payment badge rendered here by JS -->
+                                    <span id="paymentStatusBadge" class="payment-badge-large pending">
+                                <i class="bi bi-clock-fill"></i> Pending
+                            </span>
+                                </div>
+                                <div class="inv-meta-item">
+                                    <span class="inv-label">Delivery Method</span>
+                                    <span class="inv-meta-value" id="deliveryTypeName">—</span>
                                 </div>
                             </div>
                         </div>
@@ -129,94 +154,65 @@
                                 <table class="table">
                                     <thead>
                                     <tr>
-                                        <th style="width: 50%;">Description</th>
+                                        <th style="width:50%;">Product</th>
                                         <th class="text-center">Qty</th>
                                         <th class="text-end">Unit Price</th>
                                         <th class="text-end">Amount</th>
                                     </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody id="invoiceItemsBody">
                                     <tr>
-                                        <td>
-                                            <div class="inv-item-name">Website Design & Development</div>
-                                            <div class="inv-item-desc">Custom responsive website with CMS integration</div>
+                                        <td colspan="4" class="text-center py-4" style="color:#9ca3af;">
+                                            Loading items...
                                         </td>
-                                        <td class="text-center">1</td>
-                                        <td class="text-end">$3,500.00</td>
-                                        <td class="text-end inv-amount">$3,500.00</td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="inv-item-name">Logo Design</div>
-                                            <div class="inv-item-desc">Brand identity package with multiple variations</div>
-                                        </td>
-                                        <td class="text-center">1</td>
-                                        <td class="text-end">$800.00</td>
-                                        <td class="text-end inv-amount">$800.00</td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="inv-item-name">SEO Optimization</div>
-                                            <div class="inv-item-desc">On-page SEO setup and configuration</div>
-                                        </td>
-                                        <td class="text-center">1</td>
-                                        <td class="text-end">$500.00</td>
-                                        <td class="text-end inv-amount">$500.00</td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="inv-item-name">Maintenance & Support</div>
-                                            <div class="inv-item-desc">Monthly maintenance package (3 months)</div>
-                                        </td>
-                                        <td class="text-center">3</td>
-                                        <td class="text-end">$150.00</td>
-                                        <td class="text-end inv-amount">$450.00</td>
                                     </tr>
                                     </tbody>
                                 </table>
                             </div>
-                        </div>
 
-                        <!-- Summary -->
-                        <div class="invoice-summary">
-                            <div class="row justify-content-end">
-                                <div class="col-sm-5">
-                                    <table class="table table-sm table-borderless">
-                                        <tbody>
-                                        <tr>
-                                            <td class="inv-summary-label">Subtotal</td>
-                                            <td class="text-end">$5,250.00</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="inv-summary-label">Discount (10%)</td>
-                                            <td class="text-end" style="color: var(--danger-color);">-$525.00</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="inv-summary-label">Tax (8%)</td>
-                                            <td class="text-end">$378.00</td>
-                                        </tr>
-                                        <tr class="border-top">
-                                            <td class="inv-summary-total">Total</td>
-                                            <td class="text-end inv-summary-total">$5,103.00</td>
-                                        </tr>
-                                        <tr>
-                                            <td class="inv-summary-label">Amount Paid</td>
-                                            <td class="text-end" style="color: var(--success-color);">-$5,103.00</td>
-                                        </tr>
-                                        <tr class="border-top">
-                                            <td class="inv-balance-label">Balance Due</td>
-                                            <td class="text-end inv-balance-label">$0.00</td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
+                            <div class="invoice-summary">
+                                <div class="row justify-content-end">
+                                    <div class="col-sm-5">
+                                        <table class="table table-sm table-borderless">
+                                            <tbody>
+                                            <tr>
+                                                <td class="inv-summary-label">Subtotal</td>
+                                                <td class="text-end" id="invSubtotal">-</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="inv-summary-label">Delivery</td>
+                                                <td class="text-end" id="invDelivery">-</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="inv-summary-label">Tax (8%)</td>
+                                                <td class="text-end" id="invTax">-</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="inv-summary-label">Discount</td>
+                                                <td class="text-end" style="color: var(--danger-color);">(-)</td>
+                                            </tr>
+                                            <tr class="border-top">
+                                                <td class="inv-summary-total">Total</td>
+                                                <td class="text-end inv-summary-total" id="invTotal1">-</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="inv-summary-label">Amount Paid</td>
+                                                <td class="text-end" id="invTotal2" style="color: var(--success-color);">-
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
+
                         </div>
 
                         <!-- Notes -->
                         <div class="invoice-notes">
                             <div class="inv-label">Notes</div>
-                            <p class="inv-notes-text">Thank you for your business! Payment was received on January 20, 2024. If you have any questions about this invoice, please contact our billing department.</p>
+                            <p class="inv-notes-text">Thank you for your business! If you have any questions about this invoice, please contact our billing
+                                department.</p>
                         </div>
 
                         <!-- Footer -->
@@ -224,99 +220,77 @@
                             <div class="row">
                                 <div class="col-sm-4 text-center mb-3 mb-sm-0">
                                     <i class="bi bi-telephone"></i>
-                                    <div class="inv-footer-text">+1 (555) 123-4567</div>
+                                    <div class="inv-footer-text">+94 75 316 6931</div>
                                 </div>
                                 <div class="col-sm-4 text-center mb-3 mb-sm-0">
                                     <i class="bi bi-envelope"></i>
-                                    <div class="inv-footer-text"><a href="https://bootstrapmade.com/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2e4c4742424740496e4b564f435e424b004d4143">[email&#160;protected]</a></div>
+                                    <div class="inv-footer-text"><a
+                                            href="https://bootstrapmade.com/cdn-cgi/l/email-protection"
+                                            class="__cf_email__"
+                                            data-cfemail="2e4c4742424740496e4b564f435e424b004d4143">[email&#160;protected]</a>
+                                    </div>
                                 </div>
                                 <div class="col-sm-4 text-center">
                                     <i class="bi bi-globe"></i>
-                                    <div class="inv-footer-text">www.example.com</div>
+                                    <div class="inv-footer-text">www.flexzone.com</div>
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
 
-            <!-- Sidebar -->
+            <!-- ── RIGHT: Sidebar ── -->
             <div class="col-lg-4">
-                <!-- Payment Info -->
-                <div class="card">
+
+                <!-- Delivery Timeline -->
+                <div class="card mb-4">
                     <div class="card-header">
-                        <h5 class="card-title mb-0">Payment Information</h5>
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-truck me-2" style="color:var(--accent-color);"></i>
+                            Delivery Progress
+                        </h5>
                     </div>
-                    <div class="card-body p-0">
-                        <div class="inv-detail-list">
-                            <div class="inv-detail-row">
-                                <span class="inv-detail-label">Payment Method</span>
-                                <span class="inv-detail-value">Credit Card</span>
-                            </div>
-                            <div class="inv-detail-row">
-                                <span class="inv-detail-label">Card Number</span>
-                                <span class="inv-detail-value">**** **** **** 4242</span>
-                            </div>
-                            <div class="inv-detail-row">
-                                <span class="inv-detail-label">Payment Date</span>
-                                <span class="inv-detail-value">Jan 20, 2024</span>
-                            </div>
-                            <div class="inv-detail-row">
-                                <span class="inv-detail-label">Transaction ID</span>
-                                <span class="inv-detail-value" style="font-size: 0.8125rem;">TXN-8472619</span>
-                            </div>
+                    <div class="card-body">
+                        <div class="delivery-timeline" id="deliveryTimeline">
+                            <div style="color:#9ca3af;font-size:13px;">Loading...</div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Client Card -->
-                <div class="card">
+                <div class="card mb-4">
                     <div class="card-header">
-                        <h5 class="card-title mb-0">Client</h5>
+                        <h5 class="card-title mb-0">Customer</h5>
                     </div>
                     <div class="card-body">
                         <div class="inv-client-card">
-                            <span class="inv-client-avatar" style="width: 48px; height: 48px; font-size: 0.875rem; background: color-mix(in srgb, var(--accent-color), transparent 85%); color: var(--accent-color);">AC</span>
+                    <span class="inv-client-avatar" id="clientCardAvatar"
+                          style="width:48px;height:48px;font-size:15px;font-weight:700;
+                                 background:color-mix(in srgb,var(--accent-color),transparent 85%);
+                                 color:var(--accent-color);">
+                        —
+                    </span>
                             <div>
-                                <div class="inv-client-name">Acme Corporation</div>
-                                <div class="inv-client-email"><a href="https://bootstrapmade.com/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6a0b0909051f041e192a0b09070f44090507">[email&#160;protected]</a></div>
+                                <div class="inv-client-name" id="clientCardName">—</div>
+                                <div class="inv-client-email" id="clientCardEmail">—</div>
                             </div>
-                        </div>
-                        <div class="inv-client-actions">
-                            <a href="https://bootstrapmade.com/content/demo/EliteAdmin/users-view.html" class="btn btn-sm btn-outline-primary">View Profile</a>
-                            <a href="https://bootstrapmade.com/content/demo/EliteAdmin/invoice-list.html" class="btn btn-sm btn-outline-secondary">All Invoices</a>
                         </div>
                     </div>
                 </div>
 
-                <!-- Activity -->
+                <!-- Activity Log -->
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="card-title mb-0">Activity</h5>
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-clock-history me-2" style="color:var(--accent-color);"></i>
+                            Activity
+                        </h5>
                     </div>
                     <div class="card-body">
-                        <div class="inv-activity">
-                            <div class="inv-activity-item">
-                                <div class="inv-activity-dot" style="background: var(--success-color);"></div>
-                                <div class="inv-activity-content">
-                                    <div class="inv-activity-text">Payment received</div>
-                                    <div class="inv-activity-time">Jan 20, 2024 at 2:30 PM</div>
-                                </div>
-                            </div>
-                            <div class="inv-activity-item">
-                                <div class="inv-activity-dot" style="background: var(--accent-color);"></div>
-                                <div class="inv-activity-content">
-                                    <div class="inv-activity-text">Invoice sent to client</div>
-                                    <div class="inv-activity-time">Jan 15, 2024 at 10:15 AM</div>
-                                </div>
-                            </div>
-                            <div class="inv-activity-item">
-                                <div class="inv-activity-dot" style="background: var(--muted-color);"></div>
-                                <div class="inv-activity-content">
-                                    <div class="inv-activity-text">Invoice created</div>
-                                    <div class="inv-activity-time">Jan 15, 2024 at 9:00 AM</div>
-                                </div>
-                            </div>
+                        <div class="inv-activity" id="activityLog">
+                            <div style="color:#9ca3af;font-size:13px;">Loading...</div>
                         </div>
                     </div>
                 </div>
@@ -325,32 +299,28 @@
     </div>
 
 
-<!-- Footer -->
-<footer class="footer">
-    <div class="footer-content">
-        <div class="footer-links">
-            <a href="#">About</a>
-            <span class="footer-separator"></span>
-            <a href="#">Privacy</a>
-            <span class="footer-separator"></span>
-            <a href="#">Terms</a>
-            <span class="footer-separator"></span>
-            <a href="#">Contact</a>
-        </div>
-        <div class="footer-copyright">
-            &copy; 2026 <a href="#">EliteAdmin</a>
-        </div>
-        <div class="footer-copyright">
-            <div class="credits">
-                <!-- All the links in the footer should remain intact. -->
-                <!-- You can delete the links only if you purchased the pro version. -->
-                <!-- Licensing information: https://bootstrapmade.com/license/ -->
-                <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/elite-admin-bootstrap-admin-dashboard-template/ -->
-                Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="#">About</a>
+                <span class="footer-separator"></span>
+                <a href="#">Privacy</a>
+                <span class="footer-separator"></span>
+                <a href="#">Terms</a>
+                <span class="footer-separator"></span>
+                <a href="#">Contact</a>
+            </div>
+            <div class="footer-copyright">
+                &copy; 2026 <a href="#">FlexZone</a>
+            </div>
+            <div class="footer-copyright">
+                <div class="credits">
+                    Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+                </div>
             </div>
         </div>
-    </div>
-</footer>
+    </footer>
 </main>
 
 <!-- Back to Top -->
@@ -376,6 +346,7 @@
 <script src="https://bootstrapmade.com/content/demo/EliteAdmin/assets/js/main.js"></script>
 <script src="assets/js/notiflix-aio-3.2.8.min.js"></script>
 <script src="assets/js/auth.js"></script>
+<script src="assets/js/admin/admin-invoice-detail.js"></script>
 <script>
     window.addEventListener("load", checkAdmin);
 </script>

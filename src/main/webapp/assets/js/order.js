@@ -52,17 +52,49 @@ function renderOrderPage() {
 
 function buildOrderCard(order, index) {
 
-    const statusMap = {
-        "PENDING": {cls: "warning", icon: "bi-clock", label: "Pending", timelineStep: 0},
-        "COMPLETED": {cls: "success", icon: "bi-patch-check-fill", label: "Payment Completed", timelineStep: 1},
-        "APPROVED": {cls: "info", icon: "bi-check-circle", label: "Approved", timelineStep: 2},
-        "PACKING": {cls: "primary", icon: "bi-box-seam", label: "Packing", timelineStep: 3},
-        "RECEIVED": {cls: "primary", icon: "bi-truck", label: "In Transit", timelineStep: 4},
-        "DELIVERED": {cls: "success", icon: "bi-house-door", label: "Delivered", timelineStep: 5},
-        "CANCELED": {cls: "danger", icon: "bi-x-circle", label: "Cancelled", timelineStep: -1},
-        "BLOCKED": {cls: "danger", icon: "bi-slash-circle", label: "Failed", timelineStep: -1},
+    const paymentStatus = order.status;         // PAID / PENDING / BLOCKED
+    const deliveryStatus = order.deliveryStatus; // APPROVED / PACKING / SHIPPED etc.
+
+    const payMap = {
+        "PAID": {
+            cls: "badge-soft-success",
+            icon: "bi-check-circle-fill",
+            label: "Paid"
+        },
+
+        "PENDING": {
+            cls: "badge-soft-warning",
+            icon: "bi-clock-fill",
+            label: "Pending"
+        },
+
+        "BLOCKED": {
+            cls: "badge-soft-danger",
+            icon: "bi-x-circle-fill",
+            label: "Payment Failed"
+        }
     };
-    const s = statusMap[order.status] || {cls: "secondary", icon: "bi-clock", label: order.status, timelineStep: 0};
+
+    const pay = payMap[paymentStatus] || {
+        cls: "badge-soft-secondary",
+        icon: "bi-question-circle",
+        label: paymentStatus || "Unknown"
+    };
+
+    const deliveryMap = {
+        "APPROVED":  { icon: "bi-check-circle",     label: "Approved",  timelineStep: 1 },
+        "PACKING":   { icon: "bi-box-seam",         label: "Packing",   timelineStep: 2 },
+        "SHIPPED":   { icon: "bi-truck",            label: "Shipped",   timelineStep: 3 },
+        "DELIVERED": { icon: "bi-house-door",       label: "Delivered", timelineStep: 4 },
+        "COMPLETED": { icon: "bi-patch-check-fill", label: "Completed", timelineStep: 5 },
+        "CANCELED":  { icon: "bi-x-circle",         label: "Canceled",  timelineStep: -1 },
+    };
+
+    const delivery = deliveryMap[deliveryStatus] || {
+        icon: "bi-clock",
+        label: deliveryStatus || "Pending",
+        timelineStep: 0
+    };
 
     //Product images
     const items = order.items || [];
@@ -130,26 +162,27 @@ function buildOrderCard(order, index) {
 
     //Timeline
     const timelineSteps = [
-        {icon: "bi-bag-check", label: "Order Confirmed", desc: "Your order has been received"},
-        {icon: "bi-check-circle", label: "Approved", desc: "Order approved for processing"},
-        {icon: "bi-box-seam", label: "Packing", desc: "Items being packed for shipment"},
-        {icon: "bi-truck", label: "In Transit", desc: "Order is on its way"},
-        {icon: "bi-house-door", label: "Delivered", desc: "Delivered to your address"},
+        { icon: "bi-bag-check",         label: "Order Placed",   desc: "Your order has been received" },
+        { icon: "bi-check-circle",      label: "Approved",       desc: "Order approved for processing" },
+        { icon: "bi-box-seam",          label: "Packing",        desc: "Items being packed for shipment" },
+        { icon: "bi-truck",             label: "In Transit",     desc: "Order is on its way" },
+        { icon: "bi-house-door",        label: "Delivered",      desc: "Delivered to your address" },
+        { icon: "bi-patch-check-fill",  label: "Completed",      desc: "Order completed!" },
     ];
 
-    const isCancelled = s.timelineStep < 0;
+    const isCancelled = delivery.timelineStep < 0;
     const isPending = order.status === "PENDING";
     const showBuyNow = isCancelled || isPending;
-    const isDelivered = order.status === "DELIVERED";
+    const isDelivered = deliveryStatus === "COMPLETED";
 
     const timelineHtml = isCancelled
         ? `<div style="text-align:center;padding:20px;color:#dc3545;">
                <i class="bi bi-x-circle-fill" style="font-size:32px;"></i>
-               <p class="mt-2 mb-0 fw-semibold">This order was ${s.label.toLowerCase()}.</p>
+               <p class="mt-2 mb-0 fw-semibold">This order was ${delivery.label.toLowerCase()}.</p>
            </div>`
         : timelineSteps.map((step, i) => {
-            const isDone = i < s.timelineStep;
-            const isActive = i === s.timelineStep;
+            const isDone = i < delivery.timelineStep;
+            const isActive = i === delivery.timelineStep;
             const color = isDone ? "var(--accent-color)" : isActive ? "#198754" : "#dee2e6";
             const textCol = isDone || isActive ? "var(--heading-color)" : "#adb5bd";
             return `
@@ -195,11 +228,11 @@ function buildOrderCard(order, index) {
                 </div>
             </div>
             <div style="text-align:right;">
-                <span class="badge bg-${s.cls} bg-opacity-15 text-${s.cls}"
+                <span class="badge bg-${pay.cls} bg-opacity-15 text-${pay.cls}"
                       style="font-size:12px;font-weight:600;padding:5px 12px;border-radius:999px;
-                             background:color-mix(in srgb,var(--bs-${s.cls},#6c757d),transparent 85%) !important;
-                             color:var(--bs-${s.cls},#6c757d) !important;">
-                    <i class="bi ${s.icon} me-1"></i>${s.label}
+                             background:color-mix(in srgb,var(--bs-${pay.cls},#6c757d),transparent 85%) !important;
+                             color:var(--bs-${pay.cls},#6c757d) !important;">
+                    <i class="bi ${pay.icon} me-1"></i>${pay.label}
                 </span>
                 <div style="font-size:12px;color:#adb5bd;margin-top:4px;">${order.createdAt}</div>
             </div>
@@ -238,7 +271,7 @@ function buildOrderCard(order, index) {
                             Rs. ${order.total.toFixed(2)}
                         </div>
                     </div>
-                       ${showBuyNow ? ``: `
+                       ${showBuyNow ? `` : `
                     <div>
                           <div style="font-size:11px;font-weight:700;text-transform:uppercase;
                           letter-spacing:0.5px;color:var(--accent-color);margin-bottom:2px;"> Invoice
@@ -248,7 +281,7 @@ function buildOrderCard(order, index) {
                     <i class="bi bi-download me-1"></i>View
                     </a>
                 </div>`
-                  }
+    }
                 </div>
             </div>
         </div>

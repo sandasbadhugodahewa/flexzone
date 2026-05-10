@@ -182,6 +182,7 @@ public class AdminProductService {
                     p.getCreatedAt() != null ? p.getCreatedAt().format(FMT) : "—");
             pJson.addProperty("updatedAt",
                     p.getUpdatedAt() != null ? p.getUpdatedAt().format(FMT) : "—");
+            pJson.addProperty("product_details", p.getProductDetails() != null ? p.getProductDetails() : "");
 
             // Images array
             JsonArray imagesArray = new JsonArray();
@@ -422,6 +423,7 @@ public class AdminProductService {
         JsonObject response = new JsonObject();
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction tx = session.beginTransaction();
+        String message;
 
         try {
             ProductDTO dto = AppUtil.GSON.fromJson(productJson, ProductDTO.class);
@@ -444,8 +446,6 @@ public class AdminProductService {
             p.setBrand(session.find(Brand.class, dto.getBrandId()));
             p.setColor(session.find(Color.class, dto.getColorId()));
             p.setGender(session.find(Gender.class, dto.getGenderId()));
-
-            System.out.println("STATUS FROM DTO = " + dto.getStatus());
 
             Status status = session.createNamedQuery("Status.findByValue", Status.class)
                     .setParameter("value", dto.getStatus())
@@ -499,9 +499,10 @@ public class AdminProductService {
             }
 
             tx.commit();
+            message = "Product created successfully!";
 
             response.addProperty("status", true);
-            response.addProperty("message", "Product created successfully!");
+            response.addProperty("message", message);
 
         } catch (Exception e) {
             tx.rollback();
@@ -511,9 +512,145 @@ public class AdminProductService {
         } finally {
             session.close();
         }
-
         return AppUtil.GSON.toJson(response);
     }
+
+//    public String createProduct(String productJson, List<FormDataBodyPart> imageParts) {
+//
+//        JsonObject response = new JsonObject();
+//
+//        boolean status = false;
+//        String message;
+//
+//        Session session = HibernateUtil.getSessionFactory().openSession();
+//        Transaction tx = null;
+//
+//        try {
+//
+//            ProductDTO dto = AppUtil.GSON.fromJson(productJson, ProductDTO.class);
+//
+//            // 🔴 VALIDATION BLOCK (Lecturer style)
+//            if (dto.getTitle() == null) {
+//                message = "Title is required!";
+//            } else if (dto.getTitle().isBlank()) {
+//                message = "Title cannot be empty!";
+//            } else if (dto.getTitle().length() > 35) {
+//                message = "Title must be less than 35 characters!";
+//            } else if (dto.getDescription() == null) {
+//                message = "Description is required!";
+//            } else if (dto.getDescription().isBlank()) {
+//                message = "Description cannot be empty!";
+//            } else if (dto.getCategoryId() == 0) {
+//                message = "Category is required!";
+//            } else if (dto.getSubCategoryId() == 0) {
+//                message = "SubCategory is required!";
+//            } else if (dto.getBrandId() == 0) {
+//                message = "Brand is required!";
+//            } else if (dto.getColorId() == 0) {
+//                message = "Color is required!";
+//            } else if (dto.getGenderId() == 0) {
+//                message = "Gender is required!";
+//            } else if (dto.getStatus() == null || dto.getStatus().isBlank()) {
+//                message = "Status is required!";
+//            } else if (dto.getStockDTOList() == null || dto.getStockDTOList().isEmpty()) {
+//                message = "At least one stock item is required!";
+//            } else {
+//
+//                // 🔴 START DB LOGIC ONLY IF VALIDATION PASSED
+//                tx = session.beginTransaction();
+//
+//                Product p = new Product();
+//                p.setTitle(dto.getTitle());
+//                p.setDescription(dto.getDescription());
+//                p.setCreatedAt(LocalDateTime.now());
+//
+//                p.setCategory(session.find(Category.class, dto.getCategoryId()));
+//
+//                Subcategory sub = session.find(Subcategory.class, dto.getSubCategoryId());
+//                if (sub == null) {
+//                    throw new RuntimeException("Invalid SubCategory ID!");
+//                }
+//                p.setSubcategory(sub);
+//
+//                p.setBrand(session.find(Brand.class, dto.getBrandId()));
+//                p.setColor(session.find(Color.class, dto.getColorId()));
+//                p.setGender(session.find(Gender.class, dto.getGenderId()));
+//
+//                Status statusEntity = session.createNamedQuery("Status.findByValue", Status.class)
+//                        .setParameter("value", dto.getStatus())
+//                        .getSingleResult();
+//
+//                p.setStatus(statusEntity);
+//
+//                if (dto.getProductDetails() != null) {
+//                    p.setProductDetails(AppUtil.GSON.toJson(dto.getProductDetails()));
+//                }
+//
+//                session.persist(p);
+//
+//                // 🔹 Images
+//                List<String> imageNames = saveImages(imageParts);
+//                if (imageNames != null) {
+//                    for (String img : imageNames) {
+//                        p.getImages().add(img);
+//                    }
+//                }
+//
+//                // 🔹 Stocks
+//                for (StockDTO s : dto.getStockDTOList()) {
+//
+//                    if (s.getSizeId() == 0) {
+//                        throw new RuntimeException("Size is required in stock!");
+//                    }
+//
+//                    Stock stock = new Stock();
+//                    stock.setProduct(p);
+//                    stock.setPrice(s.getPrice());
+//                    stock.setQuantity(s.getQuantity());
+//
+//                    stock.setSize(session.find(Size.class, s.getSizeId()));
+//
+//                    if (s.getDiscountId() != null) {
+//                        Discount discount = session.find(Discount.class, s.getDiscountId());
+//
+//                        if (discount == null) {
+//                            throw new RuntimeException("Invalid discount ID!");
+//                        }
+//
+//                        stock.setDiscount(discount);
+//                    }
+//
+//                    Status stockStatus = session.createNamedQuery("Status.findByValue", Status.class)
+//                            .setParameter("value", "ACTIVE")
+//                            .getSingleResult();
+//
+//                    stock.setStatus(stockStatus);
+//
+//                    session.persist(stock);
+//                }
+//
+//                tx.commit();
+//
+//                status = true;
+//                message = "Product created successfully!";
+//            }
+//
+//        } catch (Exception e) {
+//
+//            if (tx != null) tx.rollback();
+//
+//            e.printStackTrace();
+//            message = "Product creation failed!";
+//
+//        } finally {
+//            session.close();
+//        }
+//
+//        response.addProperty("status", status);
+//        response.addProperty("message", message);
+//
+//        return AppUtil.GSON.toJson(response);
+//    }
 
     private List<String> saveImages(List<FormDataBodyPart> imageParts) {
 
@@ -546,8 +683,136 @@ public class AdminProductService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return fileNames;
+    }
+
+    public String updateProduct(int productId, String productJson,
+                                List<FormDataBodyPart> imageParts) {
+        JsonObject response = new JsonObject();
+        Session session     = HibernateUtil.getSessionFactory().openSession();
+        Transaction tx      = session.beginTransaction();
+
+        try {
+            ProductDTO dto = AppUtil.GSON.fromJson(productJson, ProductDTO.class);
+            Product p      = session.find(Product.class, productId);
+
+            if (p == null) throw new RuntimeException("Product not found!");
+
+            // ── 1. Update basic fields ──────────────────────────────────────
+            p.setTitle(dto.getTitle());
+            p.setDescription(dto.getDescription());
+            p.setCategory(session.find(Category.class,    dto.getCategoryId()));
+            p.setBrand(session.find(Brand.class,          dto.getBrandId()));
+            p.setColor(session.find(Color.class,          dto.getColorId()));
+            p.setGender(session.find(Gender.class,        dto.getGenderId()));
+
+            // FIX: ProductDTO field is subCategoryId, not subcategoryId
+            Subcategory sub = session.find(Subcategory.class, dto.getSubCategoryId());
+            if (sub == null) throw new RuntimeException("Invalid SubCategory ID!");
+            p.setSubcategory(sub);
+
+            // ── 2. Status ───────────────────────────────────────────────────
+            if (dto.getStatus() != null && !dto.getStatus().isBlank()) {
+                Status status = session.createNamedQuery("Status.findByValue", Status.class)
+                        .setParameter("value", dto.getStatus())
+                        .getSingleResult();
+                p.setStatus(status);
+            }
+
+            // ── 3. Product details JSON ─────────────────────────────────────
+            if (dto.getProductDetails() != null) {
+                p.setProductDetails(AppUtil.GSON.toJson(dto.getProductDetails()));
+            } else {
+                p.setProductDetails(null);
+            }
+
+            session.createNativeQuery("DELETE FROM product_images WHERE pr_id = :pid")
+                    .setParameter("pid", productId)
+                    .executeUpdate();
+
+            session.flush();   // force DB sync
+            session.clear();   // clear Hibernate cache
+
+            p = session.find(Product.class, productId); // reload fresh entity
+
+            // Build new image list
+            List<String> updatedImages = new ArrayList<>();
+
+// Keep existing images
+            if (dto.getKeptImages() != null) {
+                updatedImages.addAll(dto.getKeptImages());
+            }
+
+// Add new uploaded images
+            List<String> newImageNames = saveImages(imageParts);
+            if (newImageNames != null) {
+                updatedImages.addAll(newImageNames);
+            }
+
+// Replace whole collection (IMPORTANT)
+            p.setImages(updatedImages);
+
+            // Add back kept images (ones user did NOT delete)
+//            List<String> keptImages = dto.getKeptImages();
+//            if (keptImages != null) {
+//                p.getImages().addAll(keptImages);
+//            }
+//
+//            // Save and add new uploaded images
+//            List<String> newImageNames = saveImages(imageParts);
+//            if (newImageNames != null) {
+//                p.getImages().addAll(newImageNames);
+//            }
+
+            // ── 5. FIX: Delete ALL old stocks first, then insert fresh ──────
+            // This prevents duplicate stock rows on every save
+            List<Stock> oldStocks = session
+                    .createQuery("FROM Stock s WHERE s.product.id = :pid", Stock.class)
+                    .setParameter("pid", productId)
+                    .getResultList();
+            for (Stock old : oldStocks) {
+                session.remove(old);
+            }
+
+            // ── 6. Insert updated stock rows ────────────────────────────────
+            Status activeStatus = session.createNamedQuery("Status.findByValue", Status.class)
+                    .setParameter("value", "ACTIVE")
+                    .getSingleResult();
+
+            if (dto.getStockDTOList() != null) {
+                for (StockDTO s : dto.getStockDTOList()) {
+                    Stock stock = new Stock();
+                    stock.setProduct(p);
+                    stock.setPrice(s.getPrice());
+                    stock.setQuantity(s.getQuantity());
+                    stock.setStatus(activeStatus);
+                    stock.setSize(session.find(Size.class, s.getSizeId()));
+
+                    if (s.getDiscountId() != null) {
+                        Discount discount = session.find(Discount.class, s.getDiscountId());
+                        if (discount != null) stock.setDiscount(discount);
+                    }
+
+                    session.persist(stock);
+                }
+            }
+
+            session.merge(p);
+            tx.commit();
+
+            response.addProperty("status",  true);
+            response.addProperty("message", "Product updated successfully!");
+
+        } catch (Exception e) {
+            tx.rollback();
+            e.printStackTrace();
+            response.addProperty("status",  false);
+            response.addProperty("message", "Update failed: " + e.getMessage());
+        } finally {
+            session.close();
+        }
+
+        return AppUtil.GSON.toJson(response);
     }
 
 }

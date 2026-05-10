@@ -69,8 +69,19 @@ public class AdminProductController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response createProduct(
             @FormDataParam("product") String productJson,
-            @FormDataParam("images") List<FormDataBodyPart> images
-    ) {
+            @FormDataParam("images") List<FormDataBodyPart> images) {
         return Response.ok(service.createProduct(productJson, images)).build();
     }
+
+    @PUT
+    @Path("/{id}")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateProduct(
+            @PathParam("id") int productId,
+            @FormDataParam("product") String productJson,
+            @FormDataParam("images")  List<FormDataBodyPart> images) {
+        return Response.ok(service.updateProduct(productId, productJson, images)).build();
+    }
+
 }

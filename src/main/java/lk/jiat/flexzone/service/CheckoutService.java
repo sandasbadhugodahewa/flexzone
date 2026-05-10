@@ -271,8 +271,9 @@ public class CheckoutService {
             order.setUser(dbUser);
             order.setDeliveryType(deliveryType);
             order.setStatus(pendingStatus);
-            order.setAddress(deliveryAddress);  // ✅ IMPORTANT
-            order.setTotal(0); // temporary, updated below
+            order.setAddress(deliveryAddress);
+            order.setTotal(0);
+            order.setDeliveryStatus(null);
 
 // ── FIX: set a temporary orderId before persist ──
 // We'll update it after we get the auto-generated id

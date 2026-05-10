@@ -27,6 +27,8 @@ public class ProductDTO implements Serializable {
     private List<StockDTO> stockDTOList;
     private List<String> images;
     private Map<String, Object> productDetails;
+    private List<String> keptImages;
+    private List<String> newImages;
 
     public ProductDTO() {
 
@@ -198,5 +200,21 @@ public class ProductDTO implements Serializable {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public List<String> getKeptImages() {
+        return keptImages;
+    }
+
+    public void setKeptImages(List<String> keptImages) {
+        this.keptImages = keptImages;
+    }
+
+    public List<String> getNewImages() {
+        return newImages;
+    }
+
+    public void setNewImages(List<String> newImages) {
+        this.newImages = newImages;
     }
 }

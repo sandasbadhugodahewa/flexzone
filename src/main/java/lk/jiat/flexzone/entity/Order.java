@@ -26,6 +26,10 @@ public class Order extends BaseEntity {
     @JoinColumn(name = "status_id")
     private Status status;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "delivery_status_id")
+    private DeliveryStatus deliveryStatus;
+
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "users_id")
     private User user;
@@ -79,6 +83,14 @@ public class Order extends BaseEntity {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public DeliveryStatus getDeliveryStatus() {
+        return deliveryStatus;
+    }
+
+    public void setDeliveryStatus(DeliveryStatus deliveryStatus) {
+        this.deliveryStatus = deliveryStatus;
     }
 
     public User getUser() {

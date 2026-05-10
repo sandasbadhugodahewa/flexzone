@@ -1,9 +1,4 @@
-/* ═══════════════════════════════════════════════════
-   FLEXZONE ADMIN — Product Pages CSS
-   Matches admin-main.css variables & component system
-   ═══════════════════════════════════════════════════ */
 
-/* ── Image Upload Zone ── */
 .ap-upload-zone {
     border: 2px dashed var(--border-color-dark);
     border-radius: 12px;
@@ -400,4 +395,37 @@
     .pv-main-image { width: 130px; height: 130px; }
     .pv-stat-row { grid-template-columns: repeat(2, 1fr); }
     .pv-product-title { font-size: 18px; }
+}
+
+.qty-control {
+    display: flex;
+    align-items: center;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    overflow: hidden;
+    width: 90px;
+    height: 38px;
+    background: #fff;
+}
+
+.qty-control input {
+    width: 45px;
+    text-align: center;
+    border: none;
+    outline: none;
+    font-size: 14px;
+}
+
+.qty-control button {
+    width: 30px;
+    height: 100%;
+    border: none;
+    background: #f8f9fa;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.qty-control button:hover {
+    background: #e9ecef;
 }

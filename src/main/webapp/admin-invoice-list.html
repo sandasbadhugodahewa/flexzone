@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FlexZone | Dashboard</title>
+    <title>FlexZone | Invoice</title>
     <meta name="robots" content="noindex, nofollow">
     <meta name="description" content="EliteAdmin - Bootstrap Admin Template">
     <meta name="keywords" content="admin, dashboard">
@@ -62,9 +62,6 @@
                     <span class="breadcrumb-item active">Invoices</span>
                 </nav>
             </div>
-            <div class="page-header-actions">
-                <button class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> New Invoice</button>
-            </div>
         </div>
 
         <!-- Stats -->
@@ -77,7 +74,7 @@
                             <i class="bi bi-receipt"></i>
                         </div>
                         <div class="inv-stat-info">
-                            <span class="inv-stat-value">248</span>
+                            <span class="inv-stat-value" id="totalInvoices">-</span>
                             <span class="inv-stat-label">Total Invoices</span>
                         </div>
                     </div>
@@ -91,7 +88,7 @@
                             <i class="bi bi-check-circle"></i>
                         </div>
                         <div class="inv-stat-info">
-                            <span class="inv-stat-value">$45,250</span>
+                            <span class="inv-stat-value" id="totalPaid">-</span>
                             <span class="inv-stat-label">Paid</span>
                         </div>
                     </div>
@@ -105,7 +102,7 @@
                             <i class="bi bi-clock"></i>
                         </div>
                         <div class="inv-stat-info">
-                            <span class="inv-stat-value">$12,800</span>
+                            <span class="inv-stat-value" id="totalPending">-</span>
                             <span class="inv-stat-label">Pending</span>
                         </div>
                     </div>
@@ -116,11 +113,11 @@
                     <div class="card-body">
                         <div class="inv-stat-icon"
                              style="background: var(--danger-color-light); color: var(--danger-color);">
-                            <i class="bi bi-exclamation-circle"></i>
+                            <i class="bi bi-gift-fill"></i>
                         </div>
                         <div class="inv-stat-info">
-                            <span class="inv-stat-value">$3,450</span>
-                            <span class="inv-stat-label">Overdue</span>
+                            <span class="inv-stat-value" id="totalDeliveredItems">-</span>
+                            <span class="inv-stat-label">Delivered Items</span>
                         </div>
                     </div>
                 </div>
@@ -137,11 +134,19 @@
                         <input type="text" placeholder="Search invoices...">
                     </div>
                     <select class="inv-filter">
-                        <option value="">All Status</option>
-                        <option value="paid">Paid</option>
-                        <option value="pending">Pending</option>
-                        <option value="overdue">Overdue</option>
-                        <option value="draft">Draft</option>
+                        <option value="all">All Status</option>
+                        <optgroup label="Payment">
+                            <option value="paid">Paid</option>
+                            <option value="pending">Pending</option>
+                        </optgroup>
+                        <optgroup label="Delivery">
+                            <option value="approved">Approved</option>
+                            <option value="packing">Packing</option>
+                            <option value="shipped">Shipped</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="completed">Completed</option>
+                            <option value="canceled">Canceled</option>
+                        </optgroup>
                     </select>
                 </div>
             </div>
@@ -150,215 +155,18 @@
                     <table class="table table-hover align-middle mb-0">
                         <thead>
                         <tr>
-                            <th class="inv-th-check">
-                                <div class="form-check"><input class="form-check-input" type="checkbox"></div>
-                            </th>
                             <th>Invoice</th>
                             <th>Client</th>
                             <th>Amount</th>
-                            <th>Date</th>
-                            <th>Due Date</th>
+                            <th></th>
+                            <th>Purchased</th>
+                            <th>Updated</th>
                             <th>Status</th>
                             <th class="inv-th-actions">Actions</th>
                         </tr>
                         </thead>
-                        <tbody>
-                        <tr>
-                            <td>
-                                <div class="form-check"><input class="form-check-input" type="checkbox"></div>
-                            </td>
-                            <td><a href="https://bootstrapmade.com/content/demo/EliteAdmin/invoice.html" class="inv-id">#FZ0001</a>
-                            </td>
-                            <td>
-                                <div class="inv-client">
-                                    <span class="inv-client-avatar"
-                                          style="background: color-mix(in srgb, var(--accent-color), transparent 85%); color: var(--accent-color);">AC</span>
-                                    <span>Acme Corporation</span>
-                                </div>
-                            </td>
-                            <td class="inv-amount">$5,103.00</td>
-                            <td class="inv-date">Jan 15, 2024</td>
-                            <td class="inv-date">Feb 14, 2024</td>
-                            <td><span class="inv-status paid">Paid</span></td>
-                            <td>
-                                <div class="inv-actions">
-                                    <a href="admin-invoice.html"
-                                       class="inv-action-btn" title="View"><i class="bi bi-eye"></i></a>
-                                    <button class="inv-action-btn" title="Download"><i class="bi bi-download"></i>
-                                    </button>
-                                    <button class="inv-action-btn" title="More"><i class="bi bi-three-dots"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="form-check"><input class="form-check-input" type="checkbox"></div>
-                            </td>
-                            <td><a href="https://bootstrapmade.com/content/demo/EliteAdmin/invoice.html" class="inv-id">#INV-2024-002</a>
-                            </td>
-                            <td>
-                                <div class="inv-client">
-                                    <span class="inv-client-avatar"
-                                          style="background: var(--success-color-light); color: var(--success-color);">TI</span>
-                                    <span>Tech Industries</span>
-                                </div>
-                            </td>
-                            <td class="inv-amount">$2,750.00</td>
-                            <td class="inv-date">Jan 18, 2024</td>
-                            <td class="inv-date">Feb 17, 2024</td>
-                            <td><span class="inv-status pending">Pending</span></td>
-                            <td>
-                                <div class="inv-actions">
-                                    <a href="https://bootstrapmade.com/content/demo/EliteAdmin/invoice.html"
-                                       class="inv-action-btn" title="View"><i class="bi bi-eye"></i></a>
-                                    <button class="inv-action-btn" title="Download"><i class="bi bi-download"></i>
-                                    </button>
-                                    <button class="inv-action-btn" title="More"><i class="bi bi-three-dots"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="form-check"><input class="form-check-input" type="checkbox"></div>
-                            </td>
-                            <td><a href="https://bootstrapmade.com/content/demo/EliteAdmin/invoice.html" class="inv-id">#INV-2024-003</a>
-                            </td>
-                            <td>
-                                <div class="inv-client">
-                                    <span class="inv-client-avatar"
-                                          style="background: var(--info-color-light); color: var(--info-color);">GS</span>
-                                    <span>Global Services</span>
-                                </div>
-                            </td>
-                            <td class="inv-amount">$8,420.00</td>
-                            <td class="inv-date">Jan 10, 2024</td>
-                            <td class="inv-date">Jan 25, 2024</td>
-                            <td><span class="inv-status overdue">Overdue</span></td>
-                            <td>
-                                <div class="inv-actions">
-                                    <a href="https://bootstrapmade.com/content/demo/EliteAdmin/invoice.html"
-                                       class="inv-action-btn" title="View"><i class="bi bi-eye"></i></a>
-                                    <button class="inv-action-btn" title="Download"><i class="bi bi-download"></i>
-                                    </button>
-                                    <button class="inv-action-btn" title="More"><i class="bi bi-three-dots"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="form-check"><input class="form-check-input" type="checkbox"></div>
-                            </td>
-                            <td><a href="https://bootstrapmade.com/content/demo/EliteAdmin/invoice.html" class="inv-id">#INV-2024-004</a>
-                            </td>
-                            <td>
-                                <div class="inv-client">
-                                    <span class="inv-client-avatar"
-                                          style="background: var(--warning-color-light); color: var(--warning-color);">SM</span>
-                                    <span>StartUp Media</span>
-                                </div>
-                            </td>
-                            <td class="inv-amount">$1,200.00</td>
-                            <td class="inv-date">Jan 20, 2024</td>
-                            <td class="inv-date">Feb 19, 2024</td>
-                            <td><span class="inv-status paid">Paid</span></td>
-                            <td>
-                                <div class="inv-actions">
-                                    <a href="https://bootstrapmade.com/content/demo/EliteAdmin/invoice.html"
-                                       class="inv-action-btn" title="View"><i class="bi bi-eye"></i></a>
-                                    <button class="inv-action-btn" title="Download"><i class="bi bi-download"></i>
-                                    </button>
-                                    <button class="inv-action-btn" title="More"><i class="bi bi-three-dots"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="form-check"><input class="form-check-input" type="checkbox"></div>
-                            </td>
-                            <td><a href="https://bootstrapmade.com/content/demo/EliteAdmin/invoice.html" class="inv-id">#INV-2024-005</a>
-                            </td>
-                            <td>
-                                <div class="inv-client">
-                                    <span class="inv-client-avatar"
-                                          style="background: var(--danger-color-light); color: var(--danger-color);">DC</span>
-                                    <span>Design Co.</span>
-                                </div>
-                            </td>
-                            <td class="inv-amount">$3,850.00</td>
-                            <td class="inv-date">Jan 22, 2024</td>
-                            <td class="inv-date">Feb 21, 2024</td>
-                            <td><span class="inv-status draft">Draft</span></td>
-                            <td>
-                                <div class="inv-actions">
-                                    <a href="https://bootstrapmade.com/content/demo/EliteAdmin/invoice.html"
-                                       class="inv-action-btn" title="View"><i class="bi bi-eye"></i></a>
-                                    <button class="inv-action-btn" title="Download"><i class="bi bi-download"></i>
-                                    </button>
-                                    <button class="inv-action-btn" title="More"><i class="bi bi-three-dots"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="form-check"><input class="form-check-input" type="checkbox"></div>
-                            </td>
-                            <td><a href="https://bootstrapmade.com/content/demo/EliteAdmin/invoice.html" class="inv-id">#INV-2024-006</a>
-                            </td>
-                            <td>
-                                <div class="inv-client">
-                                    <span class="inv-client-avatar"
-                                          style="background: color-mix(in srgb, var(--accent-color), transparent 85%); color: var(--accent-color);">BT</span>
-                                    <span>Blue Tech</span>
-                                </div>
-                            </td>
-                            <td class="inv-amount">$6,500.00</td>
-                            <td class="inv-date">Jan 25, 2024</td>
-                            <td class="inv-date">Feb 24, 2024</td>
-                            <td><span class="inv-status pending">Pending</span></td>
-                            <td>
-                                <div class="inv-actions">
-                                    <a href="https://bootstrapmade.com/content/demo/EliteAdmin/invoice.html"
-                                       class="inv-action-btn" title="View"><i class="bi bi-eye"></i></a>
-                                    <button class="inv-action-btn" title="Download"><i class="bi bi-download"></i>
-                                    </button>
-                                    <button class="inv-action-btn" title="More"><i class="bi bi-three-dots"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="form-check"><input class="form-check-input" type="checkbox"></div>
-                            </td>
-                            <td><a href="https://bootstrapmade.com/content/demo/EliteAdmin/invoice.html" class="inv-id">#INV-2024-007</a>
-                            </td>
-                            <td>
-                                <div class="inv-client">
-                                    <span class="inv-client-avatar"
-                                          style="background: var(--success-color-light); color: var(--success-color);">EP</span>
-                                    <span>Echo Partners</span>
-                                </div>
-                            </td>
-                            <td class="inv-amount">$4,200.00</td>
-                            <td class="inv-date">Jan 28, 2024</td>
-                            <td class="inv-date">Feb 27, 2024</td>
-                            <td><span class="inv-status paid">Paid</span></td>
-                            <td>
-                                <div class="inv-actions">
-                                    <a href="https://bootstrapmade.com/content/demo/EliteAdmin/invoice.html"
-                                       class="inv-action-btn" title="View"><i class="bi bi-eye"></i></a>
-                                    <button class="inv-action-btn" title="Download"><i class="bi bi-download"></i>
-                                    </button>
-                                    <button class="inv-action-btn" title="More"><i class="bi bi-three-dots"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
+                        <tbody id="invoiceContainer">
+
                         </tbody>
                     </table>
                 </div>
@@ -397,15 +205,8 @@
                 <a href="#">Contact</a>
             </div>
             <div class="footer-copyright">
-                &copy; 2026 <a href="#">EliteAdmin</a>
-            </div>
-            <div class="footer-copyright">
                 <div class="credits">
-                    <!-- All the links in the footer should remain intact. -->
-                    <!-- You can delete the links only if you purchased the pro version. -->
-                    <!-- Licensing information: https://bootstrapmade.com/license/ -->
-                    <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/elite-admin-bootstrap-admin-dashboard-template/ -->
-                    Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+                    &copy; 2026 Copyright fleXZone. All Rights Reserved.
                 </div>
             </div>
         </div>
@@ -434,6 +235,7 @@
 <script src="https://bootstrapmade.com/content/demo/EliteAdmin/assets/js/theme.js"></script>
 <script src="https://bootstrapmade.com/content/demo/EliteAdmin/assets/js/main.js"></script>
 <script src="assets/js/notiflix-aio-3.2.8.min.js"></script>
+<script src="assets/js/admin/admin-invoice.js"></script>
 <script src="assets/js/auth.js"></script>
 <script>
     window.addEventListener("load", checkAdmin);

@@ -3,6 +3,7 @@ let stockRowCounter = 0;
 let allSizes        = [];
 let allDiscounts    = [];
 
+//admin-add-product.js
 window.addEventListener("load", async () => {
     await loadDropdownData();
     setupImageUpload();
