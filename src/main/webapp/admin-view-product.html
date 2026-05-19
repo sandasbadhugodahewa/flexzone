@@ -291,7 +291,10 @@
 <script src="assets/js/auth.js"></script>
 <script src="assets/js/admin/admin-view-product.js"></script>
 <script>
-    window.addEventListener("load", checkAdmin);
+    window.addEventListener("load", () => {
+        checkAdmin();
+        loadAdminName();
+    });
 </script>
 
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516"

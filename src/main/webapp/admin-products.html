@@ -246,7 +246,10 @@
 <script src="assets/js/auth.js"></script>
 <script src="assets/js/admin/admin-product.js"></script>
 <script>
-    window.addEventListener("load", checkAdmin);
+    window.addEventListener("load", () => {
+        checkAdmin();
+        loadAdminName();
+    });
 </script>
 
 <script src="https://bootstrapmade.com/content/demo/EliteAdmin/assets/js/apps-sidebar-toggle.js"></script>

@@ -19,3 +19,25 @@ async function checkAdmin() {
         Notiflix.Loading.remove(1000);
     }
 }
+
+async function loadAdminName() {
+    try {
+        const res = await fetch('api/header');
+        const { username } = await res.json();
+
+        if (!username) return;
+
+        [
+            'adminName',
+            'adminSideBarName1',
+            'adminSideBarName2',
+            'adminSideBarName3'
+        ].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = username;
+        });
+
+    } catch (err) {
+        console.error('Failed to load admin name:', err);
+    }
+}

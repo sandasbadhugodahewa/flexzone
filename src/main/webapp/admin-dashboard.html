@@ -32,6 +32,7 @@
     <link href="assets/css/admin/admin-main.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/light/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
     <script>
         fetch("admin-sidebar.html").then(response => response.text())
@@ -55,7 +56,7 @@
         <!-- Welcome Banner -->
         <div class="welcome-box dash-stat-card d-flex justify-content-between align-items-center flex-wrap gap-3">
             <div>
-                <h5 class="card-title mb-1">Welcome back, <span id="adminName">Sandas</span> 👋</h5>
+                <h5 class="card-title mb-1">Welcome back, <span id="adminName">-</span> 👋</h5>
                 <p class="text-muted mb-0" style="font-size:13px;">Here's what's happening with your business today.</p>
             </div>
             <div class="d-flex gap-3 flex-wrap align-items-center">
@@ -104,29 +105,11 @@
                         </div>
                         <div class="dash-stat-info">
                             <span class="dash-stat-label">Total Revenue</span>
-                            <span class="dash-stat-value">Rs.348,295.00</span>
+                            <span class="dash-stat-value" id="totalRevenue">Rs.348,295.00</span>
                         </div>
                         <div class="dash-stat-trend positive">
-                            <i class="bi bi-arrow-up"></i>
-                            <span>+12.5%</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-6 col-xl-3">
-                <div class="dash-stat-card">
-                    <div class="dash-stat-accent" style="background: var(--success-color);"></div>
-                    <div class="dash-stat-body">
-                        <div class="dash-stat-icon" style="background: var(--success-color-light); color: var(--success-color);">
-                            <i class="bi bi-box-seam"></i>
-                        </div>
-                        <div class="dash-stat-info">
-                            <span class="dash-stat-label">Total Stock</span>
-                            <span class="dash-stat-value">5,432</span>
-                        </div>
-                        <div class="dash-stat-trend positive">
-                            <i class="bi bi-arrow-up"></i>
-                            <span>+5.8%</span>
+                            <i class="bi bi-arrow-up" id="revenueGrowthIcon"></i>
+                            <span id="revenueGrowth">+12.5%</span>
                         </div>
                     </div>
                 </div>
@@ -140,11 +123,11 @@
                         </div>
                         <div class="dash-stat-info">
                             <span class="dash-stat-label">New Orders</span>
-                            <span class="dash-stat-value">1,248</span>
+                            <span class="dash-stat-value" id="newOrders">-</span>
                         </div>
                         <div class="dash-stat-trend negative">
-                            <i class="bi bi-arrow-down"></i>
-                            <span>-3.1%</span>
+                            <i class="bi bi-arrow-down" id="orderGrowthIcon"></i>
+                            <span id="orderGrowth">-3.1%</span>
                         </div>
                     </div>
                 </div>
@@ -157,12 +140,26 @@
                             <i class="bi bi-people-fill"></i>
                         </div>
                         <div class="dash-stat-info">
-                            <span class="dash-stat-label">Total Users</span>
-                            <span class="dash-stat-value">566</span>
+                            <span class="dash-stat-label">New Users</span>
+                            <span class="dash-stat-value" id="newUsers">566</span>
                         </div>
                         <div class="dash-stat-trend positive">
-                            <i class="bi bi-arrow-up"></i>
-                            <span>+1.2%</span>
+                            <i class="bi bi-arrow-up" id="userGrowthIcon"></i>
+                            <span id="userGrowth">+1.2%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+                <div class="dash-stat-card">
+                    <div class="dash-stat-accent" style="background: var(--success-color);"></div>
+                    <div class="dash-stat-body">
+                        <div class="dash-stat-icon" style="background: var(--success-color-light); color: var(--success-color);">
+                            <i class="bi bi-box-seam"></i>
+                        </div>
+                        <div class="dash-stat-info">
+                            <span class="dash-stat-label">Total Stock</span>
+                            <span class="dash-stat-value" id="totalStock">-</span>
                         </div>
                     </div>
                 </div>
@@ -192,13 +189,8 @@
                             </div>
                             <div class="dash-chart-summary-item">
                                 <span class="dash-chart-summary-dot" style="background: var(--success-color);"></span>
-                                <span class="dash-chart-summary-label">Expenses</span>
-                                <span class="dash-chart-summary-value" id="summaryExpenses">$28,450</span>
-                            </div>
-                            <div class="dash-chart-summary-item">
-                                <span class="dash-chart-summary-dot" style="background: var(--warning-color);"></span>
-                                <span class="dash-chart-summary-label">Profit</span>
-                                <span class="dash-chart-summary-value" id="summaryProfit">$19,845</span>
+                                <span class="dash-chart-summary-label">Orders</span>
+                                <span class="dash-chart-summary-value" id="summaryExpenses">50</span>
                             </div>
                         </div>
                         <div class="chart-container" id="revenueChart"></div>
@@ -219,6 +211,7 @@
                             </div>
                         </div>
                     </div>
+
                     <div class="card-body d-flex flex-column">
                         <div class="chart-container flex-grow-1" id="trafficChart"></div>
                         <div class="dash-traffic-legend">
@@ -255,7 +248,7 @@
                     <div class="card-header">
                         <h5 class="card-title">Recent Transactions</h5>
                         <div class="card-actions">
-                            <a href="https://bootstrapmade.com/content/demo/EliteAdmin/invoice-list.html" class="btn btn-sm btn-outline-primary">View All</a>
+                            <a href="admin-invoice-list.html" class="btn btn-sm btn-outline-primary">View All</a>
                         </div>
                     </div>
                     <div class="card-body p-0">
@@ -284,48 +277,6 @@
                                     <td class="text-muted">Jan 29, 2026</td>
                                     <td class="fw-medium">$1,250.00</td>
                                     <td><span class="badge badge-soft-success">Completed</span></td>
-                                </tr>
-                                <tr>
-                                    <td class="fw-medium">#TXN-2047</td>
-                                    <td>
-                                        <div class="table-user">
-                                            <img src="https://bootstrapmade.com/content/demo/EliteAdmin/assets/img/avatars/avatar-2.webp" alt="" class="table-user-avatar">
-                                            <div>
-                                                <div class="table-user-name">Sarah Wilson</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="text-muted">Jan 28, 2026</td>
-                                    <td class="fw-medium">$890.00</td>
-                                    <td><span class="badge badge-soft-warning">Pending</span></td>
-                                </tr>
-                                <tr>
-                                    <td class="fw-medium">#TXN-2046</td>
-                                    <td>
-                                        <div class="table-user">
-                                            <img src="https://bootstrapmade.com/content/demo/EliteAdmin/assets/img/avatars/avatar-3.webp" alt="" class="table-user-avatar">
-                                            <div>
-                                                <div class="table-user-name">Mike Johnson</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="text-muted">Jan 27, 2026</td>
-                                    <td class="fw-medium">$2,340.00</td>
-                                    <td><span class="badge badge-soft-success">Completed</span></td>
-                                </tr>
-                                <tr>
-                                    <td class="fw-medium">#TXN-2045</td>
-                                    <td>
-                                        <div class="table-user">
-                                            <img src="https://bootstrapmade.com/content/demo/EliteAdmin/assets/img/avatars/avatar-4.webp" alt="" class="table-user-avatar">
-                                            <div>
-                                                <div class="table-user-name">Emily Davis</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="text-muted">Jan 26, 2026</td>
-                                    <td class="fw-medium">$560.00</td>
-                                    <td><span class="badge badge-soft-danger">Failed</span></td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -367,271 +318,57 @@
                                 </div>
                                 <span class="dash-product-revenue">$12,536</span>
                             </div>
-                            <div class="dash-product-item">
-                                <img src="https://bootstrapmade.com/content/demo/EliteAdmin/assets/img/products/product-4.webp" alt="" class="dash-product-img">
-                                <div class="dash-product-info">
-                                    <span class="dash-product-name">USB-C Hub</span>
-                                    <span class="dash-product-sales">1,203 sold</span>
-                                </div>
-                                <span class="dash-product-revenue">$9,624</span>
-                            </div>
-                            <div class="dash-product-item">
-                                <img src="https://bootstrapmade.com/content/demo/EliteAdmin/assets/img/products/product-5.webp" alt="" class="dash-product-img">
-                                <div class="dash-product-info">
-                                    <span class="dash-product-name">Mechanical Keyboard</span>
-                                    <span class="dash-product-sales">986 sold</span>
-                                </div>
-                                <span class="dash-product-revenue">$7,888</span>
-                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Top Products + Sales Pipeline + Sales by Region -->
         <div class="row g-3 mb-4">
-
-            <div class="col-xl-4">
-                <div class="card h-100">
+            <div class="col-xl-8">
+                <div class="card">
                     <div class="card-header">
-                        <h5 class="card-title">Sales by Region</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="region-list">
-                            <div class="region-item">
-                                <div class="region-info">
-                                    <span class="region-flag">🇺🇸</span>
-                                    <span class="region-name">United States</span>
-                                </div>
-                                <div class="region-stats">
-                                    <span class="region-value">$45,820</span>
-                                    <div class="progress region-progress flex-grow-1">
-                                        <div class="progress-bar" style="width: 65%"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="region-item">
-                                <div class="region-info">
-                                    <span class="region-flag">🇬🇧</span>
-                                    <span class="region-name">United Kingdom</span>
-                                </div>
-                                <div class="region-stats">
-                                    <span class="region-value">$28,450</span>
-                                    <div class="progress region-progress flex-grow-1">
-                                        <div class="progress-bar bg-success" style="width: 45%"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="region-item">
-                                <div class="region-info">
-                                    <span class="region-flag">🇩🇪</span>
-                                    <span class="region-name">Germany</span>
-                                </div>
-                                <div class="region-stats">
-                                    <span class="region-value">$21,380</span>
-                                    <div class="progress region-progress flex-grow-1">
-                                        <div class="progress-bar bg-warning" style="width: 35%"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="region-item">
-                                <div class="region-info">
-                                    <span class="region-flag">🇫🇷</span>
-                                    <span class="region-name">France</span>
-                                </div>
-                                <div class="region-stats">
-                                    <span class="region-value">$18,240</span>
-                                    <div class="progress region-progress flex-grow-1">
-                                        <div class="progress-bar bg-info" style="width: 28%"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="region-item">
-                                <div class="region-info">
-                                    <span class="region-flag">🇯🇵</span>
-                                    <span class="region-name">Japan</span>
-                                </div>
-                                <div class="region-stats">
-                                    <span class="region-value">$12,650</span>
-                                    <div class="progress region-progress flex-grow-1">
-                                        <div class="progress-bar bg-danger" style="width: 20%"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xl-4">
-                <div class="card h-100">
-                    <div class="card-header">
-                        <h5 class="card-title">Team Members</h5>
+                        <h5 class="card-title">Top 5 Spenders</h5>
                         <div class="card-actions">
-                            <a href="https://bootstrapmade.com/content/demo/EliteAdmin/users.html" class="dash-link">View All</a>
+                            <a href="admin-reports.html" class="btn btn-sm btn-outline-primary">View All</a>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Customer</th>
+                                    <th>Orders</th>
+                                    <th>Amount</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-4">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <h5 class="card-title">Payment Split</h5>
+                        <div class="card-actions">
+                            <a href="admin-invoice-list.html" class="dash-link">View All</a>
                         </div>
                     </div>
                     <div class="card-body">
-                        <div class="dash-team">
-                            <div class="dash-team-member">
-                                <img src="https://bootstrapmade.com/content/demo/EliteAdmin/assets/img/avatars/avatar-1.webp" alt="" class="dash-team-avatar">
-                                <div class="dash-team-info">
-                                    <span class="dash-team-name">Alex Thompson</span>
-                                    <span class="dash-team-role">Lead Developer</span>
-                                </div>
-                                <span class="dash-team-status online"></span>
-                            </div>
-                            <div class="dash-team-member">
-                                <img src="https://bootstrapmade.com/content/demo/EliteAdmin/assets/img/avatars/avatar-2.webp" alt="" class="dash-team-avatar">
-                                <div class="dash-team-info">
-                                    <span class="dash-team-name">Sarah Wilson</span>
-                                    <span class="dash-team-role">Product Designer</span>
-                                </div>
-                                <span class="dash-team-status online"></span>
-                            </div>
-                            <div class="dash-team-member">
-                                <img src="https://bootstrapmade.com/content/demo/EliteAdmin/assets/img/avatars/avatar-3.webp" alt="" class="dash-team-avatar">
-                                <div class="dash-team-info">
-                                    <span class="dash-team-name">Mike Johnson</span>
-                                    <span class="dash-team-role">DevOps Engineer</span>
-                                </div>
-                                <span class="dash-team-status away"></span>
-                            </div>
-                            <div class="dash-team-member">
-                                <img src="https://bootstrapmade.com/content/demo/EliteAdmin/assets/img/avatars/avatar-4.webp" alt="" class="dash-team-avatar">
-                                <div class="dash-team-info">
-                                    <span class="dash-team-name">Emily Davis</span>
-                                    <span class="dash-team-role">Marketing Lead</span>
-                                </div>
-                                <span class="dash-team-status offline"></span>
-                            </div>
-                            <div class="dash-team-member">
-                                <img src="https://bootstrapmade.com/content/demo/EliteAdmin/assets/img/avatars/avatar-5.webp" alt="" class="dash-team-avatar">
-                                <div class="dash-team-info">
-                                    <span class="dash-team-name">David Chen</span>
-                                    <span class="dash-team-role">Backend Developer</span>
-                                </div>
-                                <span class="dash-team-status online"></span>
-                            </div>
+                        <div class="rpt-chart-wrap" style="height:280px;">
+                            <canvas id="paymentSplitChart"></canvas>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Activity + Team + Targets -->
-        <div class="row g-3">
-            <div class="col-xl-4">
-                <div class="card h-100">
-                    <div class="card-header">
-                        <h5 class="card-title">Recent Activity</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="dash-activity">
-                            <div class="dash-activity-item">
-                                <div class="dash-activity-dot" style="background: var(--success-color);"></div>
-                                <div class="dash-activity-content">
-                                    <p class="dash-activity-text"><strong>Alex Thompson</strong> completed a purchase</p>
-                                    <span class="dash-activity-time">5 min ago</span>
-                                </div>
-                            </div>
-                            <div class="dash-activity-item">
-                                <div class="dash-activity-dot" style="background: var(--accent-color);"></div>
-                                <div class="dash-activity-content">
-                                    <p class="dash-activity-text"><strong>Sarah Wilson</strong> submitted a support ticket</p>
-                                    <span class="dash-activity-time">28 min ago</span>
-                                </div>
-                            </div>
-                            <div class="dash-activity-item">
-                                <div class="dash-activity-dot" style="background: var(--warning-color);"></div>
-                                <div class="dash-activity-content">
-                                    <p class="dash-activity-text">Server storage reached <strong>85%</strong> capacity</p>
-                                    <span class="dash-activity-time">1 hour ago</span>
-                                </div>
-                            </div>
-                            <div class="dash-activity-item">
-                                <div class="dash-activity-dot" style="background: var(--info-color);"></div>
-                                <div class="dash-activity-content">
-                                    <p class="dash-activity-text"><strong>Mike Johnson</strong> deployed v2.4.1 to production</p>
-                                    <span class="dash-activity-time">2 hours ago</span>
-                                </div>
-                            </div>
-                            <div class="dash-activity-item">
-                                <div class="dash-activity-dot" style="background: var(--danger-color);"></div>
-                                <div class="dash-activity-content">
-                                    <p class="dash-activity-text">Payment from <strong>Emily Davis</strong> failed</p>
-                                    <span class="dash-activity-time">3 hours ago</span>
-                                </div>
-                            </div>
-                            <div class="dash-activity-item">
-                                <div class="dash-activity-dot" style="background: var(--success-color);"></div>
-                                <div class="dash-activity-content">
-                                    <p class="dash-activity-text"><strong>David Chen</strong> upgraded to Enterprise plan</p>
-                                    <span class="dash-activity-time">5 hours ago</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-xl-4">
-                <div class="card h-100">
-                    <div class="card-header">
-                        <h5 class="card-title">Sales Targets</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="dash-targets">
-                            <div class="dash-target-item">
-                                <div class="dash-target-header">
-                                    <span class="dash-target-label">Monthly Revenue</span>
-                                    <span class="dash-target-value">$48.2K <span class="text-muted">/ $60K</span></span>
-                                </div>
-                                <div class="progress">
-                                    <div class="progress-bar" style="width: 80%; background: var(--accent-color);"></div>
-                                </div>
-                            </div>
-                            <div class="dash-target-item">
-                                <div class="dash-target-header">
-                                    <span class="dash-target-label">New Customers</span>
-                                    <span class="dash-target-value">342 <span class="text-muted">/ 500</span></span>
-                                </div>
-                                <div class="progress">
-                                    <div class="progress-bar" style="width: 68%; background: var(--success-color);"></div>
-                                </div>
-                            </div>
-                            <div class="dash-target-item">
-                                <div class="dash-target-header">
-                                    <span class="dash-target-label">Deals Closed</span>
-                                    <span class="dash-target-value">28 <span class="text-muted">/ 35</span></span>
-                                </div>
-                                <div class="progress">
-                                    <div class="progress-bar" style="width: 80%; background: var(--warning-color);"></div>
-                                </div>
-                            </div>
-                            <div class="dash-target-item">
-                                <div class="dash-target-header">
-                                    <span class="dash-target-label">Support Resolution</span>
-                                    <span class="dash-target-value">94% <span class="text-muted">/ 98%</span></span>
-                                </div>
-                                <div class="progress">
-                                    <div class="progress-bar" style="width: 96%; background: var(--info-color);"></div>
-                                </div>
-                            </div>
-                            <div class="dash-target-item">
-                                <div class="dash-target-header">
-                                    <span class="dash-target-label">User Retention</span>
-                                    <span class="dash-target-value">87% <span class="text-muted">/ 95%</span></span>
-                                </div>
-                                <div class="progress">
-                                    <div class="progress-bar" style="width: 92%; background: var(--danger-color);"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 
     <!-- Footer -->
@@ -680,12 +417,16 @@
 <script src="https://bootstrapmade.com/content/demo/EliteAdmin/assets/js/main.js"></script>
 
 <script src="https://bootstrapmade.com/content/demo/EliteAdmin/assets/js/apps-sidebar-toggle.js"></script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
 <script src="assets/js/admin/dashboard.js"></script>
 <script src="assets/js/auth.js"></script>
 <script src="assets/js/notiflix-aio-3.2.8.min.js"></script>
 <script>
-    window.addEventListener("load", checkAdmin);
+    window.addEventListener("load", () => {
+        checkAdmin();
+        loadAdminName();
+    });
 </script>
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"68c5ca450bae485a842ff76066d69420","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>

@@ -531,7 +531,10 @@
         crossorigin="anonymous"></script>
 
 <script>
-    window.addEventListener("load", checkAdmin);
+    window.addEventListener("load", () => {
+        checkAdmin();
+        loadAdminName();
+    });
 
     // Live checklist
     function updateChecklist() {

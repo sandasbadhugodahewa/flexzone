@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlexZone | Reports</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link href="assets/images/logo/favicon.ico" rel="icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com/">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap"
+          rel="stylesheet">
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/css/bootstrap-icons.css" rel="stylesheet">
+    <link href="assets/css/admin/admin-main.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/light/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    <script>
+        fetch("admin-sidebar.html").then(r => r.text()).then(d => {
+            document.getElementById("sidebar").innerHTML = d;
+        });
+    </script>
+</head>
+<body>
+
+<div id="sidebar"></div>
+
+<main class="main">
+    <div class="main-content page-reports">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Reports</h1>
+                <nav class="breadcrumb">
+                    <a href="admin-dashboard.html" class="breadcrumb-item">Home</a>
+                    <span class="breadcrumb-item active">Reports</span>
+                </nav>
+            </div>
+            <div class="page-header-actions">
+                <button class="btn btn-outline-secondary" onclick="exportCurrentTab()">
+                    <i class="bi bi-download me-1"></i> Export
+                </button>
+                <button class="btn btn-outline-secondary" onclick="printReport()">
+                    <i class="bi bi-printer me-1"></i> Print
+                </button>
+            </div>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="rpt-tab-nav" id="rptTabNav">
+            <button class="rpt-tab-btn active" data-tab="sales"
+                    onclick="switchTab('sales', this)">
+                <i class="bi bi-graph-up-arrow"></i><span>Sales</span>
+            </button>
+            <button class="rpt-tab-btn" data-tab="orders"
+                    onclick="switchTab('orders', this)">
+                <i class="bi bi-receipt"></i><span>Orders</span>
+            </button>
+            <button class="rpt-tab-btn" data-tab="products"
+                    onclick="switchTab('products', this)">
+                <i class="bi bi-bag-heart"></i><span>Products</span>
+            </button>
+            <button class="rpt-tab-btn" data-tab="inventory"
+                    onclick="switchTab('inventory', this)">
+                <i class="bi bi-boxes"></i><span>Inventory</span>
+            </button>
+            <button class="rpt-tab-btn" data-tab="customers"
+                    onclick="switchTab('customers', this)">
+                <i class="bi bi-people"></i><span>Customers</span>
+            </button>
+            <button class="rpt-tab-btn" data-tab="payments"
+                    onclick="switchTab('payments', this)">
+                <i class="bi bi-credit-card"></i><span>Payments</span>
+            </button>
+            <button class="rpt-tab-btn" data-tab="delivery"
+                    onclick="switchTab('delivery', this)">
+                <i class="bi bi-truck"></i><span>Delivery</span>
+            </button>
+        </div>
+
+        <div class="rpt-tab-panel active" id="tab-sales">
+            <div class="rpt-filter-bar">
+                <label>Period</label>
+                <select id="salesPeriod" onchange="loadSales()">
+                    <option value="monthly">Monthly</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="daily">Daily</option>
+                </select>
+                <label>From</label>
+                <input type="date" id="salesFrom">
+                <label>To</label>
+                <input type="date" id="salesTo">
+                <button class="btn-apply" onclick="loadSales()">
+                    <i class="bi bi-funnel me-1"></i>Apply
+                </button>
+                <button class="btn-export" onclick="exportPDF('sales')">
+                    <i class="bi bi-file-earmark-pdf"></i> PDF
+                </button>
+            </div>
+
+            <!-- KPI cards -->
+            <div class="rpt-kpi-grid" id="salesKpi">
+                <!-- populated by JS -->
+            </div>
+
+            <!-- Charts row -->
+            <div class="row g-4 mb-4">
+                <div class="col-lg-8">
+                    <div class="rpt-chart-card">
+                        <div class="rpt-card-header">
+                            <h5><i class="bi bi-bar-chart"></i> Monthly Revenue (Last 12 Months)</h5>
+                        </div>
+                        <div class="rpt-chart-wrap" style="height:280px;">
+                            <canvas id="salesMonthlyChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="rpt-chart-card">
+                        <div class="rpt-card-header">
+                            <h5><i class="bi bi-calendar-week"></i> Last 7 Days</h5>
+                        </div>
+                        <div class="rpt-chart-wrap" style="height:280px;">
+                            <canvas id="salesDailyChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent orders table -->
+            <div class="rpt-table-wrap">
+                <div class="rpt-table-head">
+                    <h6><i class="bi bi-clock-history"></i> Recent Paid Orders</h6>
+                    <span id="salesTableCount" style="font-size:12px;color:var(--muted-color);"></span>
+                </div>
+                <div class="table-responsive">
+                    <table class="rpt-table">
+                        <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Date</th>
+                            <th class="text-end">Revenue</th>
+                        </tr>
+                        </thead>
+                        <tbody id="salesTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="rpt-tab-panel" id="tab-orders">
+            <div class="rpt-filter-bar">
+                <label>Status</label>
+                <select id="orderStatus">
+                    <option value="all">All</option>
+                    <optgroup label="Payment">
+                        <option value="PAID">Paid</option>
+                        <option value="PENDING">Pending</option>
+                        <option value="BLOCKED">Failed</option>
+                    </optgroup>
+                    <optgroup label="Delivery">
+                        <option value="APPROVED">Approved</option>
+                        <option value="PACKING">Packing</option>
+                        <option value="SHIPPED">Shipped</option>
+                        <option value="DELIVERED">Delivered</option>
+                        <option value="COMPLETED">Completed</option>
+                        <option value="CANCELED">Canceled</option>
+                    </optgroup>
+                </select>
+                <label>From</label>
+                <input type="date" id="orderFrom">
+                <label>To</label>
+                <input type="date" id="orderTo">
+                <button class="btn-apply" onclick="loadOrders()">
+                    <i class="bi bi-funnel me-1"></i>Apply
+                </button>
+                <button class="btn-export" onclick="exportPDF('orders')">
+                    <i class="bi bi-file-earmark-pdf"></i> PDF
+                </button>
+            </div>
+
+            <div class="rpt-kpi-grid" id="ordersKpi"></div>
+
+            <div class="row g-4 mb-4">
+<!--                <div class="col-lg-5">-->
+<!--                    <div class="rpt-chart-card">-->
+<!--                        <div class="rpt-card-header">-->
+<!--                            <h5><i class="bi bi-pie-chart"></i> Payment Status Split</h5>-->
+<!--                        </div>-->
+<!--                        <div class="row align-items-center">-->
+<!--                            <div class="col-7">-->
+<!--                                <div class="rpt-chart-wrap" style="height:220px;">-->
+<!--                                    <canvas id="orderStatusChart"></canvas>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <div class="col-5">-->
+<!--                                <div class="rpt-donut-legend" id="orderStatusLegend"></div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+                <div class="col-lg-12">
+                    <div class="rpt-chart-card">
+                        <div class="rpt-card-header">
+                            <h5><i class="bi bi-bar-chart-steps"></i> Delivery Pipeline</h5>
+                        </div>
+                        <div class="rpt-chart-wrap" style="height:220px;">
+                            <canvas id="deliveryPipelineChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rpt-table-wrap">
+                <div class="rpt-table-head">
+                    <h6><i class="bi bi-list-ul"></i> Orders</h6>
+                    <span id="ordersTableCount" style="font-size:12px;color:var(--muted-color);"></span>
+                </div>
+                <div class="table-responsive">
+                    <table class="rpt-table">
+                        <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Date</th>
+                            <th>Payment</th>
+                            <th>Delivery</th>
+                            <th class="text-end">Total</th>
+                        </tr>
+                        </thead>
+                        <tbody id="ordersTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="rpt-tab-panel" id="tab-products">
+
+            <div class="row g-4 mb-4">
+                <div class="rpt-filter-bar">
+                    <label>From</label>
+                    <input type="date" id="salesFrom">
+                    <label>To</label>
+                    <input type="date" id="salesTo">
+                    <button class="btn-apply" onclick="loadSales()">
+                        <i class="bi bi-funnel me-1"></i>Apply
+                    </button>
+                    <button class="btn-export" onclick="exportPDF('products')">
+                        <i class="bi bi-file-earmark-pdf"></i> PDF
+                    </button>
+                </div>
+                <!-- Best Selling -->
+                <div class="col-lg-6">
+                    <div class="rpt-chart-card" style="height:100%;">
+                        <div class="rpt-card-header">
+                            <h5><i class="bi bi-trophy"></i> Best Selling Products</h5>
+                        </div>
+                        <div id="bestSellingList"></div>
+                    </div>
+                </div>
+                <!-- Sales by Category -->
+                <div class="col-lg-6">
+                    <div class="rpt-chart-card">
+                        <div class="rpt-card-header">
+                            <h5><i class="bi bi-arrow-down-circle" style="color:#d97706;"></i> Low Selling Products</h5>
+                        </div>
+                        <div id="lowSellingList"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4 mb-4">
+                <!-- Low Selling -->
+                <div class="col-lg-6">
+                    <div class="rpt-chart-card">
+                        <div class="rpt-card-header">
+                            <h5><i class="bi bi-pie-chart"></i> Revenue by Category</h5>
+                        </div>
+                        <div class="rpt-chart-wrap" style="height:280px;">
+                            <canvas id="categoryChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <!-- Out of Stock -->
+                <div class="col-lg-6">
+                    <div class="rpt-chart-card">
+                        <div class="rpt-card-header">
+                            <h5><i class="bi bi-exclamation-circle" style="color:#dc2626;"></i> Out of Stock</h5>
+                            <span id="outOfStockCount" class="rpt-badge out">0 products</span>
+                        </div>
+                        <div id="outOfStockList" style="max-height:280px;overflow-y:auto;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="rpt-table-wrap">
+                <div class="rpt-table-head">
+                    <h6><i class="bi bi-list-ul"></i> Products</h6>
+                    <span id="productTableCount" style="font-size:12px;color:var(--muted-color);"></span>
+                </div>
+                <div class="table-responsive">
+                    <table class="rpt-table">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Product</th>
+                            <th>Category</th>
+                            <th>Size Variants</th>
+                            <th>Stock</th>
+                            <th>Status</th>
+                            <th class="text-end">Price Range</th>
+                        </tr>
+                        </thead>
+                        <tbody id="productTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="rpt-tab-panel" id="tab-inventory">
+            <div class="rpt-filter-bar">
+                <label>From</label>
+                <input type="date" id="salesFrom">
+                <label>To</label>
+                <input type="date" id="salesTo">
+                <button class="btn-apply" onclick="loadSales()">
+                    <i class="bi bi-funnel me-1"></i>Apply
+                </button>
+                <button class="btn-export" onclick="exportPDF('inventory')">
+                    <i class="bi bi-file-earmark-pdf"></i> PDF
+                </button>
+            </div>
+
+            <div class="rpt-kpi-grid" id="inventoryKpi"></div>
+
+            <div class="row g-4 mb-4">
+                <div class="col-lg-6">
+                    <div class="rpt-chart-card">
+                        <div class="rpt-card-header">
+                            <h5><i class="bi bi-rulers"></i> Stock by Size</h5>
+                        </div>
+                        <div class="rpt-chart-wrap" style="height:260px;">
+                            <canvas id="sizeStockChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="rpt-chart-card">
+                        <div class="rpt-card-header">
+                            <h5><i class="bi bi-palette"></i> Stock by Color</h5>
+                        </div>
+                        <div class="rpt-chart-wrap" style="height:260px;">
+                            <canvas id="colorStockChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rpt-table-wrap">
+                <div class="rpt-table-head">
+                    <h6><i class="bi bi-table"></i> Full Stock Table</h6>
+                    <div style="display:flex;gap:8px;align-items:center;">
+                        <input type="text" id="stockSearch" placeholder="Search..."
+                               style="border:1.5px solid var(--border-color);border-radius:8px;
+                                  padding:5px 10px;font-size:12px;outline:none;"
+                               oninput="filterStockTable()">
+                        <select id="stockFilter"
+                                style="border:1.5px solid var(--border-color);border-radius:8px;
+                                   padding:5px 10px;font-size:12px;outline:none;"
+                                onchange="filterStockTable()">
+                            <option value="all">All</option>
+                            <option value="OK">In Stock</option>
+                            <option value="LOW">Low Stock</option>
+                            <option value="OUT">Out of Stock</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="rpt-table">
+                        <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Category</th>
+                            <th>Size</th>
+                            <th>Color</th>
+                            <th>Status</th>
+                            <th class="text-center">Qty</th>
+                            <th class="text-end">Price</th>
+                        </tr>
+                        </thead>
+                        <tbody id="stockTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="rpt-tab-panel" id="tab-customers">
+
+            <div class="rpt-kpi-grid" id="customersKpi"></div>
+
+            <div class="row g-4 mb-4">
+                <div class="col-lg-7">
+                    <div class="rpt-chart-card">
+                        <div class="rpt-card-header">
+                            <h5><i class="bi bi-person-add"></i> New Customers (Last 6 Months)</h5>
+                        </div>
+                        <div class="rpt-chart-wrap" style="height:260px;">
+                            <canvas id="newCustomersChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="rpt-chart-card" style="height:100%;">
+                        <div class="rpt-card-header">
+                            <h5><i class="bi bi-trophy"></i> Top Spenders</h5>
+                        </div>
+                        <div id="topSpendersList"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="rpt-tab-panel" id="tab-payments">
+
+            <div class="rpt-kpi-grid" id="paymentsKpi"></div>
+
+            <div class="row g-4 mb-4">
+                <div class="col-lg-8">
+                    <div class="rpt-chart-card">
+                        <div class="rpt-card-header">
+                            <h5><i class="bi bi-bar-chart"></i> Monthly Payment Status (Last 6 Months)</h5>
+                        </div>
+                        <div class="rpt-chart-wrap" style="height:270px;">
+                            <canvas id="paymentMonthlyChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="rpt-chart-card">
+                        <div class="rpt-card-header">
+                            <h5><i class="bi bi-pie-chart"></i> Payment Split</h5>
+                        </div>
+                        <div class="rpt-chart-wrap" style="height:220px;">
+                            <canvas id="paymentSplitChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="rpt-tab-panel" id="tab-delivery">
+
+            <div class="rpt-kpi-grid" id="deliveryKpi"></div>
+
+            <div class="row g-4 mb-4">
+                <div class="col-lg-5">
+                    <div class="rpt-chart-card">
+                        <div class="rpt-card-header">
+                            <h5><i class="bi bi-pie-chart"></i> Delivery Status Distribution</h5>
+                        </div>
+                        <div class="rpt-chart-wrap" style="height:260px;">
+                            <canvas id="deliveryDistChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-7">
+                    <div class="rpt-chart-card">
+                        <div class="rpt-card-header">
+                            <h5><i class="bi bi-bar-chart-horizontal"></i> Delivery Type Breakdown</h5>
+                        </div>
+                        <div class="rpt-chart-wrap" style="height:260px;">
+                            <canvas id="deliveryTypeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /main-content -->
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-copyright">&copy; 2026 <a href="#">fleXZone</a>. All Rights Reserved.</div>
+        </div>
+    </footer>
+</main>
+
+<a href="#" class="back-to-top"><i class="bi bi-arrow-up"></i></a>
+
+<!-- Scripts -->
+<script src="https://bootstrapmade.com/content/vendors/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/notiflix-aio-3.2.8.min.js"></script>
+<script src="assets/js/auth.js"></script>
+<script src="assets/js/admin/admin-reports.js"></script>
+<script src="https://bootstrapmade.com/content/demo/EliteAdmin/assets/js/theme.js"></script>
+<script src="https://bootstrapmade.com/content/demo/EliteAdmin/assets/js/main.js"></script>
+<script src="https://bootstrapmade.com/content/demo/EliteAdmin/assets/js/apps-sidebar-toggle.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
+
+<script>
+    window.addEventListener("load", () => {
+        checkAdmin();
+        loadSales();
+        loadAdminName();
+    });
+</script>
+
+</body>
+</html>

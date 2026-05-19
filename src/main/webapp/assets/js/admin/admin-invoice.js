@@ -76,6 +76,7 @@ function buildRow(o) {
 
     const ps = payMap[o.status]         || { cls: "draft", label: o.status || "—" };
     const ds = delMap[o.deliveryStatus] || null;
+    const canChangeDelivery = o.status === "PAID";
 
     return `
     <tr data-order-id="${o.orderId}">
@@ -115,43 +116,73 @@ function buildRow(o) {
                     <i class="bi bi-eye"></i>
                 </a>
                 <div class="dropdown d-inline-block">
-                    <button class="inv-action-btn dropdown-toggle"
-                            data-bs-toggle="dropdown" title="Change Status">
-                        <i class="bi bi-three-dots"></i>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end"
-                        style="font-size:13px;min-width:160px;">
-                        <li class="dropdown-header" style="font-size:11px;font-weight:700;
-                                text-transform:uppercase;color:var(--muted-color);">
-                            Change Status
-                        </li>
-                        <li><a class="dropdown-item" href="#"
-                               onclick="updateStatus('${o.orderId}','APPROVED'); return false;">
-                            <i class="bi bi-clock me-2 text-info"></i>Approved
-                        </a></li>
-                        <li><a class="dropdown-item" href="#"
-                               onclick="updateStatus('${o.orderId}','PACKING'); return false;">
-                            <i class="bi bi-box-seam me-2 text-info"></i>Packing
-                        </a></li>
-                        <li><a class="dropdown-item" href="#"
-                               onclick="updateStatus('${o.orderId}','SHIPPED'); return false;">
-                            <i class="bi bi-truck me-2 text-info"></i>Shipped
-                        </a></li>
-                        <li><a class="dropdown-item" href="#"
-                               onclick="updateStatus('${o.orderId}','DELIVERED'); return false;">
-                            <i class="bi bi-house-check me-2 text-primary"></i>Delivered
-                        </a></li>
-                        <li><a class="dropdown-item" href="#"
-                               onclick="updateStatus('${o.orderId}','COMPLETED'); return false;">
-                            <i class="bi bi-check-circle me-2 text-success"></i>Completed
-                        </a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-danger" href="#"
-                               onclick="updateStatus('${o.orderId}','CANCELLED'); return false;">
-                            <i class="bi bi-x-circle me-2"></i>Cancel
-                        </a></li>
-                    </ul>
-                </div>
+
+    <button class="inv-action-btn dropdown-toggle"
+            data-bs-toggle="${canChangeDelivery ? 'dropdown' : ''}"
+            title="${canChangeDelivery ? 'Change Status' : 'Payment not completed'}"
+            ${!canChangeDelivery ? 'disabled style="opacity:.5;cursor:not-allowed;"' : ''}>
+        <i class="bi bi-three-dots"></i>
+    </button>
+
+    ${canChangeDelivery ? `
+    <ul class="dropdown-menu dropdown-menu-end"
+        style="font-size:13px;min-width:160px;">
+
+        <li class="dropdown-header"
+            style="font-size:11px;font-weight:700;
+            text-transform:uppercase;color:var(--muted-color);">
+            Change Status
+        </li>
+
+        <li>
+            <a class="dropdown-item" href="#"
+               onclick="updateStatus('${o.orderId}','APPROVED'); return false;">
+                <i class="bi bi-clock me-2 text-info"></i>Approved
+            </a>
+        </li>
+
+        <li>
+            <a class="dropdown-item" href="#"
+               onclick="updateStatus('${o.orderId}','PACKING'); return false;">
+                <i class="bi bi-box-seam me-2 text-info"></i>Packing
+            </a>
+        </li>
+
+        <li>
+            <a class="dropdown-item" href="#"
+               onclick="updateStatus('${o.orderId}','SHIPPED'); return false;">
+                <i class="bi bi-truck me-2 text-info"></i>Shipped
+            </a>
+        </li>
+
+        <li>
+            <a class="dropdown-item" href="#"
+               onclick="updateStatus('${o.orderId}','DELIVERED'); return false;">
+                <i class="bi bi-house-check me-2 text-primary"></i>Delivered
+            </a>
+        </li>
+
+        <li>
+            <a class="dropdown-item" href="#"
+               onclick="updateStatus('${o.orderId}','COMPLETED'); return false;">
+                <i class="bi bi-check-circle me-2 text-success"></i>Completed
+            </a>
+        </li>
+
+        <li><hr class="dropdown-divider"></li>
+
+        <li>
+            <a class="dropdown-item text-danger" href="#"
+               onclick="updateStatus('${o.orderId}','CANCELED'); return false;">
+                <i class="bi bi-x-circle me-2"></i>Cancel
+            </a>
+        </li>
+
+    </ul>
+    ` : ''}
+
+</div>
+                
             </div>
         </td>
     </tr>`;

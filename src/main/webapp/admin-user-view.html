@@ -453,7 +453,10 @@
 <script src="assets/js/notiflix-aio-3.2.8.min.js"></script>
 <script src="assets/js/auth.js"></script>
 <script>
-    window.addEventListener("load", checkAdmin);
+    window.addEventListener("load", () => {
+        checkAdmin();
+        loadAdminName();
+    });
 </script>
 
 <script src="https://bootstrapmade.com/content/demo/EliteAdmin/assets/js/apps-sidebar-toggle.js"></script>

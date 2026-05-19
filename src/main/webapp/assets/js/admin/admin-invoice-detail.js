@@ -75,6 +75,7 @@ function renderInvoice(order) {
             .filter(Boolean).join(", "));
 
     renderPaymentBadge(order.status);
+    const canChangeDelivery = order.status === "PAID";
 
     //Delivery type
     setText("#deliveryTypeName",
@@ -86,19 +87,25 @@ function renderInvoice(order) {
     //Delivery timeline
     renderTimeline(order.deliveryStatus);
 
-    //Client card
     const initials = ((order.firstName?.[0] || "") + (order.lastName?.[0] || "")).toUpperCase();
     setText("#clientCardName",   `${order.firstName} ${order.lastName}`);
     setText("#clientCardEmail",  order.email);
     setHTML("#clientCardAvatar", initials);
-
-    //Activity log
     renderActivity(order);
 
-    // ── Pre-select delivery dropdown ──
     const sel = document.querySelector(".inv-filter");
-    if (sel && order.deliveryStatus) sel.value = order.deliveryStatus;
-
+    if (sel) {
+        if (order.deliveryStatus) {
+            sel.value = order.deliveryStatus;
+        }
+        if (!canChangeDelivery) {
+            sel.disabled = true;
+            sel.title = "Delivery status cannot change until payment is completed";
+        } else {
+            sel.disabled = false;
+            sel.title = "";
+        }
+    }
     window._currentOrderId = order.orderId;
 }
 
@@ -268,6 +275,20 @@ function wireDeliverySelect() {
 }
 
 async function updateDeliveryStatus(orderId, newStatus) {
+    const paymentBadge =
+        document.getElementById("paymentStatusBadge");
+
+    if (paymentBadge &&
+        (paymentBadge.textContent.includes("Pending") ||
+            paymentBadge.textContent.includes("Failed"))) {
+
+        Notiflix.Notify.failure(
+            "Cannot change delivery status before payment confirmation!",
+            { position: "center-top" }
+        );
+
+        return;
+    }
     try {
         Notiflix.Loading.pulse("Updating status...", { svgColor: "#6c5ce7" });
 
