@@ -52,7 +52,6 @@ function renderProduct(p) {
         mainImgEl.src = "assets/images/productImg/" + images[0];
     }
 
-    //Thumbnail
     const thumbStrip = document.getElementById("pvThumbStrip");
     if (thumbStrip) {
         thumbStrip.innerHTML = images.map((img, i) => `
@@ -63,7 +62,6 @@ function renderProduct(p) {
         ).join("");
     }
 
-    //Specification
     const metaRow = document.getElementById("pvMetaRow");
     if (metaRow) {
         metaRow.innerHTML = `

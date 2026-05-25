@@ -489,11 +489,9 @@ public class AdminProductService {
                     }
 
                     Status stockStatus = session.createNamedQuery("Status.findByValue", Status.class)
-                            .setParameter("value", "ACTIVE")
-                            .getSingleResult();
+                            .setParameter("value", "ACTIVE").getSingleResult();
 
                     stock.setStatus(stockStatus);
-
                     session.persist(stock);
                 }
             }
@@ -526,10 +524,8 @@ public class AdminProductService {
 //        Transaction tx = null;
 //
 //        try {
-//
 //            ProductDTO dto = AppUtil.GSON.fromJson(productJson, ProductDTO.class);
 //
-//            // 🔴 VALIDATION BLOCK (Lecturer style)
 //            if (dto.getTitle() == null) {
 //                message = "Title is required!";
 //            } else if (dto.getTitle().isBlank()) {
@@ -671,6 +667,8 @@ public class AdminProductService {
 
                 String originalName = part.getContentDisposition().getFileName();
 
+                originalName = originalName.replaceAll("[^a-zA-Z0-9\\.\\-_]", "_");
+
                 String fileName = System.currentTimeMillis() + "_" + originalName;
 
                 File file = new File(uploadPath, fileName);
@@ -679,7 +677,6 @@ public class AdminProductService {
 
                 fileNames.add(fileName);
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -689,29 +686,26 @@ public class AdminProductService {
     public String updateProduct(int productId, String productJson,
                                 List<FormDataBodyPart> imageParts) {
         JsonObject response = new JsonObject();
-        Session session     = HibernateUtil.getSessionFactory().openSession();
-        Transaction tx      = session.beginTransaction();
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction tx = session.beginTransaction();
 
         try {
             ProductDTO dto = AppUtil.GSON.fromJson(productJson, ProductDTO.class);
-            Product p      = session.find(Product.class, productId);
+            Product p = session.find(Product.class, productId);
 
             if (p == null) throw new RuntimeException("Product not found!");
 
-            // ── 1. Update basic fields ──────────────────────────────────────
             p.setTitle(dto.getTitle());
             p.setDescription(dto.getDescription());
-            p.setCategory(session.find(Category.class,    dto.getCategoryId()));
-            p.setBrand(session.find(Brand.class,          dto.getBrandId()));
-            p.setColor(session.find(Color.class,          dto.getColorId()));
-            p.setGender(session.find(Gender.class,        dto.getGenderId()));
+            p.setCategory(session.find(Category.class, dto.getCategoryId()));
+            p.setBrand(session.find(Brand.class, dto.getBrandId()));
+            p.setColor(session.find(Color.class, dto.getColorId()));
+            p.setGender(session.find(Gender.class, dto.getGenderId()));
 
-            // FIX: ProductDTO field is subCategoryId, not subcategoryId
             Subcategory sub = session.find(Subcategory.class, dto.getSubCategoryId());
             if (sub == null) throw new RuntimeException("Invalid SubCategory ID!");
             p.setSubcategory(sub);
 
-            // ── 2. Status ───────────────────────────────────────────────────
             if (dto.getStatus() != null && !dto.getStatus().isBlank()) {
                 Status status = session.createNamedQuery("Status.findByValue", Status.class)
                         .setParameter("value", dto.getStatus())
@@ -719,7 +713,6 @@ public class AdminProductService {
                 p.setStatus(status);
             }
 
-            // ── 3. Product details JSON ─────────────────────────────────────
             if (dto.getProductDetails() != null) {
                 p.setProductDetails(AppUtil.GSON.toJson(dto.getProductDetails()));
             } else {
@@ -730,88 +723,78 @@ public class AdminProductService {
                     .setParameter("pid", productId)
                     .executeUpdate();
 
-            session.flush();   // force DB sync
-            session.clear();   // clear Hibernate cache
+            p = session.find(Product.class, productId);
 
-            p = session.find(Product.class, productId); // reload fresh entity
-
-            // Build new image list
             List<String> updatedImages = new ArrayList<>();
 
-// Keep existing images
             if (dto.getKeptImages() != null) {
                 updatedImages.addAll(dto.getKeptImages());
             }
-
-// Add new uploaded images
             List<String> newImageNames = saveImages(imageParts);
             if (newImageNames != null) {
                 updatedImages.addAll(newImageNames);
             }
-
-// Replace whole collection (IMPORTANT)
             p.setImages(updatedImages);
 
-            // Add back kept images (ones user did NOT delete)
-//            List<String> keptImages = dto.getKeptImages();
-//            if (keptImages != null) {
-//                p.getImages().addAll(keptImages);
-//            }
-//
-//            // Save and add new uploaded images
-//            List<String> newImageNames = saveImages(imageParts);
-//            if (newImageNames != null) {
-//                p.getImages().addAll(newImageNames);
-//            }
-
-            // ── 5. FIX: Delete ALL old stocks first, then insert fresh ──────
-            // This prevents duplicate stock rows on every save
-            List<Stock> oldStocks = session
-                    .createQuery("FROM Stock s WHERE s.product.id = :pid", Stock.class)
-                    .setParameter("pid", productId)
-                    .getResultList();
-            for (Stock old : oldStocks) {
-                session.remove(old);
-            }
-
-            // ── 6. Insert updated stock rows ────────────────────────────────
-            Status activeStatus = session.createNamedQuery("Status.findByValue", Status.class)
-                    .setParameter("value", "ACTIVE")
-                    .getSingleResult();
+            Product product = session.find(Product.class, productId);
 
             if (dto.getStockDTOList() != null) {
+
                 for (StockDTO s : dto.getStockDTOList()) {
-                    Stock stock = new Stock();
-                    stock.setProduct(p);
-                    stock.setPrice(s.getPrice());
-                    stock.setQuantity(s.getQuantity());
-                    stock.setStatus(activeStatus);
-                    stock.setSize(session.find(Size.class, s.getSizeId()));
 
-                    if (s.getDiscountId() != null) {
-                        Discount discount = session.find(Discount.class, s.getDiscountId());
-                        if (discount != null) stock.setDiscount(discount);
+                    if (s.getStockId() > 0) {
+
+                        Stock stock = session.find(Stock.class, s.getStockId());
+                        if (stock != null) {
+
+                            stock.setPrice(s.getPrice());
+                            stock.setQuantity(s.getQuantity());
+
+                            if (s.getDiscountId() != null) {
+                                Discount discount = session.find(Discount.class, s.getDiscountId());
+                                stock.setDiscount(discount);
+                            } else {
+                                stock.setDiscount(null);
+                            }
+                            session.merge(stock);
+                        }
+
+                    } else {
+                        Status stockStatus = session.createNamedQuery("Status.findByValue", Status.class)
+                                .setParameter("value", "ACTIVE")
+                                .getSingleResult();
+
+                        Stock stock = new Stock();
+
+                        stock.setProduct(product);
+                        stock.setPrice(s.getPrice());
+                        stock.setQuantity(s.getQuantity());
+                        stock.setStatus(stockStatus);
+
+                        stock.setSize(
+                                session.find(Size.class, s.getSizeId())
+                        );
+                        if (s.getDiscountId() != null) {
+                            Discount discount = session.find(Discount.class, s.getDiscountId());
+                            stock.setDiscount(discount);
+                        }
+                        session.persist(stock);
                     }
-
-                    session.persist(stock);
                 }
             }
-
             session.merge(p);
             tx.commit();
 
-            response.addProperty("status",  true);
+            response.addProperty("status", true);
             response.addProperty("message", "Product updated successfully!");
-
         } catch (Exception e) {
             tx.rollback();
             e.printStackTrace();
-            response.addProperty("status",  false);
+            response.addProperty("status", false);
             response.addProperty("message", "Update failed: " + e.getMessage());
         } finally {
             session.close();
         }
-
         return AppUtil.GSON.toJson(response);
     }
 

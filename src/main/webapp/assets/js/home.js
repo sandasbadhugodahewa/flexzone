@@ -1,82 +1,113 @@
-
 const DISCOUNT_PERCENT = 10;
+let allProducts = [];
+let visibleCount = 12;
+const LOAD_MORE_COUNT = 8;
 
 async function loadProducts() {
     try {
-        let container = document.getElementById("productContainer");
-        container.innerHTML = "";
 
         const response = await fetch("api/products/loadProducts");
 
         if (response.ok) {
+
             const data = await response.json();
             if (data.status) {
-
-                data.products.forEach(product => {
-
-                    let image1 = product.images && product.images.length > 0
-                        ? "assets/images/productImg/" + product.images[0]
-                        : "assets/images/default.png";
-
-                    let image2 = product.images && product.images.length > 1
-                        ? "assets/images/productImg/" + product.images[1]
-                        : "assets/images/default.png";
-
-                    const discountAmount = product.price * (DISCOUNT_PERCENT / 100);
-                    const oldPrice = (product.price + discountAmount).toFixed(2);
-
-                    // first available stock id
-                    const firstStock = product.stockDTOList && product.stockDTOList.length > 0
-                        ? product.stockDTOList.find(s => s.quantity > 0) || product.stockDTOList[0]
-                        : null;
-                    const stockId = firstStock ? firstStock.stockId : null;
-
-                    let card = `
-                <div class="col-md-6 col-lg-3 product-item isotope-item filter-clothing">
-                    <div class="product-card">
-                        <div class="product-image">
-                            <span class="badge">New</span>
-                            <img src="${image1}" alt="Product" class="img-fluid main-img">
-                            <img src="${image2}" alt="Product Hover" class="img-fluid hover-img">
-                            <div class="product-overlay">
-                                <a class="btn btn-cart" onclick="addToCart(${stockId},1);"><i class="bi bi-cart-plus"></i> Add to Cart</a>
-                                <div class="product-actions">
-                                    <a class="action-btn" onclick="addToWishList(${stockId});"><i class="bi bi-heart"></i></a>
-                                    <a href="single-product.html?pId=${product.id}" class="action-btn"><i class="bi bi-eye"></i></a>
-                                    <a href="#" class="action-btn"><i class="bi bi-arrow-left-right"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="product-info">
-                            <div class="product-category-tag">${product.categoryName || ''}</div>
-                            <h5 class="product-title">
-                                <a href="single-product.html?pId=${product.id}">${product.title}</a>
-                            </h5>
-                            <div class="product-price">
-                                <span class="current-price">Rs.${product.price}.00</span>
-                                <span class="old-price">Rs.${oldPrice}.00</span>
-                            </div>
-                            <div class="product-rating">
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-half"></i>
-                                <span>(24)</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-                    container.innerHTML += card;
-                });
-
+                allProducts = data.products;
+                renderProducts();
             } else {
-                Notiflix.Notify.info(data.message, {position: "center-top"});
+                Notiflix.Notify.info(data.message, {
+                    position: "center-top"
+                });
             }
         }
     } catch (e) {
-        Notiflix.Notify.failure(e.message, {position: "center-top"});
+        Notiflix.Notify.failure(e.message, {
+            position: "center-top"
+        });
     }
+}
+
+function renderProducts() {
+
+    let container = document.getElementById("productContainer");
+    container.innerHTML = "";
+    const visibleProducts = allProducts.slice(0, visibleCount);
+    visibleProducts.forEach(product => {
+
+        let image1 = product.images && product.images.length > 0
+            ? "assets/images/productImg/" + product.images[0]
+            : "assets/images/default.png";
+
+        let image2 = product.images && product.images.length > 1
+            ? "assets/images/productImg/" + product.images[1]
+            : "assets/images/default.png";
+
+        const discountAmount = product.price * (DISCOUNT_PERCENT / 100);
+        const oldPrice = (product.price + discountAmount).toFixed(2);
+
+        const firstStock = product.stockDTOList && product.stockDTOList.length > 0
+            ? product.stockDTOList.find(s => s.quantity > 0) || product.stockDTOList[0]
+            : null;
+
+        const stockId = firstStock ? firstStock.stockId : null;
+
+        let card = `
+        <div class="col-md-6 col-lg-3 product-item isotope-item filter-clothing">
+            <div class="product-card">
+                <div class="product-image">
+                    <span class="badge">New</span>
+                    <img src="${image1}" class="img-fluid main-img">
+                    <img src="${image2}" class="img-fluid hover-img">
+                    <div class="product-overlay">
+                        <a class="btn btn-cart"
+                           onclick="addToCart(${stockId},1);">
+                           <i class="bi bi-cart-plus"></i> Add to Cart
+                        </a>
+                        <div class="product-actions">
+                            <a class="action-btn"
+                               onclick="addToWishList(${stockId});">
+                               <i class="bi bi-heart"></i>
+                            </a>
+                            <a href="single-product.html?pId=${product.id}"
+                               class="action-btn">
+                               <i class="bi bi-eye"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="product-info">
+                    <div class="product-category-tag">
+                        ${product.categoryName || ''}
+                    </div>
+                    <h5 class="product-title">
+                        <a href="single-product.html?pId=${product.id}">
+                            ${product.title}
+                        </a>
+                    </h5>
+                    <div class="product-price">
+                        <span class="current-price">
+                            Rs.${product.price}.00
+                        </span>
+                        <span class="old-price">
+                            Rs.${oldPrice}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        `;
+        container.innerHTML += card;
+    });
+    const btn = document.getElementById("viewAllBtn");
+    if (visibleCount >= allProducts.length) {
+        btn.style.display = "none";
+    }
+}
+
+function loadMoreProducts() {
+    visibleCount += LOAD_MORE_COUNT;
+    renderProducts();
 }
 
 let productStocks = [];
@@ -105,14 +136,12 @@ async function loadProductsDetails() {
             Notiflix.Notify.failure(data.message, {position: "center-top"});
             return;
         }
-
         const pData = data.productData;
 
         document.getElementById("productTitle").innerHTML = pData.title;
         document.getElementById("subCategory1").innerHTML = pData.subCategoryName;
         document.getElementById("subCategory2").innerHTML = pData.subCategoryName;
         document.getElementById("categoryName").innerHTML = pData.categoryName;
-
 
         const desc = document.getElementById("productDescription");
         if (desc) desc.innerHTML = `<p>${pData.description}</p>`;
@@ -121,7 +150,6 @@ async function loadProductsDetails() {
         renderImages(pData.images);
 
         renderColor(pData.colorValue, pData.colorHex);
-
         //Size buttons
         productStocks = pData.stockDTOList || [];
         renderSizeButtons(productStocks);
@@ -129,12 +157,10 @@ async function loadProductsDetails() {
         if (productStocks.length > 0) {
             selectStock(productStocks[0]);
         }
-
     } catch (e) {
         Notiflix.Notify.failure(e.message, {position: "center-top"});
     }
 }
-
 
 function renderImages(images) {
     const firstImage = images && images.length > 0

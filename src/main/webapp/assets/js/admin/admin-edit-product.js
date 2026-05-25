@@ -1,30 +1,12 @@
-// ═══════════════════════════════════════════════════════
-//  FLEXZONE ADMIN — Edit Product JS
-//  Flow:
-//   1. Read productId from URL
-//   2. Load dropdown options from /form-data
-//   3. Load existing product from /api/admin/products/{id}
-//   4. Pre-fill all form fields with existing data
-//   5. Show existing images (keep/delete) + allow new uploads
-//   6. Load existing stock rows (edit in place)
-//   7. On save → PUT /api/admin/products/{id} (multipart)
-// ═══════════════════════════════════════════════════════
-
-// ─────────────────────────────────────────────
-//  STATE
-// ─────────────────────────────────────────────
 let currentProductId  = null;
-let existingImages    = [];   // filenames already saved in DB  e.g. ["123_shirt.png"]
-let newUploadedImages = [];   // new File objects user just selected
-let deletedImages     = [];   // filenames user marked for removal
+let existingImages    = [];
+let newUploadedImages = [];
+let deletedImages     = [];
 let stockRowCounter   = 0;
 let allSizes          = [];
 let allDiscounts      = [];
+let selectedStockId = null;
 
-
-// ─────────────────────────────────────────────
-//  INIT
-// ─────────────────────────────────────────────
 window.addEventListener("load", async () => {
     const params      = new URLSearchParams(window.location.search);
     currentProductId  = parseInt(params.get("productId"));
@@ -51,10 +33,6 @@ window.addEventListener("load", async () => {
     }
 });
 
-
-// ═══════════════════════════════════════════════════════
-//  STEP 1 — LOAD DROPDOWN DATA
-// ═══════════════════════════════════════════════════════
 async function loadDropdownData() {
     try {
         const res  = await fetch("api/admin/products/form-data");
@@ -98,10 +76,6 @@ function populateSelect(id, items, valueKey, labelKey) {
     });
 }
 
-
-// ═══════════════════════════════════════════════════════
-//  STEP 2 — LOAD EXISTING PRODUCT & PRE-FILL FIELDS
-// ═══════════════════════════════════════════════════════
 async function loadProductData() {
     const res  = await fetch(`api/admin/products/${currentProductId}`);
     const data = await res.json();
@@ -163,6 +137,7 @@ async function loadProductData() {
         addStockRow({
             stockId:     stock.stockId,
             sizeId:      stock.sizeId,
+            sizeValue: stock.sizeValue,
             price:       stock.price,
             quantity:    stock.quantity,
             discountId:  stock.discountId || null
@@ -172,16 +147,6 @@ async function loadProductData() {
     updateChecklist();
 }
 
-
-// ═══════════════════════════════════════════════════════
-//  STEP 3 — IMAGE MANAGEMENT
-//  existingImages = already-saved filenames
-//  newUploadedImages = new File objects
-//  deletedImages = filenames marked for removal
-//
-//  The combined preview shows both sets side by side.
-//  The first non-deleted existing image (or first new) = MAIN
-// ═══════════════════════════════════════════════════════
 function setupImageUpload() {
     const zone  = document.getElementById("uploadZone");
     const input = document.getElementById("imageInput");
@@ -305,13 +270,6 @@ function removeNewImage(index) {
     updateChecklist();
 }
 
-
-// ═══════════════════════════════════════════════════════
-//  STEP 4 — STOCK ROWS
-//  Each row has a hidden stockId for existing stocks.
-//  New rows have stockId = null → backend will INSERT
-//  Existing rows → backend will UPDATE
-// ═══════════════════════════════════════════════════════
 function addStockRow(existing = null) {
     const tbody = document.getElementById("stockTableBody");
     if (!tbody) return;
@@ -338,7 +296,6 @@ function addStockRow(existing = null) {
 
 
     tr.innerHTML = `
-    <!-- Hidden stockId -->
     <td style="display:none;">
        <input type="hidden" id="stockId_${rowId}"
            value="${isExisting && existing.stockId ? existing.stockId : ""}">
@@ -351,20 +308,31 @@ function addStockRow(existing = null) {
     </td>
 
     <td>
-        <select class="form-select" id="size_${rowId}">
+    ${isExisting && existing.stockId
+        ?`<select class="form-select" disabled id="size_${rowId}">
             <option value="">Select size</option>
             ${sizeOptions}
-        </select>
+        </select>`
+        :`<select class="form-select" id="size_${rowId}">
+            <option value="">Select size</option>
+            ${sizeOptions}
+        </select>`}
     </td>
 
     <td>
-        <input type="number" class="form-control" id="price_${rowId}"
-               value="${isExisting ? existing.price : ""}">
+    ${isExisting && existing.stockId
+        ?`<input type="number" class="form-control" readonly id="price_${rowId}"
+               value="${isExisting ? existing.price : ""}">`
+        :`<input type="number" class="form-control" id="price_${rowId}"
+               value="${isExisting ? existing.price : ""}">`}
     </td>
 
     <td>
-        <input type="number" class="form-control" id="qty_${rowId}"
-               value="${isExisting ? existing.quantity : ""}">
+    ${isExisting && existing.stockId
+        ?`<input type="number" class="form-control" readonly id="qty_${rowId}"
+               value="${isExisting ? existing.quantity : ""}">`
+        :`<input type="number" class="form-control" id="qty_${rowId}"
+               value="${isExisting ? existing.quantity : ""}">`}
     </td>
 
     <td>
@@ -373,14 +341,25 @@ function addStockRow(existing = null) {
         </select>
     </td>
 
-    <td class="text-center">
-        <button type="button" class="btn btn-sm btn-outline-danger"
-                onclick="removeStockRow(${rowId})">
-            <i class="bi bi-trash"></i>
-        </button>
-    </td>
+<td class="text-center">
+   ${isExisting && existing.stockId
+        ?`
+      <button type="button"
+              class="btn btn-sm btn-outline-warning open-stock-modal"
+              data-stockid="${existing.stockId}"
+              data-size="${existing.sizeValue}"
+              data-product="${document.getElementById("titleInput").value}" data-bs-toggle="modal"
+              data-bs-target="#addStockModal">
+              <i class="bi bi-plus-circle"></i>
+      </button>`
+        :`
+    <button type="button"
+            class="btn btn-sm btn-outline-danger"
+            onclick="removeStockRow(${rowId})">
+        <i class="bi bi-trash"></i>
+    </button>`}
+</td>
 `;
-
     tbody.appendChild(tr);
     tr.addEventListener("change", updateChecklist);
     tr.addEventListener("input",  updateChecklist);
@@ -392,10 +371,68 @@ function removeStockRow(rowId) {
     updateChecklist();
 }
 
+document.addEventListener("click", function (e) {
+    const btn = e.target.closest(".open-stock-modal");
+    if (!btn) return;
+    selectedStockId = btn.dataset.stockid;
+    document.getElementById("modalProductName").value =
+        btn.dataset.product;
+    document.getElementById("modalSize").value =
+        btn.dataset.size;
+});
 
-// ═══════════════════════════════════════════════════════
-//  STEP 5 — COLLECT FORM DATA
-// ═══════════════════════════════════════════════════════
+document.getElementById("saveNewStockBtn")
+    .addEventListener("click", function () {
+
+        const newQty = parseInt(
+            document.getElementById("addNewStock").value
+        );
+
+        if (isNaN(newQty) || newQty <= 0) {
+
+            Notiflix.Notify.failure(
+                "Please enter valid stock quantity!"
+            );
+
+            return;
+        }
+
+        // Find stock row
+        document.querySelectorAll("#stockTableBody tr")
+            .forEach(row => {
+
+                const rowId = row.id.replace("stockRow_", "");
+
+                const stockId = document.getElementById(
+                    `stockId_${rowId}`
+                ).value;
+
+                // Match selected stock
+                if (stockId == selectedStockId) {
+
+                    const qtyInput = document.getElementById(
+                        `qty_${rowId}`
+                    );
+
+                    const currentQty = parseInt(qtyInput.value) || 0;
+
+                    // Add quantity
+                    qtyInput.value = currentQty + newQty;
+                }
+            });
+
+        // Reset modal
+        document.getElementById("addNewStock").value = "";
+
+        // Close modal
+        bootstrap.Modal.getInstance(
+            document.getElementById("addStockModal")
+        ).hide();
+
+        Notiflix.Notify.success("Stock added successfully!");
+
+    });
+
 function collectFormData() {
     const title    = getVal("titleInput");
     const catId    = getVal("categorySelect");
@@ -595,10 +632,6 @@ function setupCharCounter(inputId, counterId, max) {
     });
 }
 
-
-// ─────────────────────────────────────────────
-//  HELPERS
-// ─────────────────────────────────────────────
 function setVal(id, value) {
     const el = document.getElementById(id);
     if (el) el.value = value;

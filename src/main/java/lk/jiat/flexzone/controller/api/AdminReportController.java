@@ -12,7 +12,7 @@ public class AdminReportController {
 
     private final AdminReportService service = new AdminReportService();
 
-    // 1. Sales
+    //Sales
     @GET
     @Path("/sales")
     @Produces(MediaType.APPLICATION_JSON)
@@ -23,7 +23,7 @@ public class AdminReportController {
         return Response.ok(service.getSalesReport(period, from, to)).build();
     }
 
-    // 2. Orders
+    //Orders
     @GET
     @Path("/orders")
     @Produces(MediaType.APPLICATION_JSON)
@@ -34,7 +34,7 @@ public class AdminReportController {
         return Response.ok(service.getOrderReport(status, dateFrom, dateTo)).build();
     }
 
-    // 3. Products
+    //Products
     @GET
     @Path("/products")
     @Produces(MediaType.APPLICATION_JSON)
@@ -42,7 +42,7 @@ public class AdminReportController {
         return Response.ok(service.getProductReport()).build();
     }
 
-    // 4. Inventory
+    //Inventory
     @GET
     @Path("/inventory")
     @Produces(MediaType.APPLICATION_JSON)
@@ -50,7 +50,7 @@ public class AdminReportController {
         return Response.ok(service.getInventoryReport()).build();
     }
 
-    // 5. Customers
+    //Customers
     @GET
     @Path("/customers")
     @Produces(MediaType.APPLICATION_JSON)
@@ -58,7 +58,7 @@ public class AdminReportController {
         return Response.ok(service.getCustomerReport()).build();
     }
 
-    // 6. Payments
+    //Payments
     @GET
     @Path("/payments")
     @Produces(MediaType.APPLICATION_JSON)
@@ -66,7 +66,7 @@ public class AdminReportController {
         return Response.ok(service.getPaymentReport()).build();
     }
 
-    // 7. Delivery
+    //Delivery
     @GET
     @Path("/delivery")
     @Produces(MediaType.APPLICATION_JSON)

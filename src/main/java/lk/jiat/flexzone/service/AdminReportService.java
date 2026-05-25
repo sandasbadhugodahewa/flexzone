@@ -11,8 +11,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import static lk.jiat.flexzone.entity.Status.Type.PAID;
-
 public class AdminReportService {
 
     private static final DateTimeFormatter DATE_FMT =
@@ -25,7 +23,6 @@ public class AdminReportService {
         Session s = HibernateUtil.getSessionFactory().openSession();
 
         try {
-            // Only count PAID orders
             final String PAID = "PAID";
 
             Double totalRevenue = s.createQuery(
@@ -54,7 +51,7 @@ public class AdminReportService {
                     .setParameter("p", PAID).setParameter("s", todayStart)
                     .setParameter("e", todayEnd).getSingleResult();
 
-            // ── This week ──
+            //This week
             LocalDateTime weekStart = LocalDate.now().with(
                     java.time.DayOfWeek.MONDAY).atStartOfDay();
             Double weekSales = s.createQuery(
@@ -68,7 +65,7 @@ public class AdminReportService {
                             Long.class)
                     .setParameter("p", PAID).setParameter("s", weekStart).getSingleResult();
 
-            // ── This month ──
+            //This month
             LocalDateTime monthStart = LocalDate.now().withDayOfMonth(1).atStartOfDay();
             LocalDateTime monthEnd = monthStart.plusMonths(1);
             Double monthSales = s.createQuery(
@@ -84,7 +81,7 @@ public class AdminReportService {
                     .setParameter("p", PAID).setParameter("s", monthStart)
                     .setParameter("e", monthEnd).getSingleResult();
 
-            // ── This year ──
+            //This year
             LocalDateTime yearStart = LocalDate.now().withDayOfYear(1).atStartOfDay();
             Double yearSales = s.createQuery(
                             "SELECT COALESCE(SUM(o.total), 0) FROM Order o " +
@@ -97,7 +94,7 @@ public class AdminReportService {
                             Long.class)
                     .setParameter("p", PAID).setParameter("s", yearStart).getSingleResult();
 
-            // ── Last 12 months chart data ──
+            //Last 12 months chart data
             JsonArray monthlyChart = new JsonArray();
             for (int i = 11; i >= 0; i--) {
                 LocalDateTime mStart = LocalDate.now().withDayOfMonth(1)
@@ -124,7 +121,7 @@ public class AdminReportService {
                 monthlyChart.add(point);
             }
 
-            // ── Last 7 days chart data ──
+            //Last 7 days chart data
             JsonArray dailyChart = new JsonArray();
             for (int i = 6; i >= 0; i--) {
                 LocalDateTime dStart = LocalDate.now().minusDays(i).atStartOfDay();
@@ -149,7 +146,7 @@ public class AdminReportService {
                 dailyChart.add(point);
             }
 
-            // weeks chart data
+            //weeks chart data
             JsonArray weeklyChart = new JsonArray();
             for (int i = 7; i >= 0; i--) {
                 LocalDateTime wStart = LocalDate.now()
@@ -178,7 +175,7 @@ public class AdminReportService {
                 weeklyChart.add(point);
             }
 
-            // ── Recent 10 paid orders ──
+            //Recent paid orders
             List<Object[]> recentOrders = s.createQuery(
                             "SELECT o.orderId, o.total, o.createdAt, o.user.firstName, o.user.lastName " +
                                     "FROM Order o WHERE o.status.value=:p ORDER BY o.createdAt DESC",
@@ -195,7 +192,6 @@ public class AdminReportService {
                 recentArr.add(obj);
             }
 
-            // Build response
             JsonObject kpi = new JsonObject();
             kpi.addProperty("totalRevenue", totalRevenue);
             kpi.addProperty("totalOrders", totalOrders);
@@ -227,21 +223,18 @@ public class AdminReportService {
         return AppUtil.GSON.toJson(res);
     }
 
-    // ══════════════════════════════════════════════════════════
-    //  2. ORDER REPORT
-    // ══════════════════════════════════════════════════════════
     public String getOrderReport(String status, String dateFrom, String dateTo) {
         JsonObject res = new JsonObject();
         Session s = HibernateUtil.getSessionFactory().openSession();
 
         try {
-            // Payment status counts
+            //Payment status counts
             long totalAll = count(s, "SELECT COUNT(o) FROM Order o");
             long totalPaid = countWhere(s, "o.status.value", "PAID");
             long totalPending = countWhere(s, "o.status.value", "PENDING");
             long totalBlocked = countWhere(s, "o.status.value", "BLOCKED");
 
-            // Delivery status counts
+            //Delivery status counts
             long totalApproved = countDelivery(s, "APPROVED");
             long totalPacking = countDelivery(s, "PACKING");
             long totalShipped = countDelivery(s, "SHIPPED");
@@ -249,13 +242,12 @@ public class AdminReportService {
             long totalCompleted = countDelivery(s, "COMPLETED");
             long totalCanceled = countDelivery(s, "CANCELED");
 
-            // Status distribution for pie chart
             JsonArray statusDist = new JsonArray();
             addSlice(statusDist, "Paid", totalPaid, "#16a34a");
             addSlice(statusDist, "Pending", totalPending, "#d97706");
             addSlice(statusDist, "Failed", totalBlocked, "#dc2626");
 
-            // Delivery distribution
+            //Delivery distribution
             JsonArray deliveryDist = new JsonArray();
             addSlice(deliveryDist, "Approved", totalApproved, "#2563eb");
             addSlice(deliveryDist, "Packing", totalPacking, "#7c3aed");
@@ -264,7 +256,7 @@ public class AdminReportService {
             addSlice(deliveryDist, "Completed", totalCompleted, "#15803d");
             addSlice(deliveryDist, "Canceled", totalCanceled, "#6b7280");
 
-            // Orders per day last 30 days
+            //Orders per day last 30 days
             JsonArray dailyOrders = new JsonArray();
             for (int i = 29; i >= 0; i--) {
                 LocalDateTime dStart = LocalDate.now().minusDays(i).atStartOfDay();
@@ -327,15 +319,11 @@ public class AdminReportService {
         return AppUtil.GSON.toJson(res);
     }
 
-    // ══════════════════════════════════════════════════════════
-    //  3. PRODUCT SALES REPORT
-    // ══════════════════════════════════════════════════════════
     public String getProductReport() {
         JsonObject res = new JsonObject();
         Session s = HibernateUtil.getSessionFactory().openSession();
 
         try {
-
             List<Object[]> bestSelling = s.createQuery(
                     "SELECT oi.stock.product.id, oi.stock.product.title, " +
                             "SUM(oi.qty), SUM(oi.qty * oi.stock.price) " +
@@ -347,13 +335,12 @@ public class AdminReportService {
 
             JsonArray bestSellingArr = new JsonArray();
             for (Object[] row : bestSelling) {
-                int productId = (int) row[0];      // product.id is int
+                int productId = (int) row[0];
                 String title = (String) row[1];
-                long totalQty = ((Number) row[2]).longValue();   // ← fix: Number not Long
-                double totalRev = ((Number) row[3]).doubleValue(); // ← fix: Number not Double
+                long totalQty = ((Number) row[2]).longValue();
+                double totalRev = ((Number) row[3]).doubleValue();
 
-                // Fetch first image from product_images table separately
-                // (images is @ElementCollection — cannot GROUP BY it in HQL)
+                //Fetch first image
                 String firstImage = null;
                 try {
                     firstImage = s.createQuery(
@@ -397,7 +384,7 @@ public class AdminReportService {
                 lowArr.add(obj);
             }
 
-            // Out of stock products
+            //Out of stock products
             List<Object[]> outOfStock = s.createQuery(
                     "SELECT p.id, p.title, COUNT(st) as variants " +
                             "FROM Product p JOIN p.stocks st " +
@@ -415,7 +402,7 @@ public class AdminReportService {
                 outArr.add(obj);
             }
 
-            // Category-wise sales
+            //Category-wise sales
             List<Object[]> catSales = s.createQuery(
                     "SELECT oi.stock.product.category.name, SUM(oi.qty), " +
                             "SUM(oi.qty * oi.stock.price) " +
@@ -493,7 +480,7 @@ public class AdminReportService {
                             "WHERE st.product.status.value='ACTIVE'",
                     Long.class).getSingleResult();
 
-            // Low stock (quantity 1–10)
+            //Low stock
             List<Object[]> lowStock = s.createQuery(
                     "SELECT st.product.id, st.product.title, st.size.value, " +
                             "st.quantity, st.price " +
@@ -513,7 +500,7 @@ public class AdminReportService {
                 lowArr.add(obj);
             }
 
-            // Out of stock
+            //Out of stock
             List<Object[]> outStock = s.createQuery(
                     "SELECT st.product.id, st.product.title, st.size.value " +
                             "FROM Stock st WHERE st.product.status.value='ACTIVE' " +
@@ -529,7 +516,7 @@ public class AdminReportService {
                 outArr.add(obj);
             }
 
-            // Size-wise stock totals
+            //Size-wise stock
             List<Object[]> sizeStock = s.createQuery(
                     "SELECT st.size.value, SUM(st.quantity) FROM Stock st " +
                             "WHERE st.product.status.value='ACTIVE' AND st.size IS NOT NULL " +
@@ -544,7 +531,7 @@ public class AdminReportService {
                 sizeArr.add(obj);
             }
 
-            // Category-wise stock
+            //Category-wise stock
             List<Object[]> catStock = s.createQuery(
                     "SELECT st.product.category.name, SUM(st.quantity) FROM Stock st " +
                             "WHERE st.product.status.value='ACTIVE' " +
@@ -640,9 +627,6 @@ public class AdminReportService {
         return AppUtil.GSON.toJson(res);
     }
 
-    // ══════════════════════════════════════════════════════════
-    //  5. CUSTOMER REPORT
-    // ══════════════════════════════════════════════════════════
     public String getCustomerReport() {
         JsonObject res = new JsonObject();
         Session s = HibernateUtil.getSessionFactory().openSession();
@@ -657,14 +641,14 @@ public class AdminReportService {
                             "AND u.status.value='VERIFIED'",
                     Long.class).getSingleResult();
 
-            // New this month
+            //New this month
             LocalDateTime monthStart = LocalDate.now().withDayOfMonth(1).atStartOfDay();
             Long newThisMonth = s.createQuery(
                     "SELECT COUNT(u) FROM User u WHERE u.role.value='USER' " +
                             "AND u.createdAt >= :s",
                     Long.class).setParameter("s", monthStart).getSingleResult();
 
-            // Top 10 spending customers
+            //Top 10 spending customers
             List<Object[]> topSpenders = s.createQuery(
                     "SELECT o.user.id, o.user.firstName, o.user.lastName, " +
                             "o.user.email, COUNT(o), SUM(o.total) " +
@@ -684,7 +668,6 @@ public class AdminReportService {
                 topArr.add(obj);
             }
 
-            // New customers last 6 months
             JsonArray newChart = new JsonArray();
             for (int i = 5; i >= 0; i--) {
                 LocalDateTime mStart = LocalDate.now().withDayOfMonth(1)
@@ -722,9 +705,6 @@ public class AdminReportService {
         return AppUtil.GSON.toJson(res);
     }
 
-    // ══════════════════════════════════════════════════════════
-    //  6. PAYMENT REPORT
-    // ══════════════════════════════════════════════════════════
     public String getPaymentReport() {
         JsonObject res = new JsonObject();
         Session s = HibernateUtil.getSessionFactory().openSession();
@@ -741,7 +721,7 @@ public class AdminReportService {
                     "SELECT COALESCE(SUM(o.total), 0) FROM Order o " +
                             "WHERE o.status.value='PENDING'", Double.class).getSingleResult();
 
-            // Monthly payment revenue last 6 months
+            //Monthly payment last 6 months
             JsonArray monthlyPayment = new JsonArray();
             for (int i = 5; i >= 0; i--) {
                 LocalDateTime mStart = LocalDate.now().withDayOfMonth(1)
@@ -794,9 +774,6 @@ public class AdminReportService {
         return AppUtil.GSON.toJson(res);
     }
 
-    // ══════════════════════════════════════════════════════════
-    //  7. DELIVERY REPORT
-    // ══════════════════════════════════════════════════════════
     public String getDeliveryReport() {
         JsonObject res = new JsonObject();
         Session s = HibernateUtil.getSessionFactory().openSession();
@@ -826,7 +803,7 @@ public class AdminReportService {
                 typeArr.add(obj);
             }
 
-            // Delivery status distribution for chart
+            //Delivery status for chart
             JsonArray distArr = new JsonArray();
             addSlice(distArr, "Approved", approved, "#2563eb");
             addSlice(distArr, "Packing", packing, "#7c3aed");
@@ -862,7 +839,7 @@ public class AdminReportService {
         return AppUtil.GSON.toJson(res);
     }
 
-    // ── Private helpers ──────────────────────────────────────
+    //Private helpers
     private long count(Session s, String hql) {
         return s.createQuery(hql, Long.class).getSingleResult();
     }

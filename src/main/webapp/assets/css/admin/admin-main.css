@@ -34720,3 +34720,54 @@ textarea.form-control {
     .rpt-kpi-grid { grid-template-columns: repeat(2, 1fr); }
     .rpt-tab-btn span { display: none; }
 }
+
+.rpt-pagination{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+    margin-top:18px;
+    flex-wrap:wrap;
+}
+
+.rpt-pg-btns{
+    display:flex;
+    align-items:center;
+    gap:6px;
+}
+
+.rpt-pg-btn{
+    border:1px solid #e5e7eb;
+    background:#fff;
+    min-width:34px;
+    height:34px;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:13px;
+    transition:0.2s;
+}
+
+.rpt-pg-btn:hover{
+    background:#f3f4f6;
+}
+
+.rpt-pg-btn.active{
+    background:var(--accent-color);
+    color:#fff;
+    border-color:var(--accent-color);
+}
+
+.rpt-pg-btn:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+}
+
+.rpt-pg-info{
+    font-size:12px;
+    color:var(--muted-color);
+}
+
+.rpt-pg-ellipsis{
+    padding:0 4px;
+    color:#6b7280;
+}
