@@ -142,7 +142,7 @@
                         </div>
 
                         <div class="product-availability mb-4">
-<!--                            <i class="bi bi-x-circle-fill text-danger"></i>-->
+                            <!--                            <i class="bi bi-x-circle-fill text-danger"></i>-->
                             <i id="stockIcon" class="bi bi-check-circle-fill text-success"></i>
                             <span id="stockLabel">In Stock</span>
                             <span class="stock-count" id="stock">(0 items left)</span>
@@ -228,7 +228,7 @@
                                         aria-controls="description" aria-selected="true">Description
                                 </button>
                             </li>
-                            <li class="nav-item" role="presentation">
+                            <li class="nav-item" role="presentation" id="specificationsTabItem">
                                 <button class="nav-link" id="specifications-tab" data-bs-toggle="tab"
                                         data-bs-target="#specifications" type="button" role="tab"
                                         aria-controls="specifications" aria-selected="false">Specifications
@@ -243,34 +243,11 @@
                         </ul>
                         <div class="tab-content" id="productTabsContent">
                             <!-- Description Tab -->
-                            <div class="tab-pane fade show active" role="tabpanel"
+                            <div class="tab-pane fade show active" role="tabpanel" id="description"
                                  aria-labelledby="description-tab">
-                                <div class="product-description"  id="productDescription" style="white-space: pre-line">
-<!--                                    <h4>Product Overview</h4>-->
-<!--                                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum at lacus-->
-<!--                                        congue, suscipit elit nec, tincidunt orci. Phasellus egestas nisi vitae lectus-->
-<!--                                        imperdiet venenatis. Suspendisse vulputate quam diam, et consectetur augue-->
-<!--                                        condimentum in. Aenean dapibus urna eget nisi pharetra, in iaculis nulla-->
-<!--                                        blandit. Praesent at consectetur sem, sed sollicitudin nibh. Ut interdum risus-->
-<!--                                        ac nulla placerat aliquet.</p>-->
+                                <div class="product-description" id="productDescription" style="white-space: pre-line">
 
-<!--                                    <h4>Key Features</h4>-->
-<!--                                    <ul>-->
-<!--                                        <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit</li>-->
-<!--                                        <li>Vestibulum at lacus congue, suscipit elit nec, tincidunt orci</li>-->
-<!--                                        <li>Phasellus egestas nisi vitae lectus imperdiet venenatis</li>-->
-<!--                                        <li>Suspendisse vulputate quam diam, et consectetur augue condimentum in</li>-->
-<!--                                        <li>Aenean dapibus urna eget nisi pharetra, in iaculis nulla blandit</li>-->
-<!--                                    </ul>-->
 
-<!--                                    <h4>What's in the Box</h4>-->
-<!--                                    <ul>-->
-<!--                                        <li>Lorem Ipsum Wireless Headphones</li>-->
-<!--                                        <li>Carrying Case</li>-->
-<!--                                        <li>USB-C Charging Cable</li>-->
-<!--                                        <li>3.5mm Audio Cable</li>-->
-<!--                                        <li>User Manual</li>-->
-<!--                                    </ul>-->
                                 </div>
                             </div>
 
@@ -279,58 +256,11 @@
                                  aria-labelledby="specifications-tab">
                                 <div class="product-specifications">
                                     <div class="specs-group">
-                                        <h4>Technical Specifications</h4>
-                                        <div class="specs-table">
-                                            <div class="specs-row">
-                                                <div class="specs-label">Connectivity</div>
-                                                <div class="specs-value">Bluetooth 5.0, 3.5mm jack</div>
-                                            </div>
-                                            <div class="specs-row">
-                                                <div class="specs-label">Battery Life</div>
-                                                <div class="specs-value">Up to 30 hours</div>
-                                            </div>
-                                            <div class="specs-row">
-                                                <div class="specs-label">Charging Time</div>
-                                                <div class="specs-value">3 hours</div>
-                                            </div>
-                                            <div class="specs-row">
-                                                <div class="specs-label">Driver Size</div>
-                                                <div class="specs-value">40mm</div>
-                                            </div>
-                                            <div class="specs-row">
-                                                <div class="specs-label">Frequency Response</div>
-                                                <div class="specs-value">20Hz - 20kHz</div>
-                                            </div>
-                                            <div class="specs-row">
-                                                <div class="specs-label">Impedance</div>
-                                                <div class="specs-value">32 Ohm</div>
-                                            </div>
-                                            <div class="specs-row">
-                                                <div class="specs-label">Weight</div>
-                                                <div class="specs-value">250g</div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                        <h4>Product Specifications</h4>
+                                        <div class="specs-table" id="specificationsContainer">
 
-                                    <div class="specs-group">
-                                        <h4>Features</h4>
-                                        <div class="specs-table">
-                                            <div class="specs-row">
-                                                <div class="specs-label">Noise Cancellation</div>
-                                                <div class="specs-value">Active Noise Cancellation (ANC)</div>
-                                            </div>
-                                            <div class="specs-row">
-                                                <div class="specs-label">Controls</div>
-                                                <div class="specs-value">Touch controls, Voice assistant</div>
-                                            </div>
-                                            <div class="specs-row">
-                                                <div class="specs-label">Microphone</div>
-                                                <div class="specs-value">Dual beamforming microphones</div>
-                                            </div>
-                                            <div class="specs-row">
-                                                <div class="specs-label">Water Resistance</div>
-                                                <div class="specs-value">IPX4 (splash resistant)</div>
-                                            </div>
+                                            <!-- Specifications Container -->
+
                                         </div>
                                     </div>
                                 </div>

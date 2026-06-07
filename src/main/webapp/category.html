@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Category - fleXZone</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="robots" content="noindex, nofollow">
+
+    <link href="assets/images/logo/favicon.ico" rel="icon">
+    <link href="https://bootstrapmade.com/content/demo/eStore/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/" rel="preconnect">
+    <link href="https://fonts.gstatic.com/" rel="preconnect" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&amp;family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;family=Nunito:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap"
+          rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/css/bootstrap-icons.css" rel="stylesheet">
+    <link href="assets/css/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="assets/css/swiper-bundle.min.css" rel="stylesheet">
+    <link href="assets/css/aos.css" rel="stylesheet">
+    <link href="assets/css/glightbox.min.css" rel="stylesheet">
+    <link href="assets/css/drift-basic.css" rel="stylesheet">
+    <!-- Main CSS File -->
+    <link href="assets/css/main.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+
+    <script>
+        fetch("header.html")
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("header").innerHTML = data;
+            });
+
+        fetch("footer.html")
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("footer").innerHTML = data;
+            });
+    </script>
+
+</head>
+
+<body onload="initCategoryPage();">
+
+<div id="header"></div>
+
+<main class="main">
+
+    <div class="category-header">
+        <div class="container">
+            <h1 id="categoryTitle">Category Name</h1>
+            <p id="categoryDescription">Browse our exclusive collection</p>
+            <div class="category-meta">
+                <div class="meta-item">
+                    <i class="bi bi-bag-check"></i>
+                    <span id="productCount">0 Products</span>
+                </div>
+                <div class="meta-item">
+                    <i class="bi bi-star"></i>
+                    <span>Premium Quality</span>
+                </div>
+                <div class="meta-item">
+                    <i class="bi bi-truck"></i>
+                    <span>Fast Delivery</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page Title -->
+    <div class="page-title light-background">
+        <div class="container d-lg-flex justify-content-between align-items-center">
+            <h2 class="mb-2 mb-lg-0">Shop Products</h2>
+            <nav class="breadcrumbs">
+                <ol>
+                    <li><a href="index.html">Home</a></li>
+                    <li id="breadcrumb-category"><a href="#">Category</a></li>
+                    <li class="current" id="breadcrumb-current">All Products</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Category Section -->
+    <section id="category-products" class="category-products section">
+        <div class="container-fluid">
+            <div class="row g-4">
+                <!-- Sidebar Filters -->
+                <div class="col-lg-3 d-lg-block d-none">
+                    <div class="filters-sidebar" data-aos="fade-up">
+
+                        <!-- Price Filter -->
+                        <div class="filter-section">
+                            <h6 class="filter-title">Filter by Price</h6>
+                            <div class="price-range-inputs">
+                                <input type="number" id="minPrice" placeholder="Min" min="0">
+                                <input type="number" id="maxPrice" placeholder="Max" min="0">
+                            </div>
+                            <button class="filter-button" onclick="applyPriceFilter()" style="margin-top: 10px; width: 100%;">Apply</button>
+                        </div>
+
+                        <!-- Clear Filters -->
+                        <button class="clear-filters-btn" onclick="clearFilters()">Clear All Filters</button>
+
+                    </div>
+                </div>
+
+                <!-- Products Section -->
+                <div class="col-lg-9">
+                    <!-- View Mode Toggle & Sort -->
+                    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+                        <div class="view-mode-toggle">
+                            <button class="view-mode-btn active" title="Grid View" onclick="changeViewMode('grid')">
+                                <i class="bi bi-grid-3x3-gap"></i>
+                            </button>
+                        </div>
+
+                    </div>
+
+                    <!-- Products Grid -->
+                    <div class="products-grid" id="productsContainer">
+                        <!-- Products will be dynamically loaded here -->
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="pagination-container" id="paginationContainer">
+                        <!-- Pagination buttons will be generated here -->
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<div id="footer"></div>
+
+<!-- Scroll Top -->
+<a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center">
+    <i class="bi bi-arrow-up-short"></i>
+</a>
+
+<!-- Preloader -->
+<div id="preloader"></div>
+
+<!-- Vendor JS Files -->
+<script data-cfasync="false" src="assets/js/vendor/email-decode.min.js"></script>
+<script src="assets/js/bootstrap.bundle.min.js"></script>
+<script src="assets/js/vendor/validate.js"></script>
+<script src="assets/js/vendor/swiper-bundle.min.js"></script>
+<script src="assets/js/vendor/aos.js"></script>
+<script src="assets/js/vendor/imagesloaded.pkgd.min.js"></script>
+<script src="assets/js/vendor/isotope.pkgd.min.js"></script>
+<script src="assets/js/vendor/glightbox.min.js"></script>
+<script src="assets/js/vendor/Drift.min.js"></script>
+<script src="assets/js/vendor/purecounter_vanilla.js"></script>
+
+<!-- Main JS File -->
+<script src="assets/js/vendor/main.js"></script>
+<script src="assets/js/header.js"></script>
+<script src="assets/js/cart.js"></script>
+<script src="assets/js/wishlist.js"></script>
+<script src="assets/js/notiflix-aio-3.2.8.min.js"></script>
+<script src="assets/js/category.js"></script>
+
+</body>
+
+</html>

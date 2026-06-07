@@ -57,12 +57,6 @@ public class Product extends BaseEntity {
     @Column(name = "images")
     private List<String> images = new ArrayList<>();
 
-//    @ElementCollection(fetch = FetchType.EAGER)
-//    @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "pr_id"))
-//    @Column(name = "images")
-//    private List<String> images = new ArrayList<>();
-
-
     public List<String> getImages() {
         return images;
     }

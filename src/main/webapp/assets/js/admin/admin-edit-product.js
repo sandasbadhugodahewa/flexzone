@@ -1,3 +1,4 @@
+let quill;
 let currentProductId  = null;
 let existingImages    = [];
 let newUploadedImages = [];
@@ -22,11 +23,13 @@ window.addEventListener("load", async () => {
 
         await Promise.all([
             loadDropdownData(),
-            loadProductData()
+            loadProductData(),
+            initializeQuillEditor()
         ]);
 
         setupImageUpload();
-        setupCharCounter("descriptionInput", "descCharCount", 1000);
+        // setupCharCounter("descriptionInput", "descCharCount", 1000);
+
 
     } finally {
         Notiflix.Loading.remove();
@@ -94,7 +97,10 @@ async function loadProductData() {
 
     // ── Basic fields ──
     setVal("titleInput",       p.title       || "");
-    setVal("descriptionInput", p.description || "");
+    // setVal("descriptionInput", p.description || "");
+    if (quill) {
+        quill.root.innerHTML = p.description || "";
+    }
 
     // ── Dropdowns — set selected value after options loaded ──
     setSelectVal("categorySelect",    p.categoryId);
@@ -145,6 +151,37 @@ async function loadProductData() {
     });
 
     updateChecklist();
+}
+
+
+function initializeQuillEditor() {
+
+    quill = new Quill('#quillEditor', {
+        theme: 'snow',
+        placeholder: 'Describe the product — material, fit, occasion, care instructions...',
+        modules: {
+            toolbar: [
+                [{ header: [1, 2, 3, false] }],
+                ['bold', 'italic', 'underline', 'strike'],
+                [{ list: 'ordered' }, { list: 'bullet' }],
+                ['link'],
+                ['clean']
+            ]
+        }
+    });
+
+    quill.on('text-change', () => {
+        const text = quill.getText().trim();
+        const count = text.length;
+        const counter = document.getElementById("descCharCount");
+        counter.innerText = `${count}/1000`;
+
+        if (count > 900) {
+            counter.style.color = "red";
+        } else {
+            counter.style.color = "";
+        }
+    });
 }
 
 function setupImageUpload() {
@@ -440,7 +477,7 @@ function collectFormData() {
     const brandId  = getVal("brandSelect");
     const colorId  = getVal("colorSelect");
     const genderId = getVal("genderSelect");
-    const desc     = getVal("descriptionInput");
+    const desc = quill.getText().trim() ? quill.root.innerHTML : "";
 
     // Optional product_details
     const productDetails = {};

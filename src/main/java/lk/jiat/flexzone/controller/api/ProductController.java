@@ -13,10 +13,16 @@ public class ProductController {
     @Path("/loadProducts")
     @Produces(MediaType.APPLICATION_JSON)
     public Response loadProducts() {
-
         String json = new ProductService().loadProducts();
         return Response.ok().entity(json).build();
+    }
 
+    @Path("/loadNewArrivals")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response loadNewArrivals() {
+        String json = new ProductService().loadNewArrivals();
+        return Response.ok().entity(json).build();
     }
 
     @Path("/loadSingleProduct/{id}")

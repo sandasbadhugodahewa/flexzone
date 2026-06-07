@@ -1,6 +1,7 @@
 package lk.jiat.flexzone.service;
 
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import lk.jiat.flexzone.dto.ProductDTO;
 import lk.jiat.flexzone.dto.StockDTO;
 import lk.jiat.flexzone.entity.*;
@@ -8,8 +9,10 @@ import lk.jiat.flexzone.util.AppUtil;
 import lk.jiat.flexzone.util.HibernateUtil;
 import org.hibernate.Session;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ProductService {
 
@@ -60,6 +63,8 @@ public class ProductService {
                 dto.setGenderId(product.getGender().getId());
                 dto.setGenderName(product.getGender().getName());
 
+                dto.setCreatedAt(product.getCreatedAt().toString());
+
                 dto.setImages(product.getImages());
 
                 List<StockDTO> stockDTOList = new ArrayList<>();
@@ -102,6 +107,102 @@ public class ProductService {
         return AppUtil.GSON.toJson(responseObject);
     }
 
+    public String loadNewArrivals() {
+
+        JsonObject responseObject = new JsonObject();
+        boolean status = false;
+        String message;
+
+        Session session = HibernateUtil.getSessionFactory().openSession();
+
+        Status activeStatus = session.createQuery(
+                        "FROM Status WHERE value = :value", Status.class)
+                .setParameter("value", "ACTIVE")
+                .uniqueResult();
+
+        List<Product> productList = session.createQuery(
+                        "FROM Product p WHERE p.status = :status ORDER BY p.createdAt DESC",
+                        Product.class)
+                .setParameter("status", activeStatus)
+                .setMaxResults(4)
+                .getResultList();
+
+        if (productList.isEmpty()) {
+
+            message = "No new arrival products found!";
+
+        } else {
+
+            List<ProductDTO> dtoList = new ArrayList<>();
+
+            for (Product product : productList) {
+
+                ProductDTO dto = new ProductDTO();
+
+                dto.setId(product.getId());
+                dto.setTitle(product.getTitle());
+                dto.setDescription(product.getDescription());
+
+                dto.setCategoryId(product.getCategory().getId());
+                dto.setCategoryName(product.getCategory().getName());
+
+                dto.setSubCategoryId(product.getSubcategory().getId());
+                dto.setSubCategoryName(product.getSubcategory().getName());
+
+                dto.setBrandId(product.getBrand().getId());
+                dto.setBrandName(product.getBrand().getName());
+
+                dto.setColorId(product.getColor().getId());
+                dto.setColorValue(product.getColor().getValue());
+                dto.setColorHex(product.getColor().getHexCode());
+
+                dto.setGenderId(product.getGender().getId());
+                dto.setGenderName(product.getGender().getName());
+
+                dto.setCreatedAt(product.getCreatedAt().toString());
+
+                dto.setImages(product.getImages());
+
+                List<StockDTO> stockDTOList = new ArrayList<>();
+
+                for (Stock stock : product.getStocks()) {
+
+                    StockDTO stockDTO = new StockDTO();
+
+                    stockDTO.setStockId(stock.getId());
+                    stockDTO.setPrice(stock.getPrice());
+                    stockDTO.setQuantity(stock.getQuantity());
+
+                    if (stock.getSize() != null) {
+                        stockDTO.setSizeId(stock.getSize().getId());
+                        stockDTO.setSizeValue(stock.getSize().getValue());
+                    }
+
+                    stockDTOList.add(stockDTO);
+
+                    dto.setPrice(stock.getPrice());
+                    dto.setQuantity(stock.getQuantity());
+                }
+
+                dto.setStockDTOList(stockDTOList);
+
+                dtoList.add(dto);
+            }
+
+            responseObject.add("products",
+                    AppUtil.GSON.toJsonTree(dtoList));
+
+            status = true;
+            message = "New arrivals loaded successfully!";
+        }
+
+        responseObject.addProperty("status", status);
+        responseObject.addProperty("message", message);
+
+        session.close();
+        return AppUtil.GSON.toJson(responseObject);
+    }
+
     public String loadSingleProduct(int id){
 
         JsonObject responseObject = new JsonObject();
@@ -138,6 +239,8 @@ public class ProductService {
             pdto.setGenderId(product.getGender().getId());
             pdto.setGenderName(product.getGender().getName());
 
+            pdto.setCreatedAt(product.getCreatedAt().toString());
+
             pdto.setImages(product.getImages());
 
             List<StockDTO> stockDTOList = new ArrayList<>();
@@ -163,6 +266,17 @@ public class ProductService {
             }
 
             pdto.setStockDTOList(stockDTOList);
+
+            if (product.getProductDetails() != null &&
+                    !product.getProductDetails().isEmpty()) {
+
+                Type type = new TypeToken<Map<String, Object>>() {}.getType();
+
+                Map<String, Object> detailsMap =
+                        AppUtil.GSON.fromJson(product.getProductDetails(), type);
+
+                pdto.setProductDetails(detailsMap);
+            }
 
             responseObject.add("productData", AppUtil.GSON.toJsonTree(pdto));
 

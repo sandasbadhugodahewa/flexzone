@@ -1,6 +1,7 @@
 package lk.jiat.flexzone.dto;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +30,7 @@ public class ProductDTO implements Serializable {
     private Map<String, Object> productDetails;
     private List<String> keptImages;
     private List<String> newImages;
+    private String createdAt;
 
     public ProductDTO() {
 
@@ -216,5 +218,13 @@ public class ProductDTO implements Serializable {
 
     public void setNewImages(List<String> newImages) {
         this.newImages = newImages;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
     }
 }

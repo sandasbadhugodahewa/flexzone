@@ -5,7 +5,6 @@ const LOAD_MORE_COUNT = 8;
 
 async function loadProducts() {
     try {
-
         const response = await fetch("api/products/loadProducts");
 
         if (response.ok) {
@@ -13,7 +12,107 @@ async function loadProducts() {
             const data = await response.json();
             if (data.status) {
                 allProducts = data.products;
+                newArrivalItems();
                 renderProducts();
+            } else {
+                Notiflix.Notify.info(data.message, {
+                    position: "center-top"
+                });
+            }
+        }
+    } catch (e) {
+        Notiflix.Notify.failure(e.message, {
+            position: "center-top"
+        });
+    }
+}
+
+async function newArrivalItems() {
+    try {
+
+        const response = await fetch("api/products/loadNewArrivals");
+        if (response.ok) {
+            const data = await response.json();
+            if (data.status) {
+                const nProducts = data.products;
+                let container = document.getElementById("newArrivalItemsContainer");
+                container.innerHTML = "";
+                nProducts.forEach(product => {
+                    let image1 = product.images && product.images.length > 0
+                        ? "assets/images/productImg/" + product.images[0]
+                        : "assets/images/default.png";
+
+                    let image2 = product.images && product.images.length > 1
+                        ? "assets/images/productImg/" + product.images[1]
+                        : image1;
+
+                    const discountAmount = product.price * (DISCOUNT_PERCENT / 100);
+                    const oldPrice = (product.price + discountAmount).toFixed(2);
+
+                    const firstStock = product.stockDTOList && product.stockDTOList.length > 0
+                        ? product.stockDTOList.find(s => s.quantity > 0) || product.stockDTOList[0]
+                        : null;
+                    const stockId = firstStock ? firstStock.stockId : null;
+
+                    const createdDate = new Date(product.createdAt);
+                    const currentDate = new Date();
+                    const diffTime = currentDate - createdDate;
+                    const diffDays = diffTime / (1000 * 60 * 60 * 24);
+
+                    let badge = "";
+                    if (product.quantity <= 0) {
+                        badge = `<span class="badge bg-danger">Sold Out</span>`;
+                    } else if (diffDays <= 14) {
+                        badge = `<span class="badge bg-success">New</span>`;
+                    }
+
+                    let card = `
+                    <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="100">
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="${image1}" class="img-fluid default-image" alt="Product">
+                                <img src="${image2}" class="img-fluid hover-image" alt="Product hover">
+                                <div class="product-tags">
+                                    ${badge}
+                                </div>
+
+                                <div class="product-actions">
+                                    <button class="btn-wishlist" onclick="addToWishList(${stockId});" 
+                                           type="button" aria-label="Wishlist">
+                                           <i class="bi bi-heart"></i>
+                                    </button>
+                                    <a class="btn-quickview" href="single-product.html?pId=${product.id}" aria-label="View">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="product-info">
+                                <h3 class="product-title">
+                                    <a href="single-product.html?pId=${product.id}">
+                                        ${product.title}
+                                    </a>
+                                </h3>
+                                <div class="product-price">
+                                    <span class="current-price">
+                                        Rs.${product.price}.00
+                                    </span>
+                                    <span class="old-price">
+                                        Rs.${oldPrice}
+                                    </span>
+                                </div>
+
+                                <button class="btn btn-add-to-cart"
+                                        onclick="addToCart(${stockId},1)">
+                                    <i class="bi bi-bag-plus me-2"></i>
+                                    Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    `;
+                    container.innerHTML += card;
+                });
             } else {
                 Notiflix.Notify.info(data.message, {
                     position: "center-top"
@@ -51,11 +150,25 @@ function renderProducts() {
 
         const stockId = firstStock ? firstStock.stockId : null;
 
+        const createdDate = new Date(product.createdAt);
+        const currentDate = new Date();
+
+        const diffTime = currentDate - createdDate;
+        const diffDays = diffTime / (1000 * 60 * 60 * 24);
+
+        let badge = "";
+        if (diffDays <= 14) {
+            badge = `<span class="badge bg-success">New</span>`;
+        }
+        else if (product.quantity <= 0) {
+            badge = `<span class="badge bg-danger">Sold Out</span>`;
+        }
+
         let card = `
         <div class="col-md-6 col-lg-3 product-item isotope-item filter-clothing">
             <div class="product-card">
                 <div class="product-image">
-                    <span class="badge">New</span>
+                    ${badge}
                     <img src="${image1}" class="img-fluid main-img">
                     <img src="${image2}" class="img-fluid hover-img">
                     <div class="product-overlay">
@@ -144,13 +257,14 @@ async function loadProductsDetails() {
         document.getElementById("categoryName").innerHTML = pData.categoryName;
 
         const desc = document.getElementById("productDescription");
-        if (desc) desc.innerHTML = `<p>${pData.description}</p>`;
+        if (desc) desc.innerHTML = `    <h4>Product Overview</h4>
+                                     <p>${pData.description}</p>`;
 
         //Images
         renderImages(pData.images);
-
         renderColor(pData.colorValue, pData.colorHex);
-        //Size buttons
+        renderSpecifications(pData.productDetails);
+
         productStocks = pData.stockDTOList || [];
         renderSizeButtons(productStocks);
 
@@ -206,6 +320,37 @@ function renderColor(colorValue, colorHex) {
     colorOptionsEl.appendChild(swatch);
 
     if (selectedColorLabel) selectedColorLabel.textContent = colorValue;
+}
+
+function renderSpecifications(specifications) {
+
+    const container = document.getElementById("specificationsContainer");
+    const tabItem = document.getElementById("specificationsTabItem");
+
+    container.innerHTML = "";
+
+    if (!specifications || Object.keys(specifications).length === 0) {
+
+        tabItem.style.display = "none";
+        return;
+    }
+
+    tabItem.style.display = "block";
+
+    Object.entries(specifications).forEach(([key, value]) => {
+
+        container.innerHTML += `
+            <div class="specs-row">
+                <div class="specs-label">
+                    ${key}
+                </div>
+
+                <div class="specs-value">
+                    ${value}
+                </div>
+            </div>
+        `;
+    });
 }
 
 function renderSizeButtons(stocks) {
