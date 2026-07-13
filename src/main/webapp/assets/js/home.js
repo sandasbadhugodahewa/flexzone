@@ -1,5 +1,6 @@
 const DISCOUNT_PERCENT = 10;
 let allProducts = [];
+let filteredProducts = [];
 let visibleCount = 12;
 const LOAD_MORE_COUNT = 8;
 
@@ -12,6 +13,7 @@ async function loadProducts() {
             const data = await response.json();
             if (data.status) {
                 allProducts = data.products;
+                filteredProducts = [...allProducts];
                 newArrivalItems();
                 renderProducts();
             } else {
@@ -130,7 +132,7 @@ function renderProducts() {
 
     let container = document.getElementById("productContainer");
     container.innerHTML = "";
-    const visibleProducts = allProducts.slice(0, visibleCount);
+    const visibleProducts = filteredProducts.slice(0, visibleCount);
     visibleProducts.forEach(product => {
 
         let image1 = product.images && product.images.length > 0
@@ -159,8 +161,7 @@ function renderProducts() {
         let badge = "";
         if (diffDays <= 14) {
             badge = `<span class="badge bg-success">New</span>`;
-        }
-        else if (product.quantity <= 0) {
+        } else if (product.quantity <= 0) {
             badge = `<span class="badge bg-danger">Sold Out</span>`;
         }
 
@@ -213,13 +214,31 @@ function renderProducts() {
         container.innerHTML += card;
     });
     const btn = document.getElementById("viewAllBtn");
-    if (visibleCount >= allProducts.length) {
+    if (visibleCount >= filteredProducts.length) {
         btn.style.display = "none";
+    } else {
+        btn.style.display = "inline-block";
     }
 }
 
 function loadMoreProducts() {
     visibleCount += LOAD_MORE_COUNT;
+    renderProducts();
+}
+
+function filterProducts(gender, button) {
+    document.querySelectorAll(".f1").forEach(btn=>{
+        btn.classList.remove("active");
+    });
+    button.classList.add("active");
+    visibleCount = 12;
+    if(gender==="ALL"){
+        filteredProducts=[...allProducts];
+    }else{
+        filteredProducts=allProducts.filter(product=>
+            product.genderName.toUpperCase()===gender
+        );
+    }
     renderProducts();
 }
 
@@ -465,7 +484,7 @@ function handleQuantityClick(e) {
 
 function handleWishlist() {
     if (!selectedStock) {
-        Notiflix.Notify.warning("Please select a size first.", { position: "center-top" });
+        Notiflix.Notify.warning("Please select a size first.", {position: "center-top"});
         return;
     }
 

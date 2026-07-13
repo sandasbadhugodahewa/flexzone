@@ -228,7 +228,7 @@
     </section>
 
     <!-- New Arrival Items -->
-    <section id="best-sellers" class="best-sellers section">
+    <section id="new-items" class="best-sellers section">
         <div class="container section-title" data-aos="fade-up">
             <h2>New Arrival Items</h2>
         </div>
@@ -254,9 +254,9 @@
                 <div class="col-12">
                     <div class="product-filters isotope-filters mb-5 d-flex justify-content-center" data-aos="fade-up">
                         <ul class="d-flex flex-wrap gap-2 list-unstyled">
-                            <li class="filter-active" data-filter="*">All</li>
-                            <li data-filter=".filter-clothing">Men</li>
-                            <li data-filter=".filter-accessories">Women</li>
+                            <li class="filter-active f1" data-filter="*" onclick="filterProducts('ALL',this)">All</li>
+                            <li class="f1" onclick="filterProducts('MEN',this)">Men</li>
+                            <li class="f1" onclick="filterProducts('WOMEN',this)">Women</li>
                         </ul>
                     </div>
                 </div>

@@ -1,53 +1,67 @@
+window.handleCredentialResponse = function (response) {
+
+    console.log(response);
+    fetch("api/google/login", {
+        method: "POST", headers: {
+            "Content-Type": "application/json"
+        }, body: JSON.stringify({
+            token: response.credential
+        })
+    })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status) {
+                window.location.href = "index.html";
+            } else {
+                Notiflix.Notify.failure(data.message);
+            }
+        });
+}
+
 async function signIn() {
     Notiflix.Loading.dots("Wait...", {
-        clickToClose: false,
-        svgColor: '#0284c7'
+        clickToClose: false, svgColor: '#0284c7'
     });
 
     let email = document.getElementById("email");
     let password = document.getElementById("password");
 
     const userLoginObj = {
-        email: email.value,
-        password: password.value
+        email: email.value, password: password.value
     }
 
     try {
         const response = await fetch("api/users/login", {
-            method: "POST",
-            headers: {
+            method: "POST", headers: {
                 "Content-Type": "application/json"
-            },
-            body: JSON.stringify(userLoginObj)
+            }, body: JSON.stringify(userLoginObj)
         });
 
         if (response.ok) {
             const data = await response.json();
-            if(data.status){
-                Notiflix.Report.success(
-                    'Flex Zone',
-                    data.message,
-                    'Okay', // button title
+            if (data.status) {
+                Notiflix.Report.success('Flex Zone', data.message, 'Okay', // button title
                     () => {
                         window.location = "index.html"
-                    },
-                );
+                    },);
 
-            }else{
-                Notiflix.Notify.failure(data.message,{
-                    position:'center-top'
+            } else {
+                Notiflix.Notify.failure(data.message, {
+                    position: 'center-top'
                 });
             }
         } else {
-            Notiflix.Notify.failure("Login failed! Please try again",{
-                position:'center-top'
+            Notiflix.Notify.failure("Login failed! Please try again", {
+                position: 'center-top'
             });
         }
     } catch (e) {
-        Notiflix.Notify.failure(e.message,{
-            position:'center-top'
+        Notiflix.Notify.failure(e.message, {
+            position: 'center-top'
         });
-    }finally {
+    } finally {
         Notiflix.Loading.remove(1000);
     }
 }
+
+

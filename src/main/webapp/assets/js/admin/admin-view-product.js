@@ -10,7 +10,6 @@ window.addEventListener("load", async () => {
         setTimeout(() => window.location.href = "admin-products.html", 1500);
         return;
     }
-
     await loadProduct();
 });
 

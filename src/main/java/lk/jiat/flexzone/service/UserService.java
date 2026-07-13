@@ -58,6 +58,8 @@ public class UserService {
             } else {
                 if (!singleUser.getPassword().equals(userDTO.getPassword())) {
                     message = "Something went wrong. Please check your login credentials!";
+                } else if (singleUser.getRole() == null || !singleUser.getRole().getValue().equals("USER")) {
+                    message = "Something went wrong. Please check your role!";
                 } else {
                     Status verifiedStatus = hibernateSession.createNamedQuery("Status.findByValue", Status.class)
                             .setParameter("value", String.valueOf(Status.Type.VERIFIED))
@@ -79,6 +81,57 @@ public class UserService {
         }
         responseObject.addProperty("status", status);
         responseObject.addProperty("message", message);
+        return AppUtil.GSON.toJson(responseObject);
+    }
+
+    public String googleLogin(String email, String firstName, String lastName, HttpServletRequest request) {
+
+        JsonObject responseObject = new JsonObject();
+        Session hibernateSession = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = null;
+
+        try {
+            User user = hibernateSession.createNamedQuery("User.getByEmail", User.class).setParameter("email", email)
+                    .getSingleResultOrNull();
+
+            if (user == null) {
+                user = new User();
+                user.setFirstName(firstName);
+                user.setLastName(lastName);
+                user.setEmail(email);
+                user.setPassword(java.util.UUID.randomUUID().toString());
+                user.setVerificationCode("");
+
+                Status verifiedStatus = hibernateSession.createNamedQuery("Status.findByValue", Status.class)
+                        .setParameter("value", "VERIFIED").getSingleResult();
+
+                user.setStatus(verifiedStatus);
+                Role userRole = hibernateSession.createQuery("FROM Role r WHERE r.value=:value", Role.class)
+                        .setParameter("value", "USER").getSingleResult();
+
+                user.setRole(userRole);
+                transaction = hibernateSession.beginTransaction();
+                hibernateSession.persist(user);
+                transaction.commit();
+            }
+
+            HttpSession httpSession = request.getSession();
+            System.out.println("GOOGLE LOGIN SESSION : " + httpSession.getId());
+            httpSession.setAttribute("user", user);
+            new CartService().mergeSessionCartToDb(request);
+            responseObject.addProperty("status", true);
+            responseObject.addProperty("message", "Google Login Successful");
+            responseObject.addProperty("role", user.getRole().getValue());
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            responseObject.addProperty("status", false);
+            responseObject.addProperty("message", "Google login failed");
+        } finally {
+            hibernateSession.close();
+        }
         return AppUtil.GSON.toJson(responseObject);
     }
 
@@ -267,7 +320,7 @@ public class UserService {
                     AdminOtpMail mail = new AdminOtpMail(user.getEmail(), otp);
                     MailServiceProvider.getInstance().sendMail(mail);
 
-                    status  = true;
+                    status = true;
                     message = "OTP sent to your email. Please check your inbox.";
                 }
             } catch (Exception e) {
@@ -279,7 +332,7 @@ public class UserService {
             }
         }
 
-        responseObject.addProperty("status",  status);
+        responseObject.addProperty("status", status);
         responseObject.addProperty("message", message);
         return AppUtil.GSON.toJson(responseObject);
     }
@@ -322,10 +375,10 @@ public class UserService {
                     transaction.commit();
 
                     HttpSession httpSession = request.getSession();
-                    httpSession.setAttribute("user",  user);
+                    httpSession.setAttribute("user", user);
                     httpSession.setAttribute("admin", user); // admin-specific key
 
-                    status  = true;
+                    status = true;
                     message = "Verified! Redirecting to dashboard...";
                 }
             } catch (Exception e) {
@@ -337,7 +390,7 @@ public class UserService {
             }
         }
 
-        responseObject.addProperty("status",  status);
+        responseObject.addProperty("status", status);
         responseObject.addProperty("message", message);
         return AppUtil.GSON.toJson(responseObject);
     }
