@@ -170,9 +170,6 @@ function buildProductRow(p) {
     </tr>`;
 }
 
-// ─────────────────────────────────────────────
-//  EMPTY STATE
-// ─────────────────────────────────────────────
 function showEmptyState() {
     const tbody = document.querySelector("table tbody");
     if (!tbody) return;
@@ -188,9 +185,6 @@ function showEmptyState() {
         </tr>`;
 }
 
-// ─────────────────────────────────────────────
-//  UPDATE STAT CARDS
-// ─────────────────────────────────────────────
 function updateStatCards(data) {
     setEl("totalProducts",  data.totalAll);
     setEl("activeProducts", data.totalActive);
@@ -198,9 +192,6 @@ function updateStatCards(data) {
     setEl("outofStockProducts",     data.totalOutOfStock);
 }
 
-// ─────────────────────────────────────────────
-//  TAB COUNTS
-// ─────────────────────────────────────────────
 function updateTabCounts(data) {
     document.querySelectorAll(".users-filter-tab").forEach(tab => {
         const f     = tab.getAttribute("data-filter");
@@ -290,9 +281,6 @@ function updatePaginationInfo(total, page) {
     el.innerHTML = `Showing <strong>${start}–${end}</strong> of <strong>${total}</strong> products`;
 }
 
-// ─────────────────────────────────────────────
-//  FILTER TABS
-// ─────────────────────────────────────────────
 function wireFilterTabs() {
     document.querySelectorAll(".users-filter-tab").forEach(btn => {
         btn.addEventListener("click", () => {
@@ -306,9 +294,6 @@ function wireFilterTabs() {
     });
 }
 
-// ─────────────────────────────────────────────
-//  SEARCH
-// ─────────────────────────────────────────────
 function wireSearchInput() {
     const searchInput = document.querySelector(".users-search input");
     if (!searchInput) return;
@@ -322,9 +307,6 @@ function wireSearchInput() {
     });
 }
 
-// ─────────────────────────────────────────────
-//  SELECT ALL CHECKBOX
-// ─────────────────────────────────────────────
 function wireSelectAll() {
     const sa = document.getElementById("selectAll");
     if (!sa) return;
@@ -334,9 +316,6 @@ function wireSelectAll() {
     });
 }
 
-// ─────────────────────────────────────────────
-//  ACTIONS
-// ─────────────────────────────────────────────
 function toggleStatus(productId, currentStatus) {
     const newStatus = currentStatus === "ACTIVE" ? "INACTIVE" : "ACTIVE";
     const label     = newStatus === "ACTIVE" ? "activate" : "deactivate";
@@ -397,9 +376,6 @@ function deleteProduct(productId, productTitle) {
     );
 }
 
-// ─────────────────────────────────────────────
-//  HELPER
-// ─────────────────────────────────────────────
 function setEl(id, value) {
     const el = document.getElementById(id);
     if (el) el.textContent = value ?? "—";

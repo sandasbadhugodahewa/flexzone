@@ -203,6 +203,7 @@ public class AdminProductService {
                 sJson.addProperty("quantity", s.getQuantity());
                 sJson.addProperty("sizeValue", s.getSize() != null ? s.getSize().getValue() : "—");
                 sJson.addProperty("sizeId", s.getSize() != null ? s.getSize().getId() : 0);
+                sJson.addProperty("statusId", s.getStatus() != null ? s.getStatus().getId() : 0);
 
                 sJson.addProperty("soldCount", soldQty);
                 totalSold = totalSold + soldQty;
@@ -251,7 +252,6 @@ public class AdminProductService {
             responseObject.add("genders", toIdNameArray(session.createQuery("FROM Gender", Gender.class).getResultList(), "id", "name"));
             responseObject.add("sizes", toIdNameArray(session.createQuery("FROM Size", Size.class).getResultList(), "id", "value"));
 
-            // Colors with hex
             List<Color> colors = session.createQuery("FROM Color", Color.class).getResultList();
             JsonArray colorArray = new JsonArray();
             for (Color c : colors) {
@@ -263,7 +263,6 @@ public class AdminProductService {
             }
             responseObject.add("colors", colorArray);
 
-            // Discounts
             List<Discount> discounts = session.createQuery("FROM Discount", Discount.class).getResultList();
             JsonArray discArray = new JsonArray();
             for (Discount d : discounts) {
@@ -289,9 +288,6 @@ public class AdminProductService {
         return AppUtil.GSON.toJson(responseObject);
     }
 
-    // ─────────────────────────────────────────────
-    //  UPDATE PRODUCT STATUS
-    // ─────────────────────────────────────────────
     public String updateStatus(int productId, String newStatus) {
         JsonObject responseObject = new JsonObject();
         Session session = HibernateUtil.getSessionFactory().openSession();
@@ -328,9 +324,35 @@ public class AdminProductService {
         return AppUtil.GSON.toJson(responseObject);
     }
 
-    // ─────────────────────────────────────────────
-    //  DELETE PRODUCT (soft delete)
-    // ─────────────────────────────────────────────
+    public String updateStockStatus(int stockId, String newStatus) {
+        JsonObject response = new JsonObject();
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction tx = session.beginTransaction();
+        try {
+            Stock stock = session.find(Stock.class, stockId);
+            if (stock == null) {
+                response.addProperty("status", false);
+                response.addProperty("message", "Stock not found!");
+                return AppUtil.GSON.toJson(response);
+            }
+            Status status = session.createNamedQuery("Status.findByValue", Status.class)
+                    .setParameter("value", newStatus).getSingleResult();
+            stock.setStatus(status);
+            session.merge(stock);
+            tx.commit();
+            response.addProperty("status", true);
+            response.addProperty("message", "Stock status updated!");
+        } catch (Exception e) {
+            tx.rollback();
+            response.addProperty("status", false);
+            response.addProperty("message", "Update failed!");
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+        return AppUtil.GSON.toJson(response);
+    }
+
     public String deleteProduct(int productId) {
         JsonObject responseObject = new JsonObject();
         Session session = HibernateUtil.getSessionFactory().openSession();
@@ -428,7 +450,6 @@ public class AdminProductService {
         try {
             ProductDTO dto = AppUtil.GSON.fromJson(productJson, ProductDTO.class);
 
-            // 🔹 Create Product
             Product p = new Product();
             p.setTitle(dto.getTitle());
             p.setDescription(dto.getDescription());
@@ -453,7 +474,6 @@ public class AdminProductService {
 
             p.setStatus(status);
 
-            // 🔹 Save product_details JSON
             if (dto.getProductDetails() != null) {
                 p.setProductDetails(AppUtil.GSON.toJson(dto.getProductDetails()));
             }

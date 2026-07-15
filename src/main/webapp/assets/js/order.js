@@ -46,14 +46,13 @@ function renderOrderPage() {
     pageData.forEach((order, index) => {
         container.innerHTML += buildOrderCard(order, index);
     });
-
     container.scrollIntoView({behavior: "smooth", block: "start"});
 }
 
 function buildOrderCard(order, index) {
 
-    const paymentStatus = order.status;         // PAID / PENDING / BLOCKED
-    const deliveryStatus = order.deliveryStatus; // APPROVED / PACKING / SHIPPED etc.
+    const paymentStatus = order.status;
+    const deliveryStatus = order.deliveryStatus;
 
     const payMap = {
         "PAID": {
@@ -82,12 +81,12 @@ function buildOrderCard(order, index) {
     };
 
     const deliveryMap = {
-        "APPROVED":  { icon: "bi-check-circle",     label: "Approved",  timelineStep: 1 },
-        "PACKING":   { icon: "bi-box-seam",         label: "Packing",   timelineStep: 2 },
-        "SHIPPED":   { icon: "bi-truck",            label: "Shipped",   timelineStep: 3 },
-        "DELIVERED": { icon: "bi-house-door",       label: "Delivered", timelineStep: 4 },
-        "COMPLETED": { icon: "bi-patch-check-fill", label: "Completed", timelineStep: 5 },
-        "CANCELED":  { icon: "bi-x-circle",         label: "Canceled",  timelineStep: -1 },
+        "APPROVED": {icon: "bi-check-circle", label: "Approved", timelineStep: 1},
+        "PACKING": {icon: "bi-box-seam", label: "Packing", timelineStep: 2},
+        "SHIPPED": {icon: "bi-truck", label: "Shipped", timelineStep: 3},
+        "DELIVERED": {icon: "bi-house-door", label: "Delivered", timelineStep: 4},
+        "COMPLETED": {icon: "bi-patch-check-fill", label: "Completed", timelineStep: 5},
+        "CANCELED": {icon: "bi-x-circle", label: "Canceled", timelineStep: -1},
     };
 
     const delivery = deliveryMap[deliveryStatus] || {
@@ -98,6 +97,8 @@ function buildOrderCard(order, index) {
 
     //Product images
     const items = order.items || [];
+    const allReviewed = items.every(item => item.reviewed);
+
     const imgCount = Math.min(items.length, 3);
     const extra = items.length - 3;
 
@@ -134,6 +135,12 @@ function buildOrderCard(order, index) {
            <span style="color:var(--accent-color);">${order.mobile || ""}</span>`
         : `<span class="text-muted">No address on record</span>`;
 
+     const reviewOptions = items.map(item => `
+               <option value="${item.orderItemId}">
+                    ${item.productTitle}
+               </option>
+     `).join("");
+     console.log(items);
     //Items
     const itemRows = items.map(item => {
         const img = item.images && item.images.length > 0
@@ -162,12 +169,12 @@ function buildOrderCard(order, index) {
 
     //Timeline
     const timelineSteps = [
-        { icon: "bi-bag-check",         label: "Order Placed",   desc: "Your order has been received" },
-        { icon: "bi-check-circle",      label: "Approved",       desc: "Order approved for processing" },
-        { icon: "bi-box-seam",          label: "Packing",        desc: "Items being packed for shipment" },
-        { icon: "bi-truck",             label: "In Transit",     desc: "Order is on its way" },
-        { icon: "bi-house-door",        label: "Delivered",      desc: "Delivered to your address" },
-        { icon: "bi-patch-check-fill",  label: "Completed",      desc: "Order completed!" },
+        {icon: "bi-bag-check", label: "Order Placed", desc: "Your order has been received"},
+        {icon: "bi-check-circle", label: "Approved", desc: "Order approved for processing"},
+        {icon: "bi-box-seam", label: "Packing", desc: "Items being packed for shipment"},
+        {icon: "bi-truck", label: "In Transit", desc: "Order is on its way"},
+        {icon: "bi-house-door", label: "Delivered", desc: "Delivered to your address"},
+        {icon: "bi-patch-check-fill", label: "Completed", desc: "Order completed!"},
     ];
 
     const isCancelled = delivery.timelineStep < 0;
@@ -214,6 +221,99 @@ function buildOrderCard(order, index) {
         }).join("");
 
     const delay = (index % 4) * 100;
+
+    const REVIEW_STATUS_MAP = {
+        pending: {
+            label: "Pending",
+            icon: "bi-clock-fill",
+            badgeClass: "rv-status-pending",
+            cardClass: "rv-card--pending"
+        },
+        active: {
+            label: "Published",
+            icon: "bi-patch-check-fill",
+            badgeClass: "rv-status-active",
+            cardClass: "rv-card--active"
+        },
+        rejected: {
+            label: "Rejected",
+            icon: "bi-x-circle-fill",
+            badgeClass: "rv-status-rejected",
+            cardClass: "rv-card--rejected"
+        }
+    };
+
+    function normalizeStatus(rawStatus) {
+        const NUMERIC_MAP = { 0: "pending", 1: "active", 2: "rejected" };
+
+        if (typeof rawStatus === "number") {
+            return NUMERIC_MAP[rawStatus] || "pending";
+        }
+
+        if (typeof rawStatus === "string") {
+            const normalized = rawStatus.trim().toLowerCase();
+            if (REVIEW_STATUS_MAP[normalized]) return normalized;
+        }
+
+        // unrecognized value — log it so it doesn't fail silently again
+        console.warn("Unrecognized review status:", rawStatus);
+        return "pending";
+    }
+
+    function getStatusBadge(status) {
+        const key = normalizeStatus(status);
+        const s = REVIEW_STATUS_MAP[key];
+        return `<span class="rv-status-badge ${s.badgeClass}"><i class="bi ${s.icon}"></i> ${s.label}</span>`;
+    }
+
+    const reviewCards = items
+        .filter(item => item.reviewed)
+        .map(item => {
+            const review = item.review;
+
+            const stars = Array.from({length: 5}).map((_, i) =>
+                i < review.rating
+                    ? `<i class="bi bi-star-fill"></i>`
+                    : `<i class="bi bi-star"></i>`
+            ).join("");
+
+            return `
+    <div class="rv-card">
+        <div class="rv-header">
+            <img
+                src="assets/images/productImg/${item.images[0]}"
+                class="rv-product-img"
+                alt="${item.productTitle}">
+            <div class="rv-meta">
+                <h4>
+                    ${item.productTitle}
+                    ${item.sizeValue ? `<span class="rv-size">(${item.sizeValue})</span>` : ""}
+                </h4>
+                <div class="rv-top-row">
+                    <div class="rv-rating">
+                        ${stars}
+                        <span class="rv-rating-num">${review.rating}.0</span>
+                    </div>
+                    ${getStatusBadge(review.status)}
+                    <span class="rv-date"><i class="bi bi-calendar3"></i> ${review.createdAt}</span>
+                </div>
+            </div>
+        </div>
+        <div class="rv-content">
+            <h6 class="rv-title">${review.reviewTitle}</h6>
+            <p class="rv-text">${review.review}</p>
+            ${review.status === "rejected" && review.rejectReason
+                ? `<div class="rv-reject-reason"><i class="bi bi-info-circle"></i> ${review.rejectReason}</div>`
+                : ""}
+        </div>
+        <div class="rv-footer">
+            <button type="button" class="rv-delete" onclick="deleteReview('${item.id}')">
+                <i class="bi bi-trash"></i> Delete
+            </button>
+        </div>
+    </div>
+    `;
+        }).join("");
 
     return `
     <div class="order-card" data-aos="fade-up" data-aos-delay="${delay}">
@@ -320,7 +420,8 @@ ${showBuyNow ? `
 
     <button type="button"
         class="btn-review"
-        onclick="openReview('${order.orderId}')"
+        data-bs-toggle="collapse"
+        data-bs-target="#review${order.orderId}"
         style="flex:1;min-width:120px;background:#ffc107;color:#000;">
         <i class="bi bi-star me-1"></i>Review
     </button>
@@ -344,7 +445,6 @@ ${showBuyNow ? `
     </button>
 
 `}
-            
         </div>
 
         <!--Tracking-->
@@ -421,8 +521,98 @@ ${showBuyNow ? `
 
             </div>
         </div>
+        
+        <!--Reviews-->
+        <div class="collapse tracking-info" id="review${order.orderId}">
+             <div class="pr-form-card" id="writeReview">
+             ${
+            allReviewed
+             ?`
+              <div class="reviews-grid">
+                  ${reviewCards}
+              </div>
+              `
+              :`<h4>Write a review</h4>
+                 <p class="pr-form-sub">Share your experience to help other shoppers decide.</p>
+                <form class="pr-form">
+                    <label>Your rating</label>
+                    <div class="pr-star-input">
+                           <input type="radio" id="star5_${order.orderId}" name="rating${order.orderId}" value="5">
+                           <label for="star5_${order.orderId}"" title="5 stars"><i class="bi bi-star-fill"></i></label>
+                           <input type="radio" id="star4_${order.orderId}" name="rating${order.orderId}" value="4">
+                           <label for="star4_${order.orderId}" title="4 stars"><i class="bi bi-star-fill"></i></label>
+                           <input type="radio" id="star3_${order.orderId}" name="rating${order.orderId}" value="3">
+                           <label for="star3_${order.orderId}" title="3 stars"><i class="bi bi-star-fill"></i></label>
+                           <input type="radio" id="star2_${order.orderId}" name="rating${order.orderId}" value="2">
+                           <label for="star2_${order.orderId}" title="2 stars"><i class="bi bi-star-fill"></i></label>
+                           <input type="radio" id="star1_${order.orderId}" name="rating${order.orderId}" value="1">
+                           <label for="star1_${order.orderId}" title="1 star"><i class="bi bi-star-fill"></i></label>
+                    </div>
+
+                    <div class="pr-form-grid">
+                          <div>
+                              <label for="pr-review-title">Review title</label>
+                                   <input type="text" class="form-control" id="reviewTitle${order.orderId}" required>
+                          </div>
+                          <div>
+                              <label for="pr-review-fit">Product</label>
+                                  <select class="form-control" id="reviewProduct${order.orderId}">
+                                      <option value="">Select Product</option>
+                                              ${reviewOptions}
+                                  </select>
+                                                </div>
+                          </div>
+                          <div style="margin-bottom:0;">
+                             <label for="pr-review-content">Your review</label>
+                             <textarea class="form-control" id="reviewMsg${order.orderId}" rows="4" required
+                                                          style="margin-bottom:18px;"></textarea>
+                          </div>
+                          <button type="button" class="btn btn-primary" onclick="submitReview('${order.orderId}');">Submit review</button>
+                </form>`}
+             </div>
+        </div>
 
     </div>`;
+}
+
+async function submitReview(orderId) {
+
+    const title = document.getElementById(`reviewTitle${orderId}`).value;
+    const review = document.getElementById(`reviewMsg${orderId}`).value;
+    const orderItemId = document.getElementById(`reviewProduct${orderId}`).value;
+    const rating = document.querySelector(`input[name="rating${orderId}"]:checked`)?.value;
+    const reviewData = {
+        orderId: orderId,
+        orderItemId: orderItemId,
+        rating: rating,
+        reviewTitle: title,
+        review: review
+    };
+
+    const response = await fetch("api/reviews", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(reviewData)
+    });
+
+    if (response.ok) {
+        const data = await response.json();
+        if (data.status) {
+            Notiflix.Report.success(
+                'Flex Zone',
+                data.message,
+                'Okay'
+            );
+            await loadOrderCard();
+        } else {
+            Notiflix.Notify.failure(data.message, {position: "center-top"});
+        }
+    } else {
+        Notiflix.Notify.failure("Failed to add review. Please try again!", {position: "center-top"});
+    }
+
 }
 
 async function setupPagination(totalCount) {

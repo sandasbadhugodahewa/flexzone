@@ -7,8 +7,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lk.jiat.flexzone.dto.OrderDTO;
 import lk.jiat.flexzone.dto.OrderItemDTO;
+import lk.jiat.flexzone.dto.ReviewDTO;
 import lk.jiat.flexzone.entity.*;
 import lk.jiat.flexzone.util.AppUtil;
+import lk.jiat.flexzone.util.DateUtil;
 import lk.jiat.flexzone.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -137,15 +139,6 @@ public class OrderService {
                 return AppUtil.GSON.toJson(responseObject);
             }
 
-//            String orderStatus = order.getStatus().getValue();
-//
-//            if (orderStatus.equalsIgnoreCase("PENDING") || orderStatus.equalsIgnoreCase("CANCELED")) {
-//                responseObject.addProperty("status", false);
-//                responseObject.addProperty("message", "Invoice not available for this order yet!");
-//                return AppUtil.GSON.toJson(responseObject);
-//            }
-
-            // In getInvoiceData() — replace the status check:
             String paymentStatus  = order.getStatus() != null
                     ? order.getStatus().getValue() : "";
             String deliveryStatus = order.getDeliveryStatus() != null
@@ -203,6 +196,7 @@ public class OrderService {
                 Stock stock = oi.getStock();
                 Product product = stock.getProduct();
 
+                itemDTO.setOrderItemId(oi.getId());
                 itemDTO.setStockId(stock.getId());
                 itemDTO.setProductTitle(product.getTitle());
                 itemDTO.setQty(oi.getQty());
@@ -309,6 +303,27 @@ public class OrderService {
 
                     Stock stock = oi.getStock();
                     Product product = stock.getProduct();
+
+                    itemDTO.setOrderItemId(oi.getId());
+
+                    Review review = hibernateSession.createQuery("FROM Review r WHERE r.orderItem.id = :id",
+                                    Review.class).setParameter("id", oi.getId()).uniqueResult();
+                    if(review != null){
+                        itemDTO.setReviewed(true);
+
+                        ReviewDTO reviewDTO = new ReviewDTO();
+
+                        reviewDTO.setRating(review.getRating());
+                        reviewDTO.setReviewTitle(review.getReviewTitle());
+                        reviewDTO.setReview(review.getReview());
+                        reviewDTO.setStatus(review.getStatus().getValue());
+
+                        reviewDTO.setCreatedAt(DateUtil.format(review.getCreatedAt()));
+
+                        itemDTO.setReview(reviewDTO);
+                    }else{
+                        itemDTO.setReviewed(false);
+                    }
 
                     itemDTO.setStockId(stock.getId());
                     itemDTO.setProductTitle(product.getTitle());

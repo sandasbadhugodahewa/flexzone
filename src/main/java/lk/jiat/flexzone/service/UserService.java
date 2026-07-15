@@ -89,6 +89,8 @@ public class UserService {
         JsonObject responseObject = new JsonObject();
         Session hibernateSession = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
+        boolean status = false;
+        String message = "";
 
         try {
             User user = hibernateSession.createNamedQuery("User.getByEmail", User.class).setParameter("email", email)
@@ -115,23 +117,32 @@ public class UserService {
                 transaction.commit();
             }
 
-            HttpSession httpSession = request.getSession();
-            System.out.println("GOOGLE LOGIN SESSION : " + httpSession.getId());
-            httpSession.setAttribute("user", user);
-            new CartService().mergeSessionCartToDb(request);
-            responseObject.addProperty("status", true);
-            responseObject.addProperty("message", "Google Login Successful");
-            responseObject.addProperty("role", user.getRole().getValue());
+            if(user.getRole() == null){
+                status = false;
+                message = "User role not found!";
+            } else if (!user.getRole().getValue().equalsIgnoreCase("USER")) {
+                status = false;
+                message = "Something went wrong. Please check your role!";
+            }else {
+                HttpSession httpSession = request.getSession();
+                httpSession.setAttribute("user", user);
+                new CartService().mergeSessionCartToDb(request);
+                status = true;
+                message = "Google Login Successful";
+                responseObject.addProperty("role", user.getRole().getValue());
+            }
         } catch (Exception e) {
             e.printStackTrace();
             if (transaction != null) {
                 transaction.rollback();
             }
-            responseObject.addProperty("status", false);
-            responseObject.addProperty("message", "Google login failed");
+            status = false;
+            message = "Google login failed, Try again..";
         } finally {
             hibernateSession.close();
         }
+        responseObject.addProperty("status", status);
+        responseObject.addProperty("message", message);
         return AppUtil.GSON.toJson(responseObject);
     }
 
@@ -255,10 +266,9 @@ public class UserService {
                     hibernateSession.persist(u);
                     transaction.commit();
 
-                    /// verification-mail-sending-start
+                    // verification-mail-sending-start
                     VerificationMail verificationMail = new VerificationMail(u.getEmail(), verificationCode);
                     MailServiceProvider.getInstance().sendMail(verificationMail);
-                    /// verification-mail-sending-end
 
                     status = true;
                     message = "Account created successfully. Verification code has been sent to the your email. " +
@@ -276,7 +286,6 @@ public class UserService {
         return AppUtil.GSON.toJson(responseObject);
     }
 
-    // ── STEP 1: Admin login — validate credentials, send OTP ──
     public String adminLogin(UserDTO userDTO) {
         JsonObject responseObject = new JsonObject();
         boolean status = false;

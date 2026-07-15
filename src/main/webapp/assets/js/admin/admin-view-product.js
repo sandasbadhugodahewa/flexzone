@@ -144,39 +144,51 @@ function renderStockTable(stocks) {
             <td>${discountBadge}</td>
 <!--            <td><i class="bi bi-check-circle-fill text-success text-center"></i></td>-->
 <!--            <td><i class="bi bi-x-circle-fill text-danger text-center"></i></td>-->
-            <td class="text-center">
-                ${
-                   s.status === "ACTIVE"
-                   ? '<i class="bi bi-check-circle-fill text-success"></i>'
-                : ''
-                }
-            </td>
 
-            <td class="text-center">
-                ${
-                  s.status === "INACTIVE"
-                ? '<i class="bi bi-x-circle-fill text-danger"></i>'
-                : ''
-                  }
-                 </td>
-            <td>
-                <div class="dropdown">
-                    <button class="users-action-btn dropdown-toggle" data-bs-toggle="dropdown">
-                        <i class="bi bi-three-dots"></i>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                       <li>
-                            <a class="dropdown-item" href="#"
-                               onclick="toggleStatus(${s.id}, '${s.status}'); return false;">
-                                <i class="bi bi-toggle-on me-2"></i>
-                                ${s.status === "ACTIVE" ? "Deactivate" : "Activate"}
-                            </a>
-                       </li>
-                    </ul>
-                </div>
+            <td style="font-size:13px;font-weight:600;">
+              ${
+            s.statusId === 1
+                ? `<button type="button" class="btn btn-danger" onclick="toggleStockStatus(${s.stockId}, ${s.statusId})"><i class="bi bi-x-lg me-1"></i>Deactive</button>`
+                : `<button type="button" class="btn btn-success" onclick="toggleStockStatus(${s.stockId}, ${s.statusId})"><i class="bi bi-check-lg me-1"></i>Active</button>`
+              } 
             </td>
         </tr>`;
     }).join("");
+}
+
+async function toggleStockStatus(stockId, currentStatusId) {
+    const newStatus = currentStatusId === 1
+        ? "INACTIVE"
+        : "ACTIVE";
+
+    Notiflix.Confirm.show("Change Status",`Set stock to ${newStatus}?`,
+        "Confirm",
+        "Cancel",async () => {
+            try {
+                Notiflix.Loading.pulse("Updating...");
+                const response = await fetch(`api/admin/products/${stockId}/stockStatus`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        status: newStatus
+                    })
+                });
+                const data = await response.json();
+                if (data.status) {
+                    Notiflix.Notify.success(data.message);
+                    await loadProduct();
+                } else {
+                    Notiflix.Notify.failure(data.message);
+                }
+            } catch (e) {
+                Notiflix.Notify.failure(e.message);
+            } finally {
+                Notiflix.Loading.remove();
+            }
+        }
+    );
 }
 
 function switchImage(src, clickedThumb) {

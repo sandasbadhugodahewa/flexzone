@@ -23,8 +23,8 @@ public class AdminProductController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getProductList(
             @QueryParam("filter") @DefaultValue("all") String filter,
-            @QueryParam("search") @DefaultValue("")    String search,
-            @QueryParam("page")   @DefaultValue("0")   int    page) {
+            @QueryParam("search") @DefaultValue("") String search,
+            @QueryParam("page") @DefaultValue("0") int page) {
         return Response.ok(service.getProductList(filter, search, page)).build();
     }
 
@@ -80,8 +80,18 @@ public class AdminProductController {
     public Response updateProduct(
             @PathParam("id") int productId,
             @FormDataParam("product") String productJson,
-            @FormDataParam("images")  List<FormDataBodyPart> images) {
+            @FormDataParam("images") List<FormDataBodyPart> images) {
         return Response.ok(service.updateProduct(productId, productJson, images)).build();
+    }
+
+    @PUT
+    @Path("/{id}/stockStatus")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateStockStatus(@PathParam("id") int stockId, String json) {
+        JsonObject req = AppUtil.GSON.fromJson(json, JsonObject.class);
+        String status = req.get("status").getAsString();
+        return Response.ok(service.updateStockStatus(stockId, status)).build();
     }
 
 }

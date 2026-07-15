@@ -33,6 +33,7 @@
     <mapping class="lk.jiat.flexzone.entity.Wishlist"/>
     <mapping class="lk.jiat.flexzone.entity.Role"/>
     <mapping class="lk.jiat.flexzone.entity.DeliveryStatus"/>
+    <mapping class="lk.jiat.flexzone.entity.Review"/>
 
   </session-factory>
 </hibernate-configuration>

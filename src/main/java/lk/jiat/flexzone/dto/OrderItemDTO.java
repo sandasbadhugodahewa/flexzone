@@ -4,15 +4,26 @@ import java.util.List;
 
 public class OrderItemDTO {
 
+    private int orderItemId;
     private int stockId;
     private String productTitle;
     private int qty;
     private double price;
     private String sizeValue;
     private List<String> images;
+    private boolean reviewed;
+    private ReviewDTO review;
 
     public OrderItemDTO() {
 
+    }
+
+    public int getOrderItemId() {
+        return orderItemId;
+    }
+
+    public void setOrderItemId(int orderItemId) {
+        this.orderItemId = orderItemId;
     }
 
     public int getStockId() {
@@ -62,4 +73,22 @@ public class OrderItemDTO {
     public void setImages(List<String> images) {
         this.images = images;
     }
+
+    public boolean isReviewed() {
+        return reviewed;
+    }
+
+    public void setReviewed(boolean reviewed) {
+        this.reviewed = reviewed;
+    }
+
+
+    public ReviewDTO getReview() {
+        return review;
+    }
+
+    public void setReview(ReviewDTO review) {
+        this.review = review;
+    }
+
 }
