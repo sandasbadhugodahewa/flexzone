@@ -3,13 +3,14 @@ let allProducts = [];
 let filteredProducts = [];
 let visibleCount = 12;
 const LOAD_MORE_COUNT = 8;
+let reviewVisibleCount = 1;
+const REVIEW_LOAD_MORE_COUNT = 1;
 
 async function loadProducts() {
     try {
         const response = await fetch("api/products/loadProducts");
 
         if (response.ok) {
-
             const data = await response.json();
             if (data.status) {
                 allProducts = data.products;
@@ -31,7 +32,6 @@ async function loadProducts() {
 
 async function newArrivalItems() {
     try {
-
         const response = await fetch("api/products/loadNewArrivals");
         if (response.ok) {
             const data = await response.json();
@@ -165,6 +165,16 @@ function renderProducts() {
             badge = `<span class="badge bg-danger">Sold Out</span>`;
         }
 
+        const fullStars = Math.floor(product.averageRating);
+        let stars = "";
+        for (let i = 1; i <= 5; i++) {
+            if (i <= fullStars) {
+                stars += `<i class="bi bi-star-fill"></i>`;
+            } else {
+                stars += `<i class="bi bi-star"></i>`;
+            }
+        }
+
         let card = `
         <div class="col-md-6 col-lg-3 product-item isotope-item filter-clothing">
             <div class="product-card">
@@ -206,6 +216,10 @@ function renderProducts() {
                         <span class="old-price">
                             Rs.${oldPrice}
                         </span>
+                    </div>
+                    <div class="product-rating">
+                           ${stars}
+                        <span>(${product.totalReviews})</span>
                     </div>
                 </div>
             </div>
@@ -269,6 +283,7 @@ async function loadProductsDetails() {
             return;
         }
         const pData = data.productData;
+        console.log(pData);
 
         document.getElementById("productTitle").innerHTML = pData.title;
         document.getElementById("subCategory1").innerHTML = pData.subCategoryName;
@@ -279,6 +294,28 @@ async function loadProductsDetails() {
         if (desc) desc.innerHTML = `    <h4>Product Overview</h4>
                                      <p>${pData.description}</p>`;
 
+        const singleProductReview = document.getElementById("singleProductReview");
+
+        const fullStars = Math.floor(pData.averageRating);
+        const hasHalfStar = (pData.averageRating - fullStars) >= 0.5;
+
+        let stars = "";
+        for (let i = 1; i <= 5; i++) {
+            if (i <= fullStars) {
+                stars += `<i class="bi bi-star-fill"></i>`;
+            } else if (i === fullStars + 1 && hasHalfStar) {
+                stars += `<i class="bi bi-star-half"></i>`;
+            } else {
+                stars += `<i class="bi bi-star"></i>`;
+            }
+        }
+        singleProductReview.innerHTML = `
+    ${stars}
+    <span class="rating-count">
+        (${pData.totalReviews})
+    </span>
+`;
+
         //Images
         renderImages(pData.images);
         renderColor(pData.colorValue, pData.colorHex);
@@ -286,6 +323,8 @@ async function loadProductsDetails() {
 
         productStocks = pData.stockDTOList || [];
         renderSizeButtons(productStocks);
+
+        renderReviews(pData.id)
 
         if (productStocks.length > 0) {
             selectStock(productStocks[0]);
@@ -322,6 +361,116 @@ function renderImages(images) {
             </div>`;
         swiperWrapper.innerHTML += slide;
     });
+}
+
+async function renderReviews(productId){
+    try {
+        const response = await fetch(`api/reviews/get-reviews/${productId}`);
+        if (response.ok) {
+            const data = await response.json();
+            if (data.status) {
+                const allReviews = data.reviews;
+                const summary = data.summaries;
+                let container = document.getElementById("reviewContainer");
+
+                document.getElementById("reviews-tab").innerHTML = `Reviews (${summary.totalReviews})`;
+                document.getElementById("pr-score-number").innerText = summary.averageRating.toFixed(1);
+                document.getElementById("pr-score-count").innerText = `Based on ${summary.totalReviews} verified reviews`;
+                document.getElementById("pr-bar-count-5").innerText = summary.fiveStar;
+                document.getElementById("pr-bar-count-4").innerText = summary.fourStar;
+                document.getElementById("pr-bar-count-3").innerText = summary.threeStar;
+                document.getElementById("pr-bar-count-2").innerText = summary.twoStar;
+                document.getElementById("pr-bar-count-1").innerText = summary.oneStar;
+
+                const total = summary.totalReviews;
+                document.getElementById("pr-bar-fill-5").style.width =
+                    total ? (summary.fiveStar / total * 100) + "%" : "0%";
+                document.getElementById("pr-bar-fill-4").style.width =
+                    total ? (summary.fourStar / total * 100) + "%" : "0%";
+                document.getElementById("pr-bar-fill-3").style.width =
+                    total ? (summary.threeStar / total * 100) + "%" : "0%";
+                document.getElementById("pr-bar-fill-2").style.width =
+                    total ? (summary.twoStar / total * 100) + "%" : "0%";
+                document.getElementById("pr-bar-fill-1").style.width =
+                    total ? (summary.oneStar / total * 100) + "%" : "0%";
+
+                container.innerHTML = allReviews.map(review => {
+
+                    const names = review.customerName.trim().split(" ");
+                    const initials = (names[0]?.charAt(0) || "") + (names[names.length - 1]?.charAt(0) || "");
+                    const avatar = initials.toUpperCase();
+
+                    const stars = Array.from({length: 5}).map((_, i) =>
+                        i < review.rating
+                            ? `<i class="bi bi-star-fill"></i>`
+                            : `<i class="bi bi-star"></i>`
+                    ).join("");
+
+                    return `
+                    
+<article class="pr-review">
+    <div class="pr-review-avatar" style="width:36px;height:36px;border-radius:50%;
+                            background:color-mix(in srgb,var(--accent-color),transparent 85%);
+                            color:var(--accent-color);font-weight:700;font-size:13px;
+                            display:inline-flex;align-items:center;justify-content:center;
+                            margin-right:10px;flex-shrink:0;">
+        ${avatar}
+    </div>
+    <div class="pr-review-body">
+        <div class="pr-review-top">
+            <div>
+                <span class="pr-reviewer-name">
+                    ${review.customerName}
+                </span>
+                <span class="pr-verified">
+                    <i class="bi bi-patch-check-fill"></i>
+                    Verified Purchase
+                </span>
+            </div>
+            <span class="pr-review-date">
+                ${review.createdAt}
+            </span>
+        </div>
+        <div class="rv-rating">
+                        ${stars}
+                        <span class="rv-rating-num">(${review.rating}.0)</span>
+        </div>
+        <h5 class="pr-review-title">
+            ${review.reviewTitle}
+        </h5>
+        <p class="pr-review-text">
+            ${review.review}
+        </p>
+        <div class="pr-review-meta-tags">
+               <span class="pr-tag">Size: M</span>
+               <span class="pr-tag">Color: Dark Pink</span>
+        </div>
+    </div>
+</article>
+                  `;
+
+                }).join("");
+
+            }else {
+                console.error(data.message);
+            }
+        }
+    } catch (e) {
+        Notiflix.Notify.failure(e.message, {
+            position: "center-top"
+        });
+    }
+    const btn = document.getElementById("pr-load-more");
+    if (reviewVisibleCount >= allReviews.length) {
+        btn.style.display = "none";
+    } else {
+        btn.style.display = "inline-block";
+    }
+}
+
+function loadMoreReviews() {
+    reviewVisibleCount += REVIEW_LOAD_MORE_COUNT;
+    renderReviews();
 }
 
 function renderColor(colorValue, colorHex) {
@@ -414,7 +563,7 @@ function renderSizeButtons(stocks) {
     });
 }
 
-// ── Updates price, stock count, quantity input for a given stock ──
+//Updates price, stock count, quantity
 function selectStock(stock) {
     selectedStock = stock;
 
@@ -429,7 +578,7 @@ function selectStock(stock) {
 
     document.getElementById("stock").innerHTML = `(${stock.quantity} items left)`;
 
-    // ── Stock availability icon + label ──
+    //Stock availability
     const stockIconEl = document.getElementById("stockIcon");
     const stockLabelEl = document.getElementById("stockLabel");
 
@@ -443,7 +592,6 @@ function selectStock(stock) {
         }
     }
 
-    // Update quantity input max to available stock
     const qtyInput = document.querySelector(".quantity-input");
     if (qtyInput) {
         qtyInput.max = stock.quantity;
@@ -452,7 +600,7 @@ function selectStock(stock) {
 }
 
 
-// ── Thumbnail click handler ──
+//Thumbnail click
 function changeMainImage(imgPath, thumbEl) {
     const mainImg = document.getElementById("main-product-image");
     mainImg.src = imgPath;

@@ -67,6 +67,20 @@ public class ProductService {
 
                 dto.setImages(product.getImages());
 
+                List<Review> reviews = session.createQuery("FROM Review r WHERE r.product.id = :pid AND r.status.value = :status",Review.class)
+                        .setParameter("pid", product.getId()).setParameter("status", Status.Type.ACTIVE.name()).getResultList();
+
+                double totalRating = 0;
+                for (Review review : reviews) {
+                    totalRating += review.getRating();
+                }
+                double averageRating = reviews.isEmpty()
+                        ? 0
+                        : totalRating / reviews.size();
+
+                dto.setAverageRating(averageRating);
+                dto.setTotalReviews(reviews.size());
+
                 List<StockDTO> stockDTOList = new ArrayList<>();
 
                 for(Stock stock : product.getStocks()){
@@ -242,6 +256,20 @@ public class ProductService {
             pdto.setCreatedAt(product.getCreatedAt().toString());
 
             pdto.setImages(product.getImages());
+
+            List<Review> reviews = session.createQuery("FROM Review r WHERE r.product.id = :pid AND r.status.value = :status",Review.class)
+                    .setParameter("pid", product.getId()).setParameter("status", Status.Type.ACTIVE.name()).getResultList();
+
+            double totalRating = 0;
+            for (Review review : reviews) {
+                totalRating += review.getRating();
+            }
+            double averageRating = reviews.isEmpty()
+                    ? 0
+                    : totalRating / reviews.size();
+
+            pdto.setAverageRating(averageRating);
+            pdto.setTotalReviews(reviews.size());
 
             List<StockDTO> stockDTOList = new ArrayList<>();
 

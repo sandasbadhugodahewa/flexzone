@@ -171,19 +171,37 @@ public class AdvancedSearchService {
     }
 
     private List<JsonObject> generateProductDTOs(Query<Stock> stockQuery) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
         List<JsonObject> list = new ArrayList<>();
         for (Stock stock : stockQuery.getResultList()) {
+
+            Product product = stock.getProduct();
+
             JsonObject item = new JsonObject();
+
+            List<Review> reviews = session.createQuery("FROM Review r WHERE r.product.id = :pid AND r.status.value = :status",Review.class)
+                    .setParameter("pid", product.getId()).setParameter("status", Status.Type.ACTIVE.name()).getResultList();
+
+            double totalRating = 0;
+            for (Review review : reviews) {
+                totalRating += review.getRating();
+            }
+            double averageRating = reviews.isEmpty()
+                    ? 0
+                    : totalRating / reviews.size();
+
             item.addProperty("stockId",      stock.getId());
-            item.addProperty("productId",    stock.getProduct().getId());
-            item.addProperty("title",        stock.getProduct().getTitle());
+            item.addProperty("productId",    product.getId());
+            item.addProperty("title",        product.getTitle());
             item.addProperty("price",        stock.getPrice());
             item.addProperty("quantity",     stock.getQuantity());
+            item.addProperty("averageRating", averageRating);
+            item.addProperty("totalReviews", reviews.size());
             item.addProperty("sizeValue",    stock.getSize() != null ? stock.getSize().getValue() : "");
-            item.addProperty("colorValue",   stock.getProduct().getColor() != null ? stock.getProduct().getColor().getValue() : "");
-            item.addProperty("colorHex",     stock.getProduct().getColor() != null ? stock.getProduct().getColor().getHexCode() : "#000");
-            item.addProperty("brandName",    stock.getProduct().getBrand() != null ? stock.getProduct().getBrand().getName() : "");
-            item.addProperty("categoryName", stock.getProduct().getCategory() != null ? stock.getProduct().getCategory().getName() : "");
+            item.addProperty("colorValue",   product.getColor() != null ? product.getColor().getValue() : "");
+            item.addProperty("colorHex",     product.getColor() != null ? product.getColor().getHexCode() : "#000");
+            item.addProperty("brandName",    product.getBrand() != null ? product.getBrand().getName() : "");
+            item.addProperty("categoryName", product.getCategory() != null ? product.getCategory().getName() : "");
 
             com.google.gson.JsonArray imgs = new com.google.gson.JsonArray();
             if (stock.getProduct().getImages() != null) {

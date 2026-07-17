@@ -336,6 +336,16 @@ function buildProductCard(p, index) {
 
     const delay = (index % 3) * 100;
 
+    const fullStars = Math.floor(p.averageRating);
+    let stars = "";
+    for (let i = 1; i <= 5; i++) {
+        if (i <= fullStars) {
+            stars += `<i class="bi bi-star-fill"></i>`;
+        } else {
+            stars += `<i class="bi bi-star"></i>`;
+        }
+    }
+
     return `
     <div class="${colClass}" data-aos="fade-up" data-aos-delay="${delay}">
         <div class="product-card" style="${asCurrentView === "list" ? "display:flex;" : ""}">
@@ -366,10 +376,9 @@ function buildProductCard(p, index) {
                     <span class="original-price">Rs.${oldPrice}</span>
                 </div>
                 <div class="product-rating">
-                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-half"></i>
-                    <span>(24)</span>
+                           ${stars}
+
+                    <span>(${p.totalReviews})</span>
                 </div>
                 ${asCurrentView === "list" ? `
                 <div class="mt-3 d-flex gap-2">

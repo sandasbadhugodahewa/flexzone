@@ -31,6 +31,8 @@ public class ProductDTO implements Serializable {
     private List<String> keptImages;
     private List<String> newImages;
     private String createdAt;
+    private double averageRating;
+    private int totalReviews;
 
     public ProductDTO() {
 
@@ -226,5 +228,21 @@ public class ProductDTO implements Serializable {
 
     public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public double getAverageRating() {
+        return averageRating;
+    }
+
+    public void setAverageRating(double averageRating) {
+        this.averageRating = averageRating;
+    }
+
+    public int getTotalReviews() {
+        return totalReviews;
+    }
+
+    public void setTotalReviews(int totalReviews) {
+        this.totalReviews = totalReviews;
     }
 }

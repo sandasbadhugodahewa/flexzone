@@ -140,7 +140,7 @@ function buildOrderCard(order, index) {
                     ${item.productTitle}
                </option>
      `).join("");
-     console.log(items);
+
     //Items
     const itemRows = items.map(item => {
         const img = item.images && item.images.length > 0

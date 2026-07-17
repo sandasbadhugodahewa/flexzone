@@ -123,14 +123,7 @@
                     <div class="product-info">
                         <div class="product-meta mb-2">
                             <span class="product-category" id="subCategory2">Trousers</span>
-                            <div class="product-rating">
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-half"></i>
-                                <span class="rating-count">(42)</span>
-                            </div>
+                            <div class="product-rating" id="singleProductReview"></div>
                         </div>
 
                         <h1 class="product-title" id="productTitle">Men Oversized T-Shirt Pink</h1>
@@ -237,7 +230,7 @@
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews"
                                         type="button" role="tab" aria-controls="reviews" aria-selected="false">Reviews
-                                    (42)
+                                    (0)
                                 </button>
                             </li>
                         </ul>
@@ -270,70 +263,39 @@
                             <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
 
                                 <div class="product-reviews pro-reviews">
-
-                                    <!-- Summary: score + breakdown + fit feedback -->
                                     <div class="pr-summary">
                                         <div class="pr-score-card">
-                                            <div class="pr-score-number">4.5</div>
-                                            <div class="pr-score-stars">
-                                                <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                                                    class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                                                    class="bi bi-star-half"></i>
-                                            </div>
-                                            <div class="pr-score-count">Based on 42 verified reviews</div>
-                                            <button class="pr-write-btn" type="button"
-                                                    onclick="document.getElementById('pr-write-review').scrollIntoView({behavior:'smooth'})">
-                                                Write a review
-                                            </button>
+                                            <div class="pr-score-number" id="pr-score-number">0.0</div>
+                                            <div class="pr-score-stars" id="pr-score-stars"></div>
+                                            <div class="pr-score-count" id="pr-score-count">Based on 0 verified reviews</div>
                                         </div>
 
                                         <div class="pr-breakdown">
                                             <div class="pr-bar-row">
                                                 <span class="pr-bar-label">5 <i class="bi bi-star-fill"></i></span>
-                                                <div class="pr-bar-track">
-                                                    <div class="pr-bar-fill" style="width:65%"></div>
-                                                </div>
-                                                <span class="pr-bar-count">27</span>
+                                                <div class="pr-bar-track"><div class="pr-bar-fill" id="pr-bar-fill-5" style="width:0%"></div></div>
+                                                <span class="pr-bar-count" id="pr-bar-count-5">0</span>
                                             </div>
                                             <div class="pr-bar-row">
                                                 <span class="pr-bar-label">4 <i class="bi bi-star-fill"></i></span>
-                                                <div class="pr-bar-track">
-                                                    <div class="pr-bar-fill" style="width:25%"></div>
-                                                </div>
-                                                <span class="pr-bar-count">10</span>
+                                                <div class="pr-bar-track"><div class="pr-bar-fill" id="pr-bar-fill-4" style="width:0%"></div></div>
+                                                <span class="pr-bar-count" id="pr-bar-count-4">0</span>
                                             </div>
                                             <div class="pr-bar-row">
                                                 <span class="pr-bar-label">3 <i class="bi bi-star-fill"></i></span>
-                                                <div class="pr-bar-track">
-                                                    <div class="pr-bar-fill" style="width:8%"></div>
-                                                </div>
-                                                <span class="pr-bar-count">3</span>
+                                                <div class="pr-bar-track"><div class="pr-bar-fill" id="pr-bar-fill-3" style="width:0%"></div></div>
+                                                <span class="pr-bar-count" id="pr-bar-count-3">0</span>
                                             </div>
                                             <div class="pr-bar-row">
                                                 <span class="pr-bar-label">2 <i class="bi bi-star-fill"></i></span>
-                                                <div class="pr-bar-track">
-                                                    <div class="pr-bar-fill" style="width:2%"></div>
-                                                </div>
-                                                <span class="pr-bar-count">1</span>
+                                                <div class="pr-bar-track"><div class="pr-bar-fill" id="pr-bar-fill-2" style="width:0%"></div></div>
+                                                <span class="pr-bar-count" id="pr-bar-count-2">0</span>
                                             </div>
                                             <div class="pr-bar-row">
                                                 <span class="pr-bar-label">1 <i class="bi bi-star-fill"></i></span>
-                                                <div class="pr-bar-track">
-                                                    <div class="pr-bar-fill" style="width:2%"></div>
-                                                </div>
-                                                <span class="pr-bar-count">1</span>
+                                                <div class="pr-bar-track"><div class="pr-bar-fill" id="pr-bar-fill-1" style="width:0%"></div></div>
+                                                <span class="pr-bar-count" id="pr-bar-count-1">0</span>
                                             </div>
-                                        </div>
-
-                                        <div class="pr-fit-card">
-                                            <h4>Fit feedback</h4>
-                                            <div class="pr-fit-track">
-                                                <div class="pr-fit-marker" style="left:62%"></div>
-                                            </div>
-                                            <div class="pr-fit-labels">
-                                                <span>Runs small</span><span>True to size</span><span>Runs large</span>
-                                            </div>
-                                            <p class="pr-fit-note">78% of reviewers say this fits true to size</p>
                                         </div>
                                     </div>
 
@@ -351,9 +313,6 @@
                                             <button class="pr-chip" type="button" data-filter="3">3 <i
                                                     class="bi bi-star-fill"></i> (3)
                                             </button>
-                                            <button class="pr-chip" type="button" data-filter="photos"><i
-                                                    class="bi bi-camera"></i> With photos (8)
-                                            </button>
                                         </div>
                                         <div class="pr-sort">
                                             <label for="pr-sort-select">Sort by</label>
@@ -361,7 +320,6 @@
                                                 <option value="recent">Most recent</option>
                                                 <option value="high">Highest rated</option>
                                                 <option value="low">Lowest rated</option>
-                                                <option value="helpful">Most helpful</option>
                                             </select>
                                         </div>
                                     </div>
@@ -369,138 +327,17 @@
                                     <!-- Review list -->
                                     <div class="pr-list" id="pr-review-list">
 
-                                        <article class="pr-review">
-                                            <div class="pr-review-avatar">
-                                                <img src="https://bootstrapmade.com/content/demo/eStore/assets/img/person/person-m-1.webp"
-                                                     alt="John Doe">
-                                            </div>
-                                            <div class="pr-review-body">
-                                                <div class="pr-review-top">
-                                                    <div>
-                                                        <span class="pr-reviewer-name">John Doe</span>
-                                                        <span class="pr-verified"><i class="bi bi-patch-check-fill"></i> Verified purchase</span>
-                                                    </div>
-                                                    <span class="pr-review-date">Mar 15, 2024</span>
-                                                </div>
-                                                <div class="pr-review-stars">
-                                                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                                                        class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                                                        class="bi bi-star-fill"></i>
-                                                </div>
-                                                <h5 class="pr-review-title">Exceptional quality and comfort</h5>
-                                                <p class="pr-review-text">Lorem ipsum dolor sit amet, consectetur
-                                                    adipiscing elit. Vestibulum at lacus congue, suscipit elit nec,
-                                                    tincidunt orci. Phasellus egestas nisi vitae lectus imperdiet
-                                                    venenatis. Suspendisse vulputate quam diam, et consectetur augue
-                                                    condimentum in.</p>
-                                                <div class="pr-review-meta-tags">
-                                                    <span class="pr-tag">Size: M</span>
-                                                    <span class="pr-tag">Color: Dark Pink</span>
-                                                </div>
-                                                <div class="pr-review-photos">
-                                                    <img src="assets/img/product/product-details-1.webp"
-                                                         alt="Customer photo">
-                                                    <img src="assets/img/product/product-details-2.webp"
-                                                         alt="Customer photo">
-                                                </div>
-                                                <div class="pr-review-actions">
-                                                    <button class="pr-helpful" type="button"><i
-                                                            class="bi bi-hand-thumbs-up"></i> Helpful (12)
-                                                    </button>
-                                                    <button class="pr-report" type="button"><i class="bi bi-flag"></i>
-                                                        Report
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </article>
+                                        <article class="pr-review" id="reviewContainer">
 
-                                        <article class="pr-review">
-                                            <div class="pr-review-avatar">
-                                                <img src="https://bootstrapmade.com/content/demo/eStore/assets/img/person/person-f-2.webp"
-                                                     alt="Jane Smith">
-                                            </div>
-                                            <div class="pr-review-body">
-                                                <div class="pr-review-top">
-                                                    <div>
-                                                        <span class="pr-reviewer-name">Jane Smith</span>
-                                                        <span class="pr-verified"><i class="bi bi-patch-check-fill"></i> Verified purchase</span>
-                                                    </div>
-                                                    <span class="pr-review-date">Feb 28, 2024</span>
-                                                </div>
-                                                <div class="pr-review-stars">
-                                                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                                                        class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                                                        class="bi bi-star"></i>
-                                                </div>
-                                                <h5 class="pr-review-title">Great fit, runs slightly warm</h5>
-                                                <p class="pr-review-text">Lorem ipsum dolor sit amet, consectetur
-                                                    adipiscing elit. Vestibulum at lacus congue, suscipit elit nec,
-                                                    tincidunt orci. Phasellus egestas nisi vitae lectus imperdiet
-                                                    venenatis.</p>
-                                                <div class="pr-review-meta-tags">
-                                                    <span class="pr-tag">Size: S</span>
-                                                    <span class="pr-tag">Color: Black</span>
-                                                </div>
-                                                <div class="pr-review-actions">
-                                                    <button class="pr-helpful" type="button"><i
-                                                            class="bi bi-hand-thumbs-up"></i> Helpful (5)
-                                                    </button>
-                                                    <button class="pr-report" type="button"><i class="bi bi-flag"></i>
-                                                        Report
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </article>
-
-                                        <article class="pr-review">
-                                            <div class="pr-review-avatar">
-                                                <img src="https://bootstrapmade.com/content/demo/eStore/assets/img/person/person-m-3.webp"
-                                                     alt="Michael Johnson">
-                                            </div>
-                                            <div class="pr-review-body">
-                                                <div class="pr-review-top">
-                                                    <div>
-                                                        <span class="pr-reviewer-name">Michael Johnson</span>
-                                                        <span class="pr-verified"><i class="bi bi-patch-check-fill"></i> Verified purchase</span>
-                                                    </div>
-                                                    <span class="pr-review-date">Feb 15, 2024</span>
-                                                </div>
-                                                <div class="pr-review-stars">
-                                                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                                                        class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                                                        class="bi bi-star-half"></i>
-                                                </div>
-                                                <h5 class="pr-review-title">Solid everyday tee</h5>
-                                                <p class="pr-review-text">Lorem ipsum dolor sit amet, consectetur
-                                                    adipiscing elit. Vestibulum at lacus congue, suscipit elit nec,
-                                                    tincidunt orci. Phasellus egestas nisi vitae lectus imperdiet
-                                                    venenatis. Suspendisse vulputate quam diam.</p>
-                                                <div class="pr-review-meta-tags">
-                                                    <span class="pr-tag">Size: L</span>
-                                                    <span class="pr-tag">Color: Dark Pink</span>
-                                                </div>
-                                                <div class="pr-review-actions">
-                                                    <button class="pr-helpful" type="button"><i
-                                                            class="bi bi-hand-thumbs-up"></i> Helpful (3)
-                                                    </button>
-                                                    <button class="pr-report" type="button"><i class="bi bi-flag"></i>
-                                                        Report
-                                                    </button>
-                                                </div>
-                                            </div>
                                         </article>
 
                                     </div>
-
                                     <div class="pr-load-more">
-                                        <button class="pr-load-more-btn" type="button" id="pr-load-more">Load more
+                                        <button class="pr-load-more-btn" type="button" onclick="loadMoreReviews();" id="pr-load-more">Load more
                                             reviews
                                         </button>
                                     </div>
-
-
                                 </div>
-
                             </div>
                         </div>
                     </div>
@@ -508,9 +345,7 @@
             </div>
         </div>
     </section><!-- /Product Details Section -->
-
 </main>
-
 
 <div id="footer"></div>
 
@@ -518,10 +353,8 @@
 <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i
         class="bi bi-arrow-up-short"></i></a>
 
-<!-- Preloader -->
 <div id="preloader"></div>
 
-<!-- Vendor JS Files -->
 <script data-cfasync="false" src="assets/js/vendor/email-decode.min.js">
 </script>
 <script src="assets/js/bootstrap.bundle.min.js"></script>
@@ -535,7 +368,6 @@
 <script src="assets/js/vendor/purecounter_vanilla.js"></script>
 <script src="assets/js/notiflix-aio-3.2.8.min.js"></script>
 
-<!-- Main JS File -->
 <script src="assets/js/vendor/main.js"></script>
 <script src="assets/js/header.js"></script>
 <script src="assets/js/home.js"></script>
