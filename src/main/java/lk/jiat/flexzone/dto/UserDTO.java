@@ -22,8 +22,17 @@ public class UserDTO implements Serializable {
     private String sinceAt;
     private String newPassword;
     private String confirmPassword;
-    private String roleValue;    // "USER" or "ADMIN"
+    private String roleValue;
     private String statusValue;
+    private boolean rememberMe;
+
+    public boolean isRememberMe() {
+        return rememberMe;
+    }
+
+    public void setRememberMe(boolean rememberMe) {
+        this.rememberMe = rememberMe;
+    }
 
 
     public UserDTO() {

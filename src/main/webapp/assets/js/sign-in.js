@@ -27,7 +27,9 @@ async function signIn() {
     let password = document.getElementById("password");
 
     const userLoginObj = {
-        email: email.value, password: password.value
+        email: email.value,
+        password: password.value,
+        rememberMe: document.getElementById("rememberMe").checked
     }
 
     try {
@@ -40,7 +42,7 @@ async function signIn() {
         if (response.ok) {
             const data = await response.json();
             if (data.status) {
-                Notiflix.Report.success('Flex Zone', data.message, 'Okay', // button title
+                Notiflix.Report.success('Flex Zone', data.message, 'Okay',
                     () => {
                         window.location = "index.html"
                     },);

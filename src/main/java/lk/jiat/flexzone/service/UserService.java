@@ -1,13 +1,10 @@
 package lk.jiat.flexzone.service;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.ws.rs.core.Context;
-import jakarta.ws.rs.core.Response;
 import lk.jiat.flexzone.dto.UserDTO;
-import lk.jiat.flexzone.entity.Address;
 import lk.jiat.flexzone.entity.Role;
 import lk.jiat.flexzone.entity.Status;
 import lk.jiat.flexzone.entity.User;
@@ -20,12 +17,6 @@ import lk.jiat.flexzone.validation.Validator;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import lk.jiat.flexzone.service.CartService;
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Set;
 
 public class UserService {
 

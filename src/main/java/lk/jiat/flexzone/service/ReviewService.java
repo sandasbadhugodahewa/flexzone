@@ -168,4 +168,154 @@ public class ReviewService {
         responseObject.addProperty("message", message);
         return AppUtil.GSON.toJson(responseObject);
     }
+
+    //Admin load All reviews
+    public String loadAllReviews(String statusFilter, String search, int rating) {
+        JsonObject res = new JsonObject();
+        Session session = HibernateUtil.getSessionFactory().openSession();
+
+        try {
+            StringBuilder hql = new StringBuilder("FROM Review r WHERE 1=1 ");
+
+            if (statusFilter != null && !statusFilter.isBlank() && !statusFilter.equals("all")) {
+                hql.append("AND LOWER(r.status.value) = :status ");
+            }
+            if (search != null && !search.isBlank()) {
+                hql.append("AND (LOWER(r.user.firstName) LIKE :search " +
+                        "OR LOWER(r.user.lastName)  LIKE :search " +
+                        "OR LOWER(r.product.title)  LIKE :search " +
+                        "OR LOWER(r.review)         LIKE :search) ");
+            }
+            if (rating > 0) {
+                hql.append("AND r.rating = :rating ");
+            }
+            hql.append("ORDER BY r.createdAt DESC");
+
+            var q = session.createQuery(hql.toString(), Review.class);
+            if (statusFilter != null && !statusFilter.isBlank() && !statusFilter.equals("all"))
+                q.setParameter("status", statusFilter.toLowerCase());
+            if (search != null && !search.isBlank())
+                q.setParameter("search", "%" + search.toLowerCase() + "%");
+            if (rating > 0)
+                q.setParameter("rating", rating);
+
+            List<Review> reviews = q.getResultList();
+
+            long totalAll      = countByStatus(session, null);
+            long totalPending  = countByStatus(session, "PENDING");
+            long totalApproved = countByStatus(session, "ACTIVE");
+            long totalRejected = countByStatus(session, "INACTIVE");
+            long totalFlagged  = countByStatus(session, "BLOCKED");
+
+            double avgRating = reviews.isEmpty() ? 0 :
+                    reviews.stream().mapToInt(Review::getRating).average().orElse(0);
+
+            JsonObject kpi = new JsonObject();
+            kpi.addProperty("totalAll",      totalAll);
+            kpi.addProperty("totalPending",  totalPending);
+            kpi.addProperty("totalApproved", totalApproved);
+            kpi.addProperty("totalRejected", totalRejected);
+            kpi.addProperty("totalFlagged",  totalFlagged);
+            kpi.addProperty("avgRating",     Math.round(avgRating * 10.0) / 10.0);
+            res.add("kpi", kpi);
+
+            com.google.gson.JsonArray arr = new com.google.gson.JsonArray();
+            for (Review r : reviews) {
+                JsonObject row = new JsonObject();
+                row.addProperty("id",           r.getId());
+                row.addProperty("rating",       r.getRating());
+                row.addProperty("reviewTitle",  r.getReviewTitle() != null ? r.getReviewTitle() : "");
+                row.addProperty("review",       r.getReview() != null ? r.getReview() : "");
+                row.addProperty("status",       r.getStatus() != null ? r.getStatus().getValue() : "");
+                row.addProperty("createdAt",    r.getCreatedAt() != null
+                        ? r.getCreatedAt().format(java.time.format.DateTimeFormatter.ofPattern("dd MMM yyyy")) : "—");
+
+                row.addProperty("customerName",r.getUser().getFirstName() + " " + r.getUser().getLastName());
+                row.addProperty("customerEmail", r.getUser().getEmail());
+
+                row.addProperty("productId",   r.getProduct().getId());
+                row.addProperty("productName", r.getProduct().getTitle());
+                String img = (r.getProduct().getImages() != null && !r.getProduct().getImages().isEmpty())
+                        ? r.getProduct().getImages().get(0) : "";
+                row.addProperty("productImage", img);
+
+                arr.add(row);
+            }
+            res.add("reviews", arr);
+            res.addProperty("status",  true);
+            res.addProperty("message", "Reviews loaded!");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            res.addProperty("status",  false);
+            res.addProperty("message", "Failed to load reviews!");
+        } finally {
+            session.close();
+        }
+        return AppUtil.GSON.toJson(res);
+    }
+
+    //Admin update review
+    public String updateReviewStatus(int reviewId, String newStatus) {
+        JsonObject res = new JsonObject();
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        var tx = session.beginTransaction();
+        try {
+            Review review = session.find(Review.class, reviewId);
+            if (review == null) {
+                res.addProperty("status",  false);
+                res.addProperty("message", "Review not found!");
+                return AppUtil.GSON.toJson(res);
+            }
+            Status status = session.createNamedQuery("Status.findByValue", Status.class)
+                    .setParameter("value", newStatus).getSingleResult();
+            review.setStatus(status);
+            session.merge(review);
+            tx.commit();
+            res.addProperty("status",  true);
+            res.addProperty("message", "Status updated to " + newStatus + "!");
+        } catch (Exception e) {
+            tx.rollback();
+            e.printStackTrace();
+            res.addProperty("status",  false);
+            res.addProperty("message", "Update failed: " + e.getMessage());
+        } finally {
+            session.close();
+        }
+        return AppUtil.GSON.toJson(res);
+    }
+
+    //Admin delete review
+    public String deleteReview(int reviewId) {
+        JsonObject res = new JsonObject();
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        var tx = session.beginTransaction();
+        try {
+            Review review = session.find(Review.class, reviewId);
+            if (review == null) {
+                res.addProperty("status",  false);
+                res.addProperty("message", "Review not found!");
+                return AppUtil.GSON.toJson(res);
+            }
+            session.remove(review);
+            tx.commit();
+            res.addProperty("status",  true);
+            res.addProperty("message", "Review deleted!");
+        } catch (Exception e) {
+            tx.rollback();
+            e.printStackTrace();
+            res.addProperty("status",  false);
+            res.addProperty("message", "Delete failed!");
+        } finally {
+            session.close();
+        }
+        return AppUtil.GSON.toJson(res);
+    }
+
+    private long countByStatus(Session session, String statusValue) {
+        if (statusValue == null)
+            return session.createQuery("SELECT COUNT(r) FROM Review r", Long.class).getSingleResult();
+        return session.createQuery("SELECT COUNT(r) FROM Review r WHERE r.status.value = :val", Long.class)
+                .setParameter("val", statusValue).getSingleResult();
+    }
 }

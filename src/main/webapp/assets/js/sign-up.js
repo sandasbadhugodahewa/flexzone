@@ -24,8 +24,7 @@ async function signUp() {
             body: JSON.stringify(user)
         });
 
-
-        if (response.ok) { // 200
+        if (response.ok) {
             const data = await response.json();
             if (data.status) {
                 Notiflix.Report.success(

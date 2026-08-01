@@ -29,7 +29,7 @@ async function verifyAccount() {
                 Notiflix.Report.success(
                     'Flex Zone',
                     data.message,
-                    'Okay', // button title
+                    'Okay',
                     () => {
                         window.location = "sign-in.html"
                     },

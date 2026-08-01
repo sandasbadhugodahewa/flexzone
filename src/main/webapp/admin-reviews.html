@@ -6,15 +6,11 @@
     <title>Reviews & Ratings | FlexZone Admin</title>
     <meta name="robots" content="noindex, nofollow">
 
-
     <link href="assets/images/logo/favicon.ico" rel="icon">
-    <link href="https://bootstrapmade.com/content/demo/EliteAdmin/assets/img/apple-touch-icon.png"
-          rel="apple-touch-icon">
-
+    <link href="https://bootstrapmade.com/content/demo/EliteAdmin/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com/">
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
-          rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <link href="assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="assets/css/bootstrap-icons.css" rel="stylesheet">
@@ -28,10 +24,8 @@
     <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/light/style.css">
 
     <style>
-        /* Only page-specific bits not already covered by main.css */
         .reviews-hero-illustration { width: 190px; height: auto; opacity: 0.95; }
         @media (max-width: 767px) { .reviews-hero-illustration { display: none; } }
-
         .reviews-filter-bar {
             display: flex; align-items: center; gap: var(--spacing-md);
             flex-wrap: wrap; margin-bottom: var(--spacing-lg);
@@ -64,7 +58,7 @@
         });
     </script>
 </head>
-<body>
+<body onload="loadReviews();">
 <div id="sidebar"></div>
 
 <main class="main">
@@ -167,7 +161,7 @@
                     <div class="card-header" style="flex-wrap: wrap; gap: var(--spacing-md);">
                         <div>
                             <h3 class="card-title">All Reviews</h3>
-                            <p class="card-subtitle">Approve, reply to, or remove customer reviews</p>
+                            <p class="card-subtitle">Approve, or remove customer reviews</p>
                         </div>
                     </div>
 
@@ -180,10 +174,7 @@
                                 <button class="reviews-filter-tab" data-filter="rejected">Rejected</button>
                                 <button class="reviews-filter-tab" data-filter="flagged">Flagged</button>
                             </div>
-                            <div class="reviews-search">
-                                <i class="bi bi-search"></i>
-                                <input type="text" class="form-control" id="reviewSearchInput" placeholder="Search customer, product, comment...">
-                            </div>
+
                             <select class="form-select" id="ratingFilterSelect" style="width: auto;">
                                 <option value="0">All Ratings</option>
                                 <option value="5">5 Stars</option>
@@ -230,7 +221,7 @@
     </footer>
 </main>
 
-<!-- ══════════════ MODAL: View / Reply to Review ══════════════ -->
+
 <div class="modal fade" id="reviewModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
@@ -261,11 +252,6 @@
                         <div style="font-weight: 600; color: var(--heading-color); font-size: 0.875rem;" id="reviewModalProductName">—</div>
                         <div style="font-size: 0.75rem; color: var(--muted-color);">Reviewed product</div>
                     </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Reply to customer (optional)</label>
-                    <textarea class="form-control" id="reviewReplyText" rows="3" placeholder="Write a public reply..."></textarea>
                 </div>
 
                 <div class="form-group" style="margin-bottom: 0;">
@@ -311,7 +297,7 @@
 <script src="https://bootstrapmade.com/content/demo/EliteAdmin/assets/js/main.js"></script>
 <script src="assets/js/notiflix-aio-3.2.8.min.js"></script>
 <script src="assets/js/auth.js"></script>
-<script src="assets/js/admin-reviews.js"></script>
+<script src="assets/js/admin/admin-reviews.js"></script>
 <script>
     window.addEventListener("load", () => {
         checkAdmin();
