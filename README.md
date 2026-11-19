@@ -4,6 +4,9 @@ FlexZone is a full-stack clothing e-commerce web application developed using Jav
 
 The platform provides an online shopping experience where customers can explore clothing products, manage their shopping carts, place orders, and complete payments.
 
+<img width="866" height="818" alt="Screenshot 2026-11-17 145138" src="https://github.com/user-attachments/assets/53d03abd-b46e-4cf1-b486-6891732acdc3" />
+
+
 ## 🚀 Key Features
 
 - **User Authentication:** User registration, login, logout, and Google authentication.
